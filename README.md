@@ -1,0 +1,2 @@
+# LearnWithFranny
+AI Note app
