@@ -6,7 +6,6 @@ export const uploadFile = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  // Send the file via API Post request
   try {
     const response = await axios.post(
       "http://localhost:8080/api/upload",
