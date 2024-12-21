@@ -3,12 +3,12 @@ package com.LearnWithFranny.LearnWithFranny.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.*;
+
 @Document("Note")
 public class Note {
 
     @Id
     private String id;
-
     private String front; // Name or title on the front of the card
     private String back; // Definition or answer on the back of the card
     private List<String> categories; // List of categories the note belongs to (e.g., ['Math', 'Algebra'])

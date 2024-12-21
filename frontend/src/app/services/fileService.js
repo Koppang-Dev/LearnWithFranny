@@ -3,7 +3,7 @@ import axios from "axios";
 // Function to upload the file via API Call
 export const uploadFile = async (file) => {
   // Adding the file to the form data
-  const formData = FormData();
+  const formData = new FormData();
   formData.append("file", file);
 
   // Send the file via API Post request
