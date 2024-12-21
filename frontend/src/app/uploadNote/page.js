@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { uploadFile } from "../services/fileService";
 
 export default function Upload() {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -25,10 +27,23 @@ export default function Upload() {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!file) {
       setMessage("Please select a valid file to upload.");
       return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    // Try to upload the file to the backend
+    try {
+      await uploadFile(file);
+      setMessage("File Loaded Successfully");
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setLoading(false);
     }
 
     // Continue with file upload process (you can send the file to the backend here)
