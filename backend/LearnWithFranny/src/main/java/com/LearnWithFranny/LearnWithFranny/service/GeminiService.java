@@ -1,6 +1,6 @@
 package com.LearnWithFranny.LearnWithFranny.service;
 
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -14,22 +14,37 @@ public class GeminiService {
     // Initalize the WebClient
     private final WebClient.Builder webClientBuilder;
 
+    // Retrieve the API Key and URL from .env
+    @Value("${gemini.api.base-url}")
+    private String baseUrl;
+
+    @Value("${gemini.api.key}")
+    private String apiKey;
+
+
     @Autowired
     public GeminiService(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 
-    
-    public Mono<String> processFileWithGemini(String fileUrl) {
+    public Mono<String> processFileWithGemini(byte[] fileContent) {
         // Setup WebClient to interact with Gemini API
-        return webClientBuilder.baseUrl("https://gemini-api.example.com")  // Replace with Gemini API URL
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer YOUR_GEMINI_API_KEY")  // API Key
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                .post()
-                .bodyValue("{\"fileUrl\": \"" + fileUrl + "\"}")  // You can send the file URL or data
-                .retrieve()
-                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                          clientResponse -> Mono.error(new Exception("API Error: " + clientResponse.statusCode())))
-                .bodyToMono(String.class);  // You can return whatever response type you need
+        return webClientBuilder
+        .baseUrl(baseUrl)
+        .build()
+        .post()
+        .uri("/process")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey) 
+        .header(HttpHeaders.CONTENT_TYPE, "application/json") 
+        .bodyValue("{\"contents\": [{\"parts\": [{\"text\": \"Explain how AI works\"}]}]}")
+        .retrieve()
+        .onStatus(
+            status -> status.is4xxClientError() || status.is5xxServerError(),
+                clientResponse -> clientResponse.bodyToMono(String.class)
+                    .flatMap(errorBody -> Mono.error(
+                        new RuntimeException("API Error: " + clientResponse.statusCode() + " - " + errorBody)
+                    ))
+        )
+                .bodyToMono(String.class);
     }
 }
