@@ -1,6 +1,8 @@
 // Main page that shows the analytics and the tab bar on the left for the options
 
 import Menu from "@/components/Menu";
+import AdminPage from "@/components/AdminPage";
+
 import Navbar from "@/components/Navbar";
 
 import Image from "next/image";
@@ -23,6 +25,7 @@ const DashboardPage = () => {
       {/* Right */}
       <div className="w-5/6 md:w-[92%] lg:w-[84%] xl:w-[86%] bg-[#F7F8FA] overflow-scroll">
         <Navbar />
+        <AdminPage />
       </div>
     </div>
   );
