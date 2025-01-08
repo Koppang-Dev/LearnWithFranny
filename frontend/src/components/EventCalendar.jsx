@@ -4,6 +4,7 @@ import { useState } from "react";
 import "react-calendar/dist/Calendar.css";
 
 // TEMPORARY
+// Events below the calendar
 const events = [
   {
     id: 1,
