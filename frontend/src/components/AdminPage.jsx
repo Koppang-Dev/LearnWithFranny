@@ -1,6 +1,7 @@
 // Page displaying the Analystics and the calender
 import ActivityChart from "./ActivityChart";
 import CountChart from "./CountChart";
+import NotesChart from "./NotesChart";
 import UserCard from "./UserCard";
 
 const AdminPage = () => {
@@ -27,7 +28,9 @@ const AdminPage = () => {
           </div>
         </div>
         {/* BOTTOM CHARTS */}
-        <div className=""></div>
+        <div className="w-full h-[500px]">
+          <NotesChart />
+        </div>
       </div>
       {/* RIGHT */}
       <div className="w-full lg:w-1/3"></div>
