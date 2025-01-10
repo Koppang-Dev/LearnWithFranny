@@ -19,7 +19,7 @@ const DashboardPage = () => {
         >
           <Image src="/images/logo.png" alt="logo" width={32} height={32} />
         </Link>
-        <span className="hidden lg:block">LearnWithFranny</span>
+        <span className="hidden lg:block font-bold">LearnWithFranny</span>
         <Menu />
       </div>
       {/* Right */}

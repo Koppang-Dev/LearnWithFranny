@@ -1,5 +1,6 @@
 // Page displaying the Analystics and the calender
 import ActivityChart from "./ActivityChart";
+import Announcements from "./Announcements";
 import CountChart from "./CountChart";
 import EventCalendar from "./EventCalendar";
 import NotesChart from "./NotesChart";
@@ -37,6 +38,7 @@ const AdminPage = () => {
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
         {/* EVENT CALENDAR */}
         <EventCalendar />
+        <Announcements />
       </div>
     </div>
   );
