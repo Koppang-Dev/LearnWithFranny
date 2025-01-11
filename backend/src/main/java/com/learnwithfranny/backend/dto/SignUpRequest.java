@@ -7,6 +7,7 @@ import lombok.Data;
  * This class is used to map the incoming JSON data for user registration.
  * It contains the necessary fields for a user to sign up: username, email, and password.
  */
+@Data
 public class SignUpRequest {
     private String username;
     private String email;
