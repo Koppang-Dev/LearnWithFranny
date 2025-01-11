@@ -1,5 +1,9 @@
 package com.learnwithfranny.backend.config;
 
+import com.learnwithfranny.backend.service.UserDetailsServiceImpl;
+import com.learnwithfranny.backend.service.AuthEntryPointJwt;
+import com.learnwithfranny.backend.filter.AuthTokenFilter;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -24,14 +28,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-
-public class SecurityConfiguation {
+public class SecurityConfiguration {
 
     private UserDetailsServiceImpl userDetailsService;
     private AuthEntryPointJwt authEntryPointJwt;
     private AuthTokenFilter authTokenFilter;
     
-    public SecurityConfiguation() {
+    public SecurityConfiguration(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt authEntryPointJwt, AuthTokenFilter authTokenFilter) {
         this.userDetailsService = userDetailsService;
         this.authEntryPointJwt = authEntryPointJwt;
         this.authTokenFilter = authTokenFilter;
@@ -90,10 +93,9 @@ public class SecurityConfiguation {
         .csrf().disable()
         .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .authorizeRequests()
-        .antMatchers("/api/auth/**").permitAll()
-        .antMatchers("/api/test/**").permitAll()
-        .anyRequest().authenticated();
+        .authorizeHttpRequests()  // Replaced deprecated authorizeRequests()
+        .requestMatchers("/api/auth/**", "/api/test/**").permitAll()  // Use requestMatchers() for antMatchers()
+        .anyRequest().authenticated();  // Keep the existing rule for other requests
         
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

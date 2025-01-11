@@ -9,8 +9,11 @@ import lombok.Data;
  * The use of Lombok's @Data annotation automatically generates getters, setters, 
  * toString, equals, and hashCode methods.
  */
+@Data
 public class SignInRequest {
     private String username;
     private String password;
+
+
     
 }

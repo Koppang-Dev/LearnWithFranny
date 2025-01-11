@@ -1,6 +1,5 @@
 package com.learnwithfranny.backend.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,7 +32,7 @@ public class User {
     @Column
     private String password;
 
-      /**
+    /**
      * The roles associated with the user.
      * This is a many-to-many relationship with the Role entity.
      * The roles are fetched eagerly, meaning they are loaded immediately with the user.

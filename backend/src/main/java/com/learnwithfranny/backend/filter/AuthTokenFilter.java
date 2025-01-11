@@ -1,20 +1,23 @@
 package com.learnwithfranny.backend.filter;
 
 import java.io.IOException;
+import com.learnwithfranny.backend.service.UserDetailsServiceImpl;
+import com.learnwithfranny.backend.util.JwtUtil;
+
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
 
 
 /**
@@ -23,6 +26,8 @@ import jakarta.servlet.http.HttpServletResponse;
  * ensures that the user is authenticated for each request before accessing 
  * protected resources.
  */
+@Log4j2
+@Component
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     private JwtUtil jwtUtil;
@@ -58,7 +63,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                     // If a valid JWT token is present, authenticate the user
                     if (jwt != null && jwtUtil.validateJwtToken(jwt)) {
-                        String username = jwtUtil.validateJwtToken(jwt));
+                        String username = jwtUtil.getUserNameFromJwtToken(jwt);
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                         UsernamePasswordAuthenticationToken  authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

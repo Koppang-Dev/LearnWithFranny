@@ -1,15 +1,26 @@
 package com.learnwithfranny.backend.controller;
 
-import org.apache.catalina.User;
-import org.springframework.context.support.BeanDefinitionDsl.Role;
+import com.learnwithfranny.backend.repository.UserRepository;
+import com.learnwithfranny.backend.repository.RoleRepository;
+import com.learnwithfranny.backend.model.User;
+import com.learnwithfranny.backend.model.ERole;
+import com.learnwithfranny.backend.model.Role;
+
+
+import com.learnwithfranny.backend.util.JwtUtil;
+import com.learnwithfranny.backend.dto.SignInRequest;
+import com.learnwithfranny.backend.dto.JwtResponse;
+
+import com.learnwithfranny.backend.dto.SignUpRequest;
+import com.learnwithfranny.backend.service.UserDetailsImpl;
+
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashSet;
@@ -19,7 +30,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import io.micrometer.core.ipc.http.HttpSender.Response;
 
 /**
  * Authentication Controller for handling user authentication and registration requests.
@@ -77,10 +87,10 @@ public class AuthController {
         String jwt = jwtUtil.generateJwtToken(authentication);
 
         // Retrieve user details from the authentication object
-        UserDetailsImpl userDetails = (UserDetailsImp) authentication.getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         // Get the list of roles the user has and convert them to a list of strings
-        List<String> roles = userDetails.getAuthoriities().stream().map(item -> item.getAuthority())
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
         // Construct the JWT response
@@ -102,7 +112,7 @@ public class AuthController {
      * @return ResponseEntity with appropriate status and message
      */
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<String> signup(@RequestBody SignUpRequest signUpRequest) {
 
         // Check if the username already exists
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -123,7 +133,7 @@ public class AuthController {
 
         // Role is not found
         if (userRole.isEmpty()) {
-            return ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR).body("role not found");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("role not found");
         }
 
         // Initialize the user entity and set its details
