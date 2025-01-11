@@ -29,7 +29,7 @@ const menuItems = [
       {
         icon: "/images/upload.png",
         label: "Upload Notes",
-        href: "/",
+        href: "/uploadNote",
       },
     ],
   },
