@@ -20,13 +20,16 @@ export default function SignUp() {
 
   async function handleSubmit() {
     // Send a POST request to the signup API endpoint
-    const res = await fetch("https://localhost:3001/api/auth/signup", {
-      method: "POST",
-      body: JSON.stringify(state),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      "${process.env.REACT_APP_API_URL}/api/auth/signin",
+      {
+        method: "POST",
+        body: JSON.stringify(state),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (res.ok) {
       alert("user registered success");

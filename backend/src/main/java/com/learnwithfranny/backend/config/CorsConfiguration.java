@@ -1,6 +1,7 @@
 package com.learnwithfranny.backend.config;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -9,6 +10,10 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 @Configuration
 public class CorsConfiguration {
+
+    @Value("${frontend.url")
+    private String frontendUrl;
+
 
     /**
      * Bean configuration for CORS (Cross-Origin Resource Sharing).
@@ -25,8 +30,8 @@ public class CorsConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 // Allow CORS for all routes and specify allowed methods and headers
-                registry.addMapping("/**").allowedMethods("GET", "PUT", "POST", "DELETE")
-                        .allowedHeaders("http://localhost:3001");
+                registry.addMapping("/**").allowedOrigins(frontendUrl).allowedMethods("GET", "PUT", "POST", "DELETE")
+                        .allowedHeaders("*");
             }
         };
     }

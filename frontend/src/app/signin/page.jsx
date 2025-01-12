@@ -19,7 +19,7 @@ export default function SignIn() {
 
   async function handleSubmit() {
     // Send a POST request to the server with the user's credentials
-    const res = await fetch("https://localhost:3001", {
+    const res = await fetch("${process.env.REACT_APP_API_URL}", {
       method: "POST",
       body: JSON.stringify(state),
       headers: {
@@ -29,7 +29,6 @@ export default function SignIn() {
 
     if (res.ok) {
       // Store the token in localStorage on successful login
-
       const json = await res.json();
       localStorage.setItem("token", json.token);
       router.push("/dashboard");
