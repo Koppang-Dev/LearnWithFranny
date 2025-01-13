@@ -1,0 +1,4 @@
+[[redirects]]
+from "/*"
+to "/frontend/src/app/dashboard"
+status = 200

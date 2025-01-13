@@ -1,3 +1,4 @@
+"use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -38,44 +39,42 @@ export default function SignUp() {
   }
 
   return (
-    <Layout>
-      <div className={styles.container}>
-        <h1 className={styles.title}>Sign Up</h1>
-        <div className={styles.form}>
-          {/* Username input */}
-          <input
-            className={styles.input}
-            type="text"
-            name="username"
-            placeholder="username"
-            value={state.username}
-            onChange={handleChange}
-            autoComplete="off"
-          />
-          {/* Email input */}
-          <input
-            className={styles.input}
-            type="text"
-            name="email"
-            placeholder="email"
-            value={state.email}
-            onChange={handleChange}
-            autoComplete="off"
-          />
-          {/* Password input */}
-          <input
-            className={styles.input}
-            type="password"
-            name="password"
-            placeholder="password"
-            value={state.password}
-            onChange={handleChange}
-          />
-          <button className={styles.btn} onClick={handleSubmit}>
-            Submit
-          </button>
-        </div>
+    <div className="">
+      <h1 className="">Sign Up</h1>
+      <div className="">
+        {/* Username input */}
+        <input
+          className=""
+          type="text"
+          name="username"
+          placeholder="username"
+          value={state.username}
+          onChange={handleChange}
+          autoComplete="off"
+        />
+        {/* Email input */}
+        <input
+          className=""
+          type="text"
+          name="email"
+          placeholder="email"
+          value={state.email}
+          onChange={handleChange}
+          autoComplete="off"
+        />
+        {/* Password input */}
+        <input
+          className=""
+          type="password"
+          name="password"
+          placeholder="password"
+          value={state.password}
+          onChange={handleChange}
+        />
+        <button className="" onClick={handleSubmit}>
+          Submit
+        </button>
       </div>
-    </Layout>
+    </div>
   );
 }
