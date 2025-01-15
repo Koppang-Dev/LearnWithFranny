@@ -1,6 +1,3 @@
-"use client";
-import Link from "next/link";
-import { useState } from "react";
 import {
   FaFacebookF,
   FaLinkedinIn,
@@ -10,42 +7,7 @@ import {
 
 import { MdLockOutline } from "react-icons/md";
 
-// SignIn component handles user login
-export default function Register() {
-  const [state, setState] = useState({
-    username: "",
-    password: "",
-  });
-
-  // Updates state with form input values
-  function handleChange(e) {
-    const copy = { ...state };
-    copy[e.target.name] = e.target.value;
-    setState(copy);
-  }
-
-  async function handleSubmit() {
-    // Send a POST request to the server with the user's credentials
-    const res = await fetch(
-      "${process.env.REACT_APP_API_URL}/api/auth/signin",
-      {
-        method: "POST",
-        body: JSON.stringify(state),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (res.ok) {
-      // Store the token in localStorage on successful login
-      const json = await res.json();
-      localStorage.setItem("token", json.token);
-    } else {
-      alert("Bad Credentials");
-    }
-  }
-
+export default function Login() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
@@ -134,7 +96,7 @@ export default function Register() {
               href="#"
               className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-lamaPurple"
             >
-              Register
+              Sign Up
             </a>
           </div>
         </div>
