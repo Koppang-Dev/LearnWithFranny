@@ -1,7 +1,8 @@
 "use client";
+
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import {
   FaFacebookF,
   FaLinkedinIn,
@@ -20,6 +21,8 @@ export default function Register() {
     email: "",
     password: "",
   });
+
+  const router = useRouter();
 
   // Updates state with form input values
   function handleChange(e) {
@@ -44,9 +47,9 @@ export default function Register() {
 
     if (res.ok) {
       // Store the token in localStorage on successful login
-      const json = await res.json();
-      localStorage.setItem("token", json.token);
-      router.push("/dashboard");
+      const response = await res.text();
+      console.log(response);
+      router.push("/login");
     } else {
       alert("Bad Credentials");
     }
