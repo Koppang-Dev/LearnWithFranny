@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/router";
 import {
   FaFacebookF,
   FaLinkedinIn,
@@ -8,12 +9,15 @@ import {
   FaRegEnvelope,
 } from "react-icons/fa";
 
+import { IoPersonCircle } from "react-icons/io5";
+
 import { MdLockOutline } from "react-icons/md";
 
 // SignIn component handles user login
 export default function Register() {
   const [state, setState] = useState({
     username: "",
+    email: "",
     password: "",
   });
 
@@ -24,23 +28,25 @@ export default function Register() {
     setState(copy);
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    console.log("Clicked Sign up");
+
     // Send a POST request to the server with the user's credentials
-    const res = await fetch(
-      "${process.env.REACT_APP_API_URL}/api/auth/signin",
-      {
-        method: "POST",
-        body: JSON.stringify(state),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const res = await fetch("http://localhost:8080/api/auth/signup", {
+      method: "POST",
+      body: JSON.stringify(state),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     if (res.ok) {
       // Store the token in localStorage on successful login
       const json = await res.json();
       localStorage.setItem("token", json.token);
+      router.push("/dashboard");
     } else {
       alert("Bad Credentials");
     }
@@ -85,10 +91,23 @@ export default function Register() {
               {/* ENTER INFORMATION */}
               <div className="flex flex-col items-center">
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
+                  <IoPersonCircle accumulate="" className="text-gray-400 m-2" />
+                  <input
+                    type="username"
+                    name="username"
+                    value={state.username}
+                    onChange={handleChange}
+                    placeholder="Username"
+                    className="bg-gray-100 outline-none flex-1"
+                  />
+                </div>
+                <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
                   <FaRegEnvelope className="text-gray-400 m-2" />
                   <input
                     type="email"
                     name="email"
+                    value={state.email}
+                    onChange={handleChange}
                     placeholder="Email"
                     className="bg-gray-100 outline-none flex-1"
                   />
@@ -98,6 +117,8 @@ export default function Register() {
                   <input
                     type="password"
                     name="password"
+                    value={state.password}
+                    onChange={handleChange}
                     placeholder="Password"
                     className="bg-gray-100 outline-none flex-1"
                   />
@@ -112,12 +133,12 @@ export default function Register() {
                     Forgot Password?
                   </a>
                 </div>
-                <a
-                  href="#"
+                <button
+                  onClick={handleSubmit}
                   className=" text-lamaPurple border-2 border-lamaPurple rounded-full px-12 py-2 inline-block font-semibold hover:bg-lamaPurple hover:text-white"
                 >
                   Sign Up
-                </a>
+                </button>
               </div>
             </div>
           </div>

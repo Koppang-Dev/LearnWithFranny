@@ -30,7 +30,7 @@ public class CorsConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 // Allow CORS for all routes and specify allowed methods and headers
-                registry.addMapping("/**").allowedOrigins(frontendUrl).allowedMethods("GET", "PUT", "POST", "DELETE")
+                registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "PUT", "POST", "DELETE")
                         .allowedHeaders("*");
             }
         };

@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 
-
 /**
  * AuthTokenFilter is a custom filter responsible for authenticating requests
  * based on the presence of a JWT token in the Authorization header. This filter
@@ -56,7 +55,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
      * @throws IOException if an I/O error occurs during request processing.
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse reponse, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
                 try {
                     String jwt = parseJwt(request);
@@ -74,7 +73,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                     log.error("Cannot set user authentication: {}", e);
                 }
-                filterChain.doFilter(request, reponse);
+                filterChain.doFilter(request, response);
     }
 
 
