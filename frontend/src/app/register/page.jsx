@@ -1,6 +1,4 @@
 "use client";
-
-import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -29,6 +27,10 @@ export default function Register() {
     const copy = { ...state };
     copy[e.target.name] = e.target.value;
     setState(copy);
+  }
+
+  function handleLoginClicked() {
+    router.push("/login");
   }
 
   async function handleSubmit(e) {
@@ -154,12 +156,12 @@ export default function Register() {
             <p className="mb-10">
               Fill up personal information and start the journey
             </p>
-            <a
-              href="#"
+            <button
+              onClick={handleLoginClicked}
               className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-lamaPurple"
             >
-              Register
-            </a>
+              Login
+            </button>
           </div>
         </div>
       </main>

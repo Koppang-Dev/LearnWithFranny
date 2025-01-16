@@ -28,7 +28,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
-
+    
     private JwtUtil jwtUtil;
     private UserDetailsServiceImpl userDetailsService;
 

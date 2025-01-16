@@ -1,13 +1,58 @@
+"use client";
 import {
   FaFacebookF,
   FaLinkedinIn,
   FaGoogle,
   FaRegEnvelope,
 } from "react-icons/fa";
+import { IoPersonCircle } from "react-icons/io5";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { MdLockOutline } from "react-icons/md";
 
 export default function Login() {
+  const [state, setState] = useState({
+    email: "",
+    username: "",
+    password: "",
+  });
+
+  const router = useRouter();
+
+  function handleChange(e) {
+    const copy = { ...state };
+    copy[e.target.name] = e.target.value;
+    setState(copy);
+  }
+
+  function handleSignupClicked() {
+    router.push("/signup");
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    console.log("Clicked Login up");
+
+    // Send a POST request to the server with the user's credentials
+    const res = await fetch("http://localhost:8080/api/auth/signin", {
+      method: "POST",
+      body: JSON.stringify(state),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.ok) {
+      // Store the token in localStorage on successful login
+      const response = await res.text();
+      console.log(response);
+      router.push("/dashboard");
+    } else {
+      alert("Bad Credentials");
+    }
+  }
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
@@ -47,10 +92,23 @@ export default function Login() {
               {/* ENTER INFORMATION */}
               <div className="flex flex-col items-center">
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
-                  <FaRegEnvelope className="text-gray-400 m-2" />
+                  <IoPersonCircle className="text-gray-400 m-2" />
+                  <input
+                    type="username"
+                    name="username"
+                    value={state.username}
+                    onChange={handleChange}
+                    placeholder="Username"
+                    className="bg-gray-100 outline-none flex-1"
+                  />
+                </div>
+                <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
+                  <MdLockOutline className="text-gray-400 m-2" />
                   <input
                     type="email"
                     name="email"
+                    value={state.email}
+                    onChange={handleChange}
                     placeholder="Email"
                     className="bg-gray-100 outline-none flex-1"
                   />
@@ -60,6 +118,8 @@ export default function Login() {
                   <input
                     type="password"
                     name="password"
+                    value={state.password}
+                    onChange={handleChange}
                     placeholder="Password"
                     className="bg-gray-100 outline-none flex-1"
                   />
@@ -74,12 +134,12 @@ export default function Login() {
                     Forgot Password?
                   </a>
                 </div>
-                <a
-                  href="#"
+                <button
+                  onClick={handleSubmit}
                   className=" text-lamaPurple border-2 border-lamaPurple rounded-full px-12 py-2 inline-block font-semibold hover:bg-lamaPurple hover:text-white"
                 >
-                  Sign Up
-                </a>
+                  Login
+                </button>
               </div>
             </div>
           </div>
@@ -92,12 +152,12 @@ export default function Login() {
             <p className="mb-10">
               Fill up personal information and start the journey
             </p>
-            <a
-              href="#"
+            <button
+              onClick={handleSignupClicked}
               className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-lamaPurple"
             >
-              Sign Up
-            </a>
+              Signup
+            </button>
           </div>
         </div>
       </main>
