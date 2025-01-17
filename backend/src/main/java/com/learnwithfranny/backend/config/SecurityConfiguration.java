@@ -96,16 +96,16 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.cors().and()
-        .csrf().disable()
-        // .exceptionHandling()
-            // .authenticationEntryPoint(authEntryPointJwt)
-        // .and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .authorizeHttpRequests()  // Replaced deprecated authorizeRequests()
-                .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**").permitAll() // Use requestMatchers() for antMatchers()
-                .anyRequest().authenticated();  // Keep the existing rule for other requests
-        http.oauth2Login(oAuthLogin -> oAuthLogin.successHandler(oauth2AuthenticationSuccessHandler));
+        http
+        // .exceptionHandling(exceptionHandling -> exceptionHandling
+        //     .authenticationEntryPoint(authEntryPointJwt)  
+        // )
+        .sessionManagement(session -> session
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(authz -> authz
+            .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**").permitAll()
+            .anyRequest().authenticated())
+        .oauth2Login(oAuthLogin -> oAuthLogin.successHandler(oauth2AuthenticationSuccessHandler));
        
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
