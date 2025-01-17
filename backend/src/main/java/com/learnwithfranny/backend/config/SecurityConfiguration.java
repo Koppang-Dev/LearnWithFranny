@@ -92,16 +92,16 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and()
         .csrf().disable()
-        .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
+        // .exceptionHandling()
+            // .authenticationEntryPoint(authEntryPointJwt)
+        // .and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .authorizeHttpRequests()  // Replaced deprecated authorizeRequests()
-                .requestMatchers("/api/auth/**", "/api/test/**").permitAll() // Use requestMatchers() for antMatchers()
+                .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**").permitAll() // Use requestMatchers() for antMatchers()
                 .anyRequest().authenticated()  // Keep the existing rule for other requests
                 .and()
-                .oauth2Login(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults());
-        
-        
+                .oauth2Login()
+                .defaultSuccessUrl("http://localhost:3001", true);        
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
