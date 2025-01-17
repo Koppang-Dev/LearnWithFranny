@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -94,8 +95,12 @@ public class SecurityConfiguration {
         .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .authorizeHttpRequests()  // Replaced deprecated authorizeRequests()
-        .requestMatchers("/api/auth/**", "/api/test/**").permitAll()  // Use requestMatchers() for antMatchers()
-        .anyRequest().authenticated();  // Keep the existing rule for other requests
+                .requestMatchers("/api/auth/**", "/api/test/**").permitAll() // Use requestMatchers() for antMatchers()
+                .anyRequest().authenticated()  // Keep the existing rule for other requests
+                .and()
+                .oauth2Login(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults());
+        
         
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
