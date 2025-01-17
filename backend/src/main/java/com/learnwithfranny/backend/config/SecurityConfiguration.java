@@ -4,6 +4,7 @@ import com.learnwithfranny.backend.service.UserDetailsServiceImpl;
 import com.learnwithfranny.backend.service.AuthEntryPointJwt;
 import com.learnwithfranny.backend.filter.AuthTokenFilter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -34,6 +35,10 @@ public class SecurityConfiguration {
     private UserDetailsServiceImpl userDetailsService;
     private AuthEntryPointJwt authEntryPointJwt;
     private AuthTokenFilter authTokenFilter;
+
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+
     
     public SecurityConfiguration(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt authEntryPointJwt, AuthTokenFilter authTokenFilter) {
         this.userDetailsService = userDetailsService;
@@ -90,6 +95,7 @@ public class SecurityConfiguration {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http.cors().and()
         .csrf().disable()
         // .exceptionHandling()
@@ -98,10 +104,9 @@ public class SecurityConfiguration {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .authorizeHttpRequests()  // Replaced deprecated authorizeRequests()
                 .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**").permitAll() // Use requestMatchers() for antMatchers()
-                .anyRequest().authenticated()  // Keep the existing rule for other requests
-                .and()
-                .oauth2Login()
-                .defaultSuccessUrl("http://localhost:3001", true);        
+                .anyRequest().authenticated();  // Keep the existing rule for other requests
+        http.oauth2Login(oAuthLogin -> oAuthLogin.successHandler(oauth2AuthenticationSuccessHandler));
+       
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

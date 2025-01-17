@@ -9,12 +9,17 @@ import com.learnwithfranny.backend.repository.RoleRepository;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.model.Role;
 import com.learnwithfranny.backend.model.ERole;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 import java.io.IOException;
 import java.util.UUID;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.learnwithfranny.backend.service.UserDetailsImpl;
@@ -30,9 +35,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
+    @Autowired
+    @Lazy
+    public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -42,6 +49,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
 
+        System.out.println("Authentication is not an OAuth2 token");
+
+
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User oauthUser = oauthToken.getPrincipal();
 
@@ -50,7 +60,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String name = oauthUser.getAttribute("name");
 
         // Create or update the user in the database
-        createOrUpdateUser(name, email);
+        createOrUpdateUser(email, name);
 
         // Redirect to the frontend after successful login
         response.sendRedirect("http://localhost:3001");
@@ -60,7 +70,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         // Check if the user already exists
         Boolean existingUser = userRepository.existsByEmail(email);
         
-        if (existingUser == null) {
+        if (existingUser == false) {
             // User doesn't exist, create a new one
             User newUser = new User();
             newUser.setEmail(email);
@@ -77,6 +87,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
             if (userRole.isEmpty()) {
                 // If role is not found, you might want to handle this
+                System.out.println("Role not found: " + ERole.ROLE_USER);
                 return;
             }
             roles.add(userRole.get());
@@ -84,8 +95,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
             // Save the new user to the repository
             userRepository.save(newUser);
-        } else {
-            // IDK Maybe log them in?
         }
     }
 }
