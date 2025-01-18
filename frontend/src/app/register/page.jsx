@@ -86,7 +86,7 @@ export default function Register() {
                   <FaLinkedinIn className="text-sm" />
                 </a>
                 <a
-                  href="http://localhost:8080/login/oauth2/code/google"
+                  href="http://localhost:8080/login/oauth2/authorization/google"
                   className="border-2 border-gray-200 rounded-full p-3 mx-1"
                 >
                   <FaGoogle className="text-sm" />

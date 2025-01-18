@@ -27,7 +27,7 @@ export default function Login() {
   }
 
   function handleSignupClicked() {
-    router.push("/signup");
+    router.push("/register");
   }
 
   async function handleSubmit(e) {

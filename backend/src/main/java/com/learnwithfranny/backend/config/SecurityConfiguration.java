@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -20,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 
 /**
@@ -103,9 +103,15 @@ public class SecurityConfiguration {
         .sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**").permitAll()
-            .anyRequest().authenticated())
-        .oauth2Login(oAuthLogin -> oAuthLogin.successHandler(oauth2AuthenticationSuccessHandler));
+            .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**", "/oauth2/authorization/google").permitAll()
+                        .anyRequest().authenticated())
+                .oauth2Login(oAuthLogin -> 
+                oAuthLogin
+                        // .failureUrl("http://localhost:3001/dashboard")
+                        .defaultSuccessUrl("http://localhost:3001/dashboard", true)        
+                        .successHandler(oauth2AuthenticationSuccessHandler)
+                );
+
        
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

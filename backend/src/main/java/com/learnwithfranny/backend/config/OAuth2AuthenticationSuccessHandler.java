@@ -3,7 +3,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.learnwithfranny.backend.repository.UserRepository;
 import com.learnwithfranny.backend.repository.RoleRepository;
 import com.learnwithfranny.backend.model.User;
@@ -18,17 +17,12 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import com.learnwithfranny.backend.service.UserDetailsImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 @Component
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -59,7 +53,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         createOrUpdateUser(email, name);
 
         // Redirect to the frontend after successful login
-        response.sendRedirect("http://localhost:3001");
+        response.sendRedirect("http://localhost:3001/dashboard");
     }
     
     private void createOrUpdateUser(String email, String name) {
