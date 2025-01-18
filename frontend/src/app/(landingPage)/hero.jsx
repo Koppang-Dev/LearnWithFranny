@@ -48,8 +48,7 @@ const tabs = [
       <PiSparkleLight className="text-3xl mr-2 text-blue-600 bg-blue-100 rounded-full p-1" />
     ),
     name: "Docs",
-    description:
-      "Use the file-share system to have all of your notes in one place",
+    description: "Have all your files in one place",
     LearnMore: (
       <div className="text-blue-600 flex items-center">
         Learn More <PiArrowRight className="text-sm ml-1" />
@@ -155,8 +154,85 @@ const Hero = () => {
           </div>
         </div>
       ) : (
-        <></>
+        // Tab images for large and normal screens
+        <div className="flex xl:space-x-4 items-center justify-between hover:cursor-pointer gap-4 w-4/5 xl:w-3/4 2xl:w-[55%]">
+          {tabs.map((tab) => (
+            <motion.div
+              key={tab.name}
+              className={`
+              xl:flex
+              justify-center
+              space-x-4
+              xl:pt-4
+              sm:my-10
+              xl:my-0
+              w-60
+              h-36
+
+                ${
+                  activeTab === tab
+                    ? "border rounded-xl pt-2 bg-white"
+                    : "shadow-md rounded-xl pt-2 bg-[#f6f5f4]"
+                }`}
+              onMouseEnter={() => setActiveTab(tab)}
+            >
+              <div className="px-4">
+                <div className="flex items-center">
+                  <div>{tab.icon}</div>
+                  <div className="text-2xl font-medium">{tab.name}</div>
+                  {/* Render The Feature tag only for the AI Tab */}
+                  {tab.name === "AI" && (
+                    <div className="text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded-full ml-2">
+                      {tab.feature}
+                    </div>
+                  )}
+                </div>
+                <motion.div
+                  className="flex flex-col text-sm"
+                  initial={{ y: 0 }}
+                  animate={{ y: activeTab === tab ? 10 : 25 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div>
+                    <motion.div
+                      inital={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {tab.description}
+                    </motion.div>
+                  </div>
+
+                  {/* Conditionally Render the Learn More */}
+                  {activeTab === tab && (
+                    <div className="text-sm mt-2">{tab.LearnMore}</div>
+                  )}
+                </motion.div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       )}
+      {/* Conditionally render content based on medium screen and bigger */}
+      <div className="hidden md:flex py-10 px-8 md:px-0 lg:w-3/4 2xl:w-[55%]">
+        {activeTab && (
+          <div className="md:flex items-center justify-center space-x-6 hover:cursor-pointer w-full">
+            <Image
+              src={activeTab.image}
+              alt="hero"
+              width={500}
+              height={500}
+              className="
+           w-full
+           p-20
+           xl:p-40
+           shadow-md
+           rounded-xl
+           bg-[#f6f5f4]"
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
