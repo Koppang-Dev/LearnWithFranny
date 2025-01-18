@@ -55,7 +55,7 @@ const tabs = [
         Learn More <PiArrowRight className="text-sm ml-1" />
       </div>
     ),
-    image: "/assets/CoffeeDoodle.svg",
+    image: "/assets/CoffeeDoddle.svg",
   },
   {
     icon: (
@@ -136,6 +136,22 @@ const Hero = () => {
                 </motion.div>
               );
             })}
+          </div>
+
+          {/* Content based on which tab is active */}
+          <div className="pt-6 md:py-10 lg:px-16 xl:px-0 w-full">
+            {activeTab && (
+              <div className="flex justify-center items-center flex-col">
+                <Image
+                  src={activeTab.image}
+                  alt="hero"
+                  width={1000}
+                  height={1000}
+                  className="w-full
+                  border p-20 xl:p-40 rounded-xl"
+                />
+              </div>
+            )}
           </div>
         </div>
       ) : (
