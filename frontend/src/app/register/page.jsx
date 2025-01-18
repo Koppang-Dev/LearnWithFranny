@@ -80,7 +80,7 @@ export default function Register() {
                   <FaFacebookF className="text-sm" />
                 </a>
                 <a
-                  href="http://localhost:8080/login/oauth2/authorization/facebook"
+                  href="http://localhost:8080/oauth2/authorization/linkedin"
                   className="border-2 border-gray-200 rounded-full p-3 mx-1"
                 >
                   <FaLinkedinIn className="text-sm" />
