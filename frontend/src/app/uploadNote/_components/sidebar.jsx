@@ -1,4 +1,5 @@
 import { Button } from "@/components/navbar/_components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Layout, Shield } from "lucide-react";
 import Image from "next/image";
 
@@ -19,6 +20,14 @@ const Sidebar = () => {
           <Shield />
           <h2>Upgrade</h2>
         </div>
+      </div>
+      {/* Progress Bar */}
+      <div className="absolute bottom-24 w-[80%]">
+        <Progress value={33} />
+        <p className="text-sm mt-1">2 out of 5 documents uploaded</p>
+        <p className="text-xs mt-2 text-gray-400">
+          Upgrade to upload more document
+        </p>
       </div>
     </div>
   );
