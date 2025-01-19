@@ -15,7 +15,7 @@
 
 - **Frontend**: Next.js (React)
 - **Backend**: Spring Boot (Java)
-- **Authentication**: JWT (JSON Web Tokens)
+- **Authentication**: JWT (JSON Web Tokens) OAuth2 (Google, Facebook, Linkedin)
 - **Deployment**:
   - **Frontend**: Vercel
   - **Backend**: Render
