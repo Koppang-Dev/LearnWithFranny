@@ -98,7 +98,14 @@ const UserStatsSection = () => {
     setActiveImageIndex(index);
   };
 
-  return <div></div>;
+  return (
+    <div className="pt-20 xl:pt-24 flex justify-center items-center">
+      <div className="text-3xl w-3/4 xl:text-5xl font-medium xl:w-1/2 text-center">
+        Join a global community. Unleash your full potential
+      </div>
+      <div className="py-4 px-10 xl:w-1/2 2xl:w-1/3"></div>
+    </div>
+  );
 };
 
 export default UserStatsSection;
