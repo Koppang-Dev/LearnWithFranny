@@ -24,7 +24,7 @@ const UploadScreen = ({ children }) => {
                 {/* File Selection */}
                 <h2 className="mt-5">Select a file to upload</h2>
                 <div className="gap-2 p-3 rounded-md border">
-                  <input type="file" />
+                  <input type="file" accept="application/pdf" />
                 </div>
                 <div className="mt-2">
                   <label>FIle Name *</label>
