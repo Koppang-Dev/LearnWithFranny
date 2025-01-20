@@ -18,12 +18,14 @@ import uuid4 from "uuid4";
 import {
   AddFileEntryToDb,
   generateUploadUrl,
+  getFileUrl,
 } from "../../../../convex/fileStorage";
 import { api } from "../../../../convex/_generated/api";
 
 const UploadScreen = ({ children }) => {
   const generateUploadUrl = useMutation(api.fileStorage.generateUploadUrl);
-  const InsertFileEntry = useMutation(api.fileStorage.AddFileEntryToDb);
+  const InsertFileEntry = useMutation(api.fileStorage.addFileEntryToDb);
+  const getFileUrl = useMutation(api.fileStorage.getFileUrl);
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState();
@@ -55,11 +57,16 @@ const UploadScreen = ({ children }) => {
 
     // Saving the storage ID into the database
     const fileId = uuid4();
+
+    // Getting file URL
+    const fileUrl = await getFileUrl({ storageId: storageId });
+
     const response = await InsertFileEntry({
       fileId: fileId,
       storageId: storageId,
       fileName: fileName ?? "Untitiled File",
       userEmail: "User@gmail.com",
+      fileUrl: fileUrl,
       createdBy: "User's Name",
     });
 

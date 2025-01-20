@@ -12,6 +12,7 @@ export default defineSchema({
     storageId: v.string(),
     fileName: v.string(),
     userEmail: v.string(),
+    fileUrl: v.string(),
     createdBy: v.string(),
   }),
 });

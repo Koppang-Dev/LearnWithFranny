@@ -5,13 +5,14 @@ export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
 });
 
-export const AddFileEntryToDb = mutation({
+export const addFileEntryToDb = mutation({
   args: {
     fileId: v.string(),
     storageId: v.string(),
     fileName: v.string(),
     userEmail: v.string(),
     createdBy: v.string(),
+    fileUrl: v.string(),
   },
   handler: async (ctx, args) => {
     const result = await ctx.db.insert("files", {
@@ -20,7 +21,18 @@ export const AddFileEntryToDb = mutation({
       storageId: args.storageId,
       userEmail: args.userEmail,
       createdBy: args.createdBy,
+      fileUrl: args.fileUrl,
     });
     return "Inserted";
+  },
+});
+
+export const getFileUrl = mutation({
+  args: {
+    storageId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const url = await ctx.storage.getUrl(args.storageId);
+    return url;
   },
 });
