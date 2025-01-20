@@ -47,6 +47,8 @@ const UploadScreen = ({ children }) => {
     const { storageId } = await result.json();
     console.log("Storage ID", storageId);
 
+    // Saving the storage ID into the database
+
     // Set loading icon back to false
     setLoading(false);
   };
