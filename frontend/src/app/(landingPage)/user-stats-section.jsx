@@ -56,8 +56,8 @@ const tabs = [
   },
   {
     profile: "assets/DoogieDoodle.svg",
-    userName: "Carlos Hernandez",
-    userHandle: "@carlos",
+    userName: "Yousef Fatouraee",
+    userHandle: "@KingYousef",
     userText: (
       <div className="md:mt-6">
         <span className="text-sky-500">@LearnWithFranny</span>
@@ -121,12 +121,12 @@ const UserStatsSection = () => {
                 index <= 2
                   ? "md:col-span-6 lg:col-span-4 bg-[#f6f5f4] p-6 rounded-xl flex"
                   : index <= 4
-                  ? "md:col-span-6 bg-[#f6f5f4] p-6 rounded-xl flex"
-                  : index === 5
-                  ? " md:col-span-6  lg:col-span-8  lg:row-span-3    bg-[#f6f5f4] p-6 rounded-xl "
-                  : index > 5
-                  ? "col-span-12 lg:col-span-4  md:col-span-4 bg-[#f6f5f4] p-6 rounded-xl flex-col "
-                  : "l"
+                    ? "md:col-span-6 bg-[#f6f5f4] p-6 rounded-xl flex"
+                    : index === 5
+                      ? " md:col-span-6  lg:col-span-8  lg:row-span-3    bg-[#f6f5f4] p-6 rounded-xl "
+                      : index > 5
+                        ? "col-span-12 lg:col-span-4  md:col-span-4 bg-[#f6f5f4] p-6 rounded-xl flex-col "
+                        : "l"
               }
             `}
             >
