@@ -6,7 +6,7 @@ import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.model.ERole;
 import com.learnwithfranny.backend.model.Role;
 
-
+import com.learnwithfranny.backend.exceptions.ErrorResponse;
 import com.learnwithfranny.backend.util.JwtUtil;
 import com.learnwithfranny.backend.dto.SignInRequest;
 import com.learnwithfranny.backend.dto.JwtResponse;
@@ -112,16 +112,16 @@ public class AuthController {
      * @return ResponseEntity with appropriate status and message
      */
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<Object> signup(@RequestBody SignUpRequest signUpRequest) {
 
         // Check if the username already exists
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("username is already taken");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("username is already taken"));
         }
 
         // Check if the email is already taken
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("email is already taken");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("email is already taken"));
         }
 
         // Hash password

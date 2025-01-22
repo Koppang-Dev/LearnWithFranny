@@ -18,12 +18,49 @@ export default function Login() {
     password: "",
   });
 
+  const [errors, setErrors] = useState({
+    email: "",
+    username: "",
+    password: "",
+  });
+
+  const [requestError, setRequestError] = useState("");
+
   const router = useRouter();
 
   function handleChange(e) {
     const copy = { ...state };
     copy[e.target.name] = e.target.value;
     setState(copy);
+    setErrors({ ...errors, [e.target.name]: "" });
+  }
+
+  // Form Validation
+  function validateForm() {
+    const newErrors = {};
+
+    // Username is empty
+    if (!state.username.trim()) {
+      newErrors.username = "Username is required.";
+    }
+
+    // Email is empty or not a valid email
+    if (!state.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(state.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    // Password is empty or too short
+    if (!state.password.trim()) {
+      newErrors.password = "Password is required";
+    } else if (state.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    // Setting the possible errors
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   }
 
   function handleSignupClicked() {
@@ -33,24 +70,35 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    // Stop form submission if errors occured during form input
+    if (!validateForm()) {
+      return;
+    }
+
     console.log("Clicked Login up");
 
-    // Send a POST request to the server with the user's credentials
-    const res = await fetch("http://localhost:8080/api/auth/signin", {
-      method: "POST",
-      body: JSON.stringify(state),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    try {
+      // Send a POST request to the server with the user's credentials
+      const res = await fetch("http://localhost:8080/api/auth/signin", {
+        method: "POST",
+        body: JSON.stringify(state),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    if (res.ok) {
-      // Store the token in localStorage on successful login
-      const response = await res.text();
-      console.log(response);
-      router.push("/dashboard");
-    } else {
-      alert("Bad Credentials");
+      if (res.ok) {
+        // Store the token in localStorage on successful login
+        const response = await res.text();
+        console.log(response);
+        router.push("/dashboard");
+      } // Extract error
+      const errorData = await res.json();
+      setRequestError(errorData.message || "An unexpected error occured");
+    } catch (err) {
+      setRequestError(
+        "Failed to connect to the server. Please try again later."
+      );
     }
   }
   return (
@@ -67,6 +115,12 @@ export default function Login() {
                 Sign Into Account
               </h1>
               <div className="border-2 w-10 border-lamaPurple inline-block mb-2"></div>
+              {/* Display the error message */}
+              {requestError && (
+                <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
+                  {requestError}
+                </div>
+              )}
               {/* SOCIAL LOGIN */}
               <div className="flex justify-center my-2">
                 <a
@@ -102,6 +156,9 @@ export default function Login() {
                     className="bg-gray-100 outline-none flex-1"
                   />
                 </div>
+                {errors.username && (
+                  <p className="text-red-500 text-sm mb-2">{errors.username}</p>
+                )}
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
                   <MdLockOutline className="text-gray-400 m-2" />
                   <input
@@ -113,6 +170,9 @@ export default function Login() {
                     className="bg-gray-100 outline-none flex-1"
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-red-500 text-sm mb-2">{errors.email}</p>
+                )}
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
                   <MdLockOutline className="text-gray-400 m-2" />
                   <input
@@ -124,6 +184,10 @@ export default function Login() {
                     className="bg-gray-100 outline-none flex-1"
                   />
                 </div>
+                {errors.password && (
+                  <p className="text-red-500 text-sm mb-2">{errors.password}</p>
+                )}
+
                 {/* REMEMBER ME SECTION */}
                 <div className="flex justify-between w-64 mb-5">
                   <label>

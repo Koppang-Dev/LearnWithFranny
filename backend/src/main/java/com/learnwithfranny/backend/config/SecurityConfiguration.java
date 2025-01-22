@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -97,9 +98,12 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-        // .exceptionHandling(exceptionHandling -> exceptionHandling
-        //     .authenticationEntryPoint(authEntryPointJwt)  
-        // )
+        .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**")
+        )
+        .exceptionHandling(exceptionHandling -> exceptionHandling
+            .authenticationEntryPoint(authEntryPointJwt)  
+        )
         .sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authz -> authz
