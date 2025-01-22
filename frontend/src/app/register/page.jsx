@@ -60,7 +60,7 @@ export default function Register() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <div className="bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-4xl justify-between">
+        <div className="bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-7xl justify-between">
           {/* SIGN IN SECTION */}
           <div className="w-3/5 p-5">
             <div className="text-left font-bold">
@@ -68,9 +68,9 @@ export default function Register() {
             </div>
             <div className="py-10">
               <h1 className="text-3xl font-bold text-lamaPurple mb-2">
-                Sign Into Account
+                Create Account
               </h1>
-              <div className="border-2 w-10 border-lamaPurple inline-block mb-2"></div>
+              <div className="border-2 w-20 border-lamaPurple inline-block mb-2"></div>
               {/* SOCIAL LOGIN */}
               <div className="flex justify-center my-2">
                 <a
@@ -92,7 +92,7 @@ export default function Register() {
                   <FaGoogle className="text-sm" />
                 </a>
               </div>
-              <p className="text-gray-400">or use your email account</p>
+              <p className="text-gray-400">or create account with your email</p>
               {/* ENTER INFORMATION */}
               <div className="flex flex-col items-center">
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
@@ -153,9 +153,7 @@ export default function Register() {
               Hello Studier!
             </h2>
             <div className="border-2 w-10 border-white inline-block mb-2"></div>
-            <p className="mb-10">
-              Fill up personal information and start the journey
-            </p>
+            <p className="mb-10">Already have an account? Login instead.</p>
             <button
               onClick={handleLoginClicked}
               className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-lamaPurple"

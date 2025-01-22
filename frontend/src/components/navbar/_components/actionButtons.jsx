@@ -10,15 +10,17 @@ const ActionButtons = () => {
     <div className="pr-2">
       <div className="items-center justify-center flex">
         <div className="flex xl:space-x-4">
-          <Link href="/register" className="hidden lg:flex items-center">
-            <div>Sign Up</div>
+          <Link href="/login" className="hidden lg:flex items-center">
+            <div>Login</div>
           </Link>
         </div>
         <div className="flex lg:space-x-4 items-center pr-4 pl-5">
           <div>
-            <Button className="hidden lg:flex items-center border-none text-md">
-              Sign Up For Free
-            </Button>
+            <Link href="/register">
+              <Button className="hidden lg:flex items-center border-none text-md">
+                Sign Up For Free
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

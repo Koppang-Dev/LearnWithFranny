@@ -1,5 +1,6 @@
 import { PiArrowRight } from "react-icons/pi";
 import Image from "next/image";
+import Link from "next/link";
 
 const ActionSection = () => {
   return (
@@ -12,9 +13,11 @@ const ActionSection = () => {
           Stay on track of your studying. Upload, Share and Transform with
           Franny.
         </div>
-        <div className="text-sky-500 flex items-center hover:underline hover:cursor-pointer">
-          Sign up free today <PiArrowRight className="ml-3 text-sm" />
-        </div>
+        <Link href="/register">
+          <div className="text-sky-500 flex items-center hover:underline hover:cursor-pointer">
+            Sign up free today <PiArrowRight className="ml-3 text-sm" />
+          </div>
+        </Link>
         <Image
           src="assets/MessyDoodle.svg"
           alt="heroImage"

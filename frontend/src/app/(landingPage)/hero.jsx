@@ -87,7 +87,7 @@ const Hero = () => {
         and proven to increase grades.
       </p>
       <div className="flex gap-4 pt-6 items-center justify-center">
-        <Link href={"/"}>
+        <Link href={"/register"}>
           <Button className="py-1">
             <div className="flex items-center justify-center">
               <div className="text-lg">Get Franny's Techniques for free</div>
