@@ -18,6 +18,7 @@ import com.learnwithfranny.backend.service.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -76,32 +77,50 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody SignInRequest signInRequest) {
 
+        // Email Form validation
+        if (signInRequest.getUsername() == null || signInRequest.getUsername().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Email must not be empty"));
+        }
+
+        // Password form validation
+         if (signInRequest.getPassword() == null || signInRequest.getPassword().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Password must not be empty"));
+        }
+
         // Authenticate the user based on provided username and password
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword()));
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword()));
 
-        // Set the authentication context for further requests
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Set the authentication context for further requests
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Generate JWT token after successful authentication
-        String jwt = jwtUtil.generateJwtToken(authentication);
+            // Generate JWT token after successful authentication
+            String jwt = jwtUtil.generateJwtToken(authentication);
 
-        // Retrieve user details from the authentication object
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            // Retrieve user details from the authentication object
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        // Get the list of roles the user has and convert them to a list of strings
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+            // Get the list of roles the user has and convert them to a list of strings
+            List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
 
-        // Construct the JWT response
-        JwtResponse res = new JwtResponse();
-        res.setToken(jwt);
-        res.setId(userDetails.getId());
-        res.setUsername(userDetails.getUsername());
-        res.setRoles(roles);
+            // Construct the JWT response
+            JwtResponse res = new JwtResponse();
+            res.setToken(jwt);
+            res.setId(userDetails.getId());
+            res.setUsername(userDetails.getUsername());
+            res.setRoles(roles);
 
-        // Return the response with the generated JWT token and user details
-        return ResponseEntity.ok(res);
+            // Return the response with the generated JWT token and user details
+            return ResponseEntity.ok(res);
+    } catch (BadCredentialsException e) {
+        // Handle invalid credentials
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Invalid username or password"));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("An error occured during login"));
+    }
     }
 
      /**
@@ -113,6 +132,17 @@ public class AuthController {
      */
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody SignUpRequest signUpRequest) {
+
+
+        // Email Form validation
+        if (signUpRequest.getUsername() == null || signUpRequest.getUsername().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Email must not be empty"));
+        }
+
+        // Password form validation
+         if (signUpRequest.getPassword() == null || signUpRequest.getPassword().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Password must not be empty"));
+        }
 
         // Check if the username already exists
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
