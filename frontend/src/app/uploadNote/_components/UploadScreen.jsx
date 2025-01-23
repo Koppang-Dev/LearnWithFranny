@@ -15,17 +15,8 @@ import { useMutation } from "convex/react";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import uuid4 from "uuid4";
-import {
-  AddFileEntryToDb,
-  generateUploadUrl,
-  getFileUrl,
-} from "../../../../convex/fileStorage";
-import { api } from "../../../../convex/_generated/api";
 
 const UploadScreen = ({ children }) => {
-  const generateUploadUrl = useMutation(api.fileStorage.generateUploadUrl);
-  const InsertFileEntry = useMutation(api.fileStorage.addFileEntryToDb);
-  const getFileUrl = useMutation(api.fileStorage.getFileUrl);
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState();
@@ -39,38 +30,8 @@ const UploadScreen = ({ children }) => {
   const OnUpload = async () => {
     setLoading(true);
 
-    // Get a short-lived URL
-    const postUrl = await generateUploadUrl();
-
-    // Post the file
-    const result = await fetch(postUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": file.type,
-      },
-      body: file,
-    });
-
-    // Retrieving the storage ID
-    const { storageId } = await result.json();
-    console.log("Storage ID", storageId);
-
     // Saving the storage ID into the database
     const fileId = uuid4();
-
-    // Getting file URL
-    const fileUrl = await getFileUrl({ storageId: storageId });
-
-    const response = await InsertFileEntry({
-      fileId: fileId,
-      storageId: storageId,
-      fileName: fileName ?? "Untitiled File",
-      userEmail: "User@gmail.com",
-      fileUrl: fileUrl,
-      createdBy: "User's Name",
-    });
-
-    console.log(response);
 
     // Set loading icon back to false
     setLoading(false);
