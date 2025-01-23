@@ -22,7 +22,7 @@
 
 ## Deployment Link
 
-- **Frontend (Vercel)**: [LearnWithFranny Dashboard](https://learn-with-franny.vercel.app/dashboard)
+- **Frontend (Vercel)**: [LearnWithFranny Dashboard](https://learn-with-franny.vercel.app)
 
 ## Setup Instructions
 
