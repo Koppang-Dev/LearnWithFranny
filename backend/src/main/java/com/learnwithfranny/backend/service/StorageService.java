@@ -12,11 +12,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
-
 import lombok.extern.slf4j.Slf4j;
-
-
-import lombok.extern.java.Log;
 
 @Service
 @Slf4j
@@ -60,11 +56,6 @@ public class StorageService {
             log.error("Failed to download file from S3 storage", e);
             return null;
         }
-
-
-
-
-
     }
 
     // Converts Multipart file to regular file
@@ -76,6 +67,12 @@ public class StorageService {
             log.error("Error converting multipartfile to file", e);
         }
         return convertedFile;
+    }
+
+    // Deleting a file from S3 Bucket
+    public String deleteFile(String fileName) {
+        s3Client.deleteObject(bucketName, fileName);
+        return fileName + "removed";
     }
     
 }
