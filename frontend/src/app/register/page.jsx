@@ -7,6 +7,7 @@ import {
   FaGoogle,
   FaRegEnvelope,
 } from "react-icons/fa";
+import Link from "next/link";
 
 import { IoPersonCircle } from "react-icons/io5";
 
@@ -113,7 +114,9 @@ export default function Register() {
           {/* SIGN IN SECTION */}
           <div className="w-3/5 p-5">
             <div className="text-left font-bold">
-              <span className="text-lamaPurple">LearnWithFranny</span>
+              <Link href="/">
+                <span className="text-lamaPurple">LearnWithFranny</span>
+              </Link>
             </div>
             <div className="py-10">
               <h1 className="text-3xl font-bold text-lamaPurple mb-2">

@@ -6,6 +6,7 @@ import {
   FaRegEnvelope,
 } from "react-icons/fa";
 import { IoPersonCircle } from "react-icons/io5";
+import Link from "next/link";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -108,7 +109,9 @@ export default function Login() {
           {/* SIGN IN SECTION */}
           <div className="w-3/5 p-5">
             <div className="text-left font-bold">
-              <span className="text-lamaPurple">LearnWithFranny</span>
+              <Link href="/">
+                <span className="text-lamaPurple">LearnWithFranny</span>
+              </Link>
             </div>
             <div className="py-10">
               <h1 className="text-3xl font-bold text-lamaPurple mb-2">
