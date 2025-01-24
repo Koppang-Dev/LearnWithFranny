@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import Provider from "./provider";
 
 const font = Outfit({ subsets: ["latin"] });
 
@@ -23,9 +22,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={font.className}>
-        <Provider>{children}</Provider>
-      </body>
+      <body className={font.className}>{children}</body>
     </html>
   );
 }
