@@ -1,14 +1,14 @@
 package com.learnwithfranny.backend.service;
 import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.model.User;
-import com.learnwithfranny.backend.model.UserFile;
+import com.learnwithfranny.backend.model.UserFileMetaData;
 import com.learnwithfranny.backend.repository.UserFileRepository;
+import com.learnwithfranny.backend.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -20,11 +20,13 @@ import java.util.Date;
 @Service
 public class UserFileService {
     private final UserFileRepository userFileRepository;
+    private final UserRepository userRepository;
     private final StorageService storageService;
 
-    public UserFileService(UserFileRepository userFileRepository, StorageService storageService) {
+    public UserFileService(UserFileRepository userFileRepository, StorageService storageService, UserRepository userRepository) {
         this.userFileRepository = userFileRepository;
         this.storageService = storageService;
+        this.userRepository = userRepository;
     }
 
 
@@ -39,16 +41,28 @@ public class UserFileService {
      * @param user the user who uploaded the file (foreign key reference).
      * @return the saved UserFile entity with generated ID and timestamp.
      */
-    public UserFile saveFileMetadata(String fileName, String s3Key, String fileType, Long fileSize, User user) {
-        // Saving the file information
-        UserFile userFile = new UserFile();
-        userFile.setFileName(fileName);
-        userFile.setS3Key(s3Key);
-        userFile.setFileType(fileType);
-        userFile.setFileSize(fileSize);
-        userFile.setUploadDate(new Date());
-        userFile.setUser(user);
-        return userFileRepository.save(userFile);
+     public String saveFile(MultipartFile file, Long userId) {
+
+        // Saving the file information in s3 storage
+        String fileUrl = storageService.uploadFile(file);
+
+        // Find the user based on the unique ID
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Saving the file metadata
+        UserFileMetaData userFileMetaData = new UserFileMetaData();
+        userFileMetaData.setUser(user);
+        userFileMetaData.setFileName(file.getOriginalFilename());
+        userFileMetaData.setS3Key(fileUrl);
+        userFileMetaData.setFileType(file.getContentType());
+        userFileMetaData.setFileSize(file.getSize());
+        userFileMetaData.setUploadDate(new Date());
+        userFileMetaData.setUser(user);
+        userFileRepository.save(userFileMetaData);
+
+
+        return "File uploaded successfully. File URL: " + fileUrl;
     }
 
     /**
@@ -61,7 +75,7 @@ public class UserFileService {
     public List<FileResponse> getAllFilesByUserId(Long userId) {
 
         // Get all of the users files
-        List<UserFile> userFiles = userFileRepository.findByUser_UserId(userId);
+        List<UserFileMetaData> userFiles = userFileRepository.findByUser_Id(userId);
 
         // Generate file URLS using StorageService
         return userFiles.stream().map(file-> {

@@ -14,36 +14,35 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
-@Table(name = "user_files")
-public class UserFile {
+@Table(name = "user_file_metadata")
+public class UserFileMetaData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fileId; // Unique file identifier
+    private Long fileId;
 
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "file_name", nullable = false)
     @NotBlank
-    private String fileName; // The original name of the file
+    private String fileName; 
 
     @Column(name = "s3_key", nullable = false, unique = true)
-    private String s3Key; // The unique key (path) for the file in S3
+    private String s3Key; 
 
     @Column(name = "file_type", nullable = false)
-    private String fileType; // MIME type of the file (e.g., pdf, image/png)
-
+    private String fileType;
     @Column(name = "file_size")
-    private Long fileSize; // Size of the file in bytes
+    private Long fileSize;
 
     @Column(name = "upload_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date uploadDate; // The date when the file was uploaded
+    private Date uploadDate;
 
     @Column(name = "tags")
-    private String tags; // Tags associated with the file, stored as a string (e.g., "work,personal")
+    private String tags;
 
     // Getters and setters
     public Long getFileId() {

@@ -100,18 +100,19 @@ public class SecurityConfiguration {
         .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/api/**", "/file/upload")
         )
-        .exceptionHandling(exceptionHandling -> exceptionHandling
-            .authenticationEntryPoint(authEntryPointJwt)  
-        )
         .sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**", "/oauth2/authorization/google", "/file/upload").permitAll()
+            .requestMatchers("/api/**", "/api/test/**", "/login/oauth2/**", "/oauth2/authorization/google", "/file/upload").permitAll()
                         .anyRequest().authenticated())
+                        .exceptionHandling(exceptionHandling -> exceptionHandling
+            .authenticationEntryPoint(authEntryPointJwt)  
+        )
                 .oauth2Login(oAuthLogin -> 
                 oAuthLogin
                         .successHandler(oauth2AuthenticationSuccessHandler)
                 );
+                
 
        
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);

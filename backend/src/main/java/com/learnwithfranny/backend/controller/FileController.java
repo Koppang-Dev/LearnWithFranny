@@ -20,7 +20,7 @@ import com.learnwithfranny.backend.service.UserFileService;
 
 
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/api/file")
 public class FileController {
 
     @Autowired
@@ -30,14 +30,20 @@ public class FileController {
     private UserFileService userFileService;
 
     // Uploading file endpoint
-    @PostMapping("/upload")
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
-        return new ResponseEntity<>(service.uploadFile(file), HttpStatus.OK);
+    @PostMapping("/{userId}/upload")
+    public ResponseEntity<String> handleFileUpload(@PathVariable("userId") Long userId, @RequestParam("file") MultipartFile file) {
+        try {
+            // Call the service method to upload the file and save the metadata
+            String result = userFileService.saveFile(file, userId);  // Pass both file and userId to the service
+            return new ResponseEntity<>(result, HttpStatus.OK);  // Return success message
+        } catch (Exception e) {
+            return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }   
 
     // Retrieves all of the files from a users account
     @GetMapping("/{userId}/files")
-    public List<FileResponse> getUserFiles(@PathVariable Long userId) {
+    public List<FileResponse> getUserFiles(@PathVariable(name = "userId") Long userId) {
         return userFileService.getAllFilesByUserId(userId);
     }
 
