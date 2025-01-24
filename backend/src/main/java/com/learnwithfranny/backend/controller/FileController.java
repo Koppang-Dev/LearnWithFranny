@@ -13,6 +13,9 @@ import com.learnwithfranny.backend.service.StorageService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import com.learnwithfranny.backend.dto.FileResponse;
+import java.util.List;
+import com.learnwithfranny.backend.service.UserFileService;
 
 
 
@@ -23,11 +26,19 @@ public class FileController {
     @Autowired
     private StorageService service;
 
+    @Autowired
+    private UserFileService userFileService;
 
     // Uploading file endpoint
     @PostMapping("/upload")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
         return new ResponseEntity<>(service.uploadFile(file), HttpStatus.OK);
+    }   
+
+    // Retrieves all of the files from a users account
+    @GetMapping("/{userId}/files")
+    public List<FileResponse> getUserFiles(@PathVariable Long userId) {
+        return userFileService.getAllFilesByUserId(userId);
     }
 
     // Downloading file endpoint
