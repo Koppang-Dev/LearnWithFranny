@@ -98,7 +98,7 @@ public class SecurityConfiguration {
 
         http
         .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**")
+                .ignoringRequestMatchers("/api/**", "/file/upload")
         )
         .exceptionHandling(exceptionHandling -> exceptionHandling
             .authenticationEntryPoint(authEntryPointJwt)  
@@ -106,12 +106,10 @@ public class SecurityConfiguration {
         .sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**", "/oauth2/authorization/google").permitAll()
+            .requestMatchers("/api/auth/**", "/api/test/**", "/login/oauth2/**", "/oauth2/authorization/google", "/file/upload").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oAuthLogin -> 
                 oAuthLogin
-                        // .failureUrl("http://localhost:3001/dashboard")
-                        .defaultSuccessUrl("http://localhost:3001/dashboard", true)        
                         .successHandler(oauth2AuthenticationSuccessHandler)
                 );
 

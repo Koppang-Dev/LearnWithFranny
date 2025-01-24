@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +19,9 @@ public class StorageConfig {
     @Value("${aws.secretAccessKey}")
     private String secretAccessKey;
 
+    @Value("${aws.region}")
+    private String region;
+
     @Bean
     public AmazonS3 generateS3Client() {
         // Generating credientals
@@ -27,6 +29,6 @@ public class StorageConfig {
 
         // S3 Builder pattern
         return AmazonS3ClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(Regions.DEFAULT_REGION).build();
+            .withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(region).build();
     }
 }
