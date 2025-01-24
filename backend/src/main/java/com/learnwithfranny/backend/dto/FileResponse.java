@@ -1,16 +1,26 @@
 package com.learnwithfranny.backend.dto;
 
 public class FileResponse {
+    private Long id;
     private String fileName;
     private String fileUrl;
     private String fileType;
     private Long fileSize;
 
-    public FileResponse(String fileName, String fileUrl, String fileType, Long fileSize) {
+    public FileResponse(Long id, String fileName, String fileUrl, String fileType, Long fileSize) {
+        this.id = id;
         this.fileName = fileName;
         this.fileUrl = fileUrl;
         this.fileType = fileType;
         this.fileSize = fileSize;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFileName() {

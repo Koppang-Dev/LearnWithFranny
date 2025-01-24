@@ -81,7 +81,7 @@ public class UserFileService {
         return userFiles.stream().map(file-> {
             // Retrieve the forle from s3
             String fileUrl = storageService.getFileUrl(file.getS3Key());
-            return new FileResponse(file.getFileName(), fileUrl, file.getFileType(), file.getFileSize());
+            return new FileResponse(file.getFileId(), file.getFileName(), fileUrl, file.getFileType(), file.getFileSize());
         }).collect(Collectors.toList());
         
 
