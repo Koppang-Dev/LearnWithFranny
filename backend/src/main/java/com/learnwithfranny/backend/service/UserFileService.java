@@ -1,13 +1,16 @@
 package com.learnwithfranny.backend.service;
+import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.model.UserFile;
 import com.learnwithfranny.backend.repository.UserFileRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.UUID;
 
 
 /**
@@ -17,10 +20,14 @@ import java.util.UUID;
 @Service
 public class UserFileService {
     private final UserFileRepository userFileRepository;
+    private final StorageService storageService;
 
-    public UserFileService(UserFileRepository userFileRepository) {
+    public UserFileService(UserFileRepository userFileRepository, StorageService storageService) {
         this.userFileRepository = userFileRepository;
+        this.storageService = storageService;
     }
+
+
 
      /**
      * Saves metadata of a file uploaded by a user to the database.
@@ -44,14 +51,26 @@ public class UserFileService {
         return userFileRepository.save(userFile);
     }
 
-       /**
+    /**
      * Retrieves all files associated with a specific user.
      * 
      * @param userId the UUID of the user whose files are being retrieved.
      * @return a list of UserFile entities belonging to the specified user.
      */
-      public List<UserFile> getAllFilesByUserId(Long userId) {
-        return userFileRepository.findByUser_UserId(userId);
+
+    public List<FileResponse> getAllFilesByUserId(Long userId) {
+
+        // Get all of the users files
+        List<UserFile> userFiles = userFileRepository.findByUser_UserId(userId);
+
+        // Generate file URLS using StorageService
+        return userFiles.stream().map(file-> {
+            // Retrieve the forle from s3
+            String fileUrl = storageService.getFileUrl(file.getS3Key());
+            return new FileResponse(file.getFileName(), fileUrl, file.getFileType(), file.getFileSize());
+        }).collect(Collectors.toList());
+        
+
     }
 
     

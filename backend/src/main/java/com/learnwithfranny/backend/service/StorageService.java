@@ -74,5 +74,10 @@ public class StorageService {
         s3Client.deleteObject(bucketName, fileName);
         return fileName + "removed";
     }
+
+    // Retrieve a file URL from S3
+    public String getFileUrl(String s3Key) {
+        return s3Client.getUrl(bucketName, s3Key).toString();
+    }
     
 }
