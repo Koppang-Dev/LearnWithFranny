@@ -22,8 +22,8 @@ public class UserFile {
     private Long fileId; // Unique file identifier
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Reference to the User entity (foreign key)
+    @JoinColumn(name = "id", nullable = false)
+    private User user;
 
     @Column(name = "file_name", nullable = false)
     @NotBlank
