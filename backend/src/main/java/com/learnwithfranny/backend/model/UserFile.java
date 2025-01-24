@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
 
@@ -25,6 +26,7 @@ public class UserFile {
     private User user; // Reference to the User entity (foreign key)
 
     @Column(name = "file_name", nullable = false)
+    @NotBlank
     private String fileName; // The original name of the file
 
     @Column(name = "s3_key", nullable = false, unique = true)
