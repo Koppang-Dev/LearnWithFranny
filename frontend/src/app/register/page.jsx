@@ -82,7 +82,7 @@ export default function Register() {
 
     try {
       // Send a POST request to the server with the user's credentials
-      const res = await fetch("http://localhost:8080/api/auth/signup", {
+      const res = await fetch(`${REACT_APP_API_URL}/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify(state),
         headers: {
