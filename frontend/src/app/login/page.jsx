@@ -127,19 +127,19 @@ export default function Login() {
               {/* SOCIAL LOGIN */}
               <div className="flex justify-center my-2">
                 <a
-                  href="#"
+                  href={`${process.env.REACT_APP_API_URL}/oauth2/authorization/facebook`}
                   className="border-2 border-gray-200 rounded-full p-3 mx-1"
                 >
                   <FaFacebookF className="text-sm" />
                 </a>
                 <a
-                  href="#"
+                  href={`${process.env.REACT_APP_API_URL}/oauth2/authorization/linkedin`}
                   className="border-2 border-gray-200 rounded-full p-3 mx-1"
                 >
                   <FaLinkedinIn className="text-sm" />
                 </a>
                 <a
-                  href="#"
+                  href={`${process.env.REACT_APP_API_URL}/oauth2/authorization/google`}
                   className="border-2 border-gray-200 rounded-full p-3 mx-1"
                 >
                   <FaGoogle className="text-sm" />
