@@ -22,39 +22,14 @@ import {
 
 const components = [
   {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+    title: "Download for Desktop",
+    href: "/download/desktop",
+    description: "Get the desktop version of the app for Windows and Mac.",
   },
   {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
-  },
-  {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
-  },
-  {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+    title: "Download for Mobile",
+    href: "/download/mobile",
+    description: "Download the mobile version for iOS and Android.",
   },
 ];
 
@@ -70,36 +45,36 @@ export function Menu() {
                 <div className="flex items-center gap-1 hover-bg-gray-400/10 p-1 rounded-sm">
                   <PiBookOpenTextLight className="text-2xl mr-2 text-red-600" />
                   <div>
-                    <a>Quizzes</a>
+                    <a>Quiz Builder</a>
                     <p className="text-gray-400 text-sm font-light">
-                      Test your knowledge by creating quizzes
+                      Create and test your knowledge with custom quizzes.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 hover-bg-gray-400/10 p-1 rounded-sm">
                   <PiSparkleLight className="text-2xl mr-2 text-purple-600" />
                   <div>
-                    <a>Wikis</a>
+                    <a>AI-Powered Notes</a>
                     <p className="text-gray-400 text-sm font-light">
-                      Use AI Assistance to create notes
+                      Use AI to assist in creating detailed and organized notes.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 hover-bg-gray-400/10 p-1 rounded-sm">
                   <PiFileThin className="text-2xl mr-2 text-yellow-600" />
                   <div>
-                    <a>Docs</a>
+                    <a>Document Hub</a>
                     <p className="text-gray-400 text-sm font-light">
-                      Have all of your notes in one place
+                      Store and organize all your study materials in one place.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 hover-bg-gray-400/10 p-1 rounded-sm">
                   <PiTargetLight className="text-2xl mr-2 text-blue-600" />
                   <div>
-                    <a>Projects</a>
+                    <a>Collaborative Projects</a>
                     <p className="text-gray-400 text-sm font-light">
-                      For every team or size
+                      Collaborate and manage study projects with your peers.
                     </p>
                   </div>
                 </div>
@@ -108,25 +83,26 @@ export function Menu() {
                 <ul className="grid p-2 md:w-[400px] lg:w-[250px] hover:cursor-pointer border-r">
                   <div className="flex items-center gap- hover-bg-gray-400/10 p-1 rounded-sm">
                     <div>
-                      <a>Template Gallary</a>
+                      <a>Note Templates</a>
                       <p className="text-gray-400 text-sm font-light">
-                        Setups to get you started
+                        Pre-designed setups to help you start note-taking fast.
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap- hover-bg-gray-400/10 p-1 rounded-sm">
                     <div>
-                      <a>Search Through Notes</a>
+                      <a>Browse Community Notes</a>
                       <p className="text-gray-400 text-sm font-light">
-                        Search through quizzes made by other students
+                        Explore notes and quizzes shared by other students.
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap- hover-bg-gray-400/10 p-1 rounded-sm">
                     <div>
-                      <a>Customer Stories</a>
+                      <a>Success Stories</a>
                       <p className="text-gray-400 text-sm font-light">
-                        See how teams and students use LearnWithFranny
+                        See how LearnWithFranny is transforming student
+                        learning.
                       </p>
                     </div>
                   </div>
@@ -152,11 +128,43 @@ export function Menu() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/docs" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Documentation
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuTrigger>Support</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid p-2 md:w-[400px] lg:w-[250px] hover:cursor-pointer border-r">
+              <div className="flex items-center gap-1 hover-bg-gray-400/10 p-1 rounded-sm">
+                <div>
+                  <a>FAQ</a>
+                  <p className="text-gray-400 text-sm font-light">
+                    Find answers to frequently asked questions.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 hover-bg-gray-400/10 p-1 rounded-sm">
+                <div>
+                  <a>Contact Support</a>
+                  <p className="text-gray-400 text-sm font-light">
+                    Reach out to us for direct assistance.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 hover-bg-gray-400/10 p-1 rounded-sm">
+                <div>
+                  <a>Community</a>
+                  <p className="text-gray-400 text-sm font-light">
+                    Join the conversation and ask questions.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 hover-bg-gray-400/10 p-1 rounded-sm">
+                <div>
+                  <a>Help Center</a>
+                  <p className="text-gray-400 text-sm font-light">
+                    Access detailed guides and troubleshooting tips.
+                  </p>
+                </div>
+              </div>
+            </ul>
+          </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
