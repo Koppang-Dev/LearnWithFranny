@@ -83,7 +83,7 @@ public class AuthController {
         }
 
         // Password form validation
-         if (signInRequest.getPassword() == null || signInRequest.getPassword().isEmpty()) {
+        if (signInRequest.getPassword() == null || signInRequest.getPassword().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Password must not be empty"));
         }
 
@@ -111,17 +111,20 @@ public class AuthController {
             res.setId(userDetails.getId());
             res.setUsername(userDetails.getUsername());
             res.setRoles(roles);
+            res.setEmail(userDetails.getEmail());
 
             // Return the response with the generated JWT token and user details
             return ResponseEntity.ok(res);
-    } catch (BadCredentialsException e) {
-        // Handle invalid credentials
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Invalid username or password"));
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("An error occured during login"));
+        } catch (BadCredentialsException e) {
+            // Handle invalid credentials
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse("Invalid username or password"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("An error occured during login"));
+        }
     }
-    }
+    
 
      /**
      * Handles sign-up (registration) requests. Validates the data, creates a new user,

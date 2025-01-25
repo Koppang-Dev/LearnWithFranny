@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdLockOutline } from "react-icons/md";
+import { useUser } from "../context/UserContext";
 
 export default function Login() {
   const [state, setState] = useState({
@@ -26,8 +27,8 @@ export default function Login() {
   });
 
   const [requestError, setRequestError] = useState("");
-
   const router = useRouter();
+  const { setUser } = useUser();
 
   function handleChange(e) {
     const copy = { ...state };
@@ -92,9 +93,21 @@ export default function Login() {
       );
 
       if (res.ok) {
-        // Store the token in localStorage on successful login
         const response = await res.text();
         console.log(response);
+
+        // Set the user context with their data
+        setUser({
+          id: response.id,
+          username: response.username,
+          roles: response.roles,
+          token: response.token,
+          type: response.type, // e.g., "Bearer"
+        });
+
+        // Storing token in local storage for persistence
+        localStorage.setItem("token", `${response.type} ${response.token}`);
+
         router.push("/dashboard");
       } // Extract error
       const errorData = await res.json();
