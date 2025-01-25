@@ -131,7 +131,7 @@ export default function Register() {
               <h1 className="text-3xl font-bold text-[#444054] mb-2">
                 Create Account
               </h1>
-              <div className="border-2 w-20 border-lamaPurple inline-block mb-2"></div>
+              <div className="border-2 w-20 border-[#222A68] inline-block mb-2"></div>
               {/* Display the error message */}
               {requestError && (
                 <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
@@ -193,7 +193,7 @@ export default function Register() {
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
                   <MdLockOutline className="text-gray-400 m-2" />
                   <input
-                    type="password"
+                    type={passwordVisible ? "text" : "password"}
                     name="password"
                     value={state.password}
                     onChange={handleChange}

@@ -136,7 +136,7 @@ export default function Login() {
               <h1 className="text-3xl font-bold text-[#444054] mb-2">
                 Sign Into Account
               </h1>
-              <div className="border-2 w-10 border-lamaPurple inline-block mb-2"></div>
+              <div className="border-2 w-10 border-[#222A68] inline-block mb-2"></div>
               {/* Display the error message */}
               {requestError && (
                 <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
