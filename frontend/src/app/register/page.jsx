@@ -82,13 +82,16 @@ export default function Register() {
 
     try {
       // Send a POST request to the server with the user's credentials
-      const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/auth/signup`, {
-        method: "POST",
-        body: JSON.stringify(state),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`,
+        {
+          method: "POST",
+          body: JSON.stringify(state),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (res.ok) {
         // Store the token in localStorage on successful login

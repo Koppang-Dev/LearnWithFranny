@@ -93,8 +93,7 @@ export default function Login() {
       );
 
       if (res.ok) {
-        const response = await res.text();
-        console.log(response);
+        const response = await res.json();
 
         // Set the user context with their data
         setUser({
@@ -102,16 +101,14 @@ export default function Login() {
           username: response.username,
           roles: response.roles,
           token: response.token,
-          type: response.type, // e.g., "Bearer"
+          type: response.type,
         });
 
         // Storing token in local storage for persistence
         localStorage.setItem("token", `${response.type} ${response.token}`);
 
         router.push("/dashboard");
-      } // Extract error
-      const errorData = await res.json();
-      setRequestError(errorData.message || "An unexpected error occured");
+      }
     } catch (err) {
       setRequestError(
         "Failed to connect to the server. Please try again later."

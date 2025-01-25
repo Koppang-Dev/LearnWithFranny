@@ -14,11 +14,16 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import uuid4 from "uuid4";
+import { useUser } from "@/app/context/UserContext";
+import { useRef } from "react";
 
 const UploadScreen = ({ children }) => {
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState();
+  const { user } = useUser();
+  const userId = user?.id ?? 10;
+  const dialogCloseRef = useRef(null);
 
   // File is selected
   const OnFileSelect = (event) => {
@@ -29,8 +34,36 @@ const UploadScreen = ({ children }) => {
   const OnUpload = async () => {
     setLoading(true);
 
-    // Saving the storage ID into the database
-    const fileId = uuid4();
+    // FormData Object to hold the file
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileName", fileName);
+
+    // Send the file to the backend
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/file/${userId}/upload`, // Endpoint for uploading the file
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
+          },
+          body: formData, // Sending file and other form data
+        }
+      );
+      if (response.ok) {
+        if (dialogCloseRef.current) {
+          dialogCloseRef.current.click(); // Triggering the DialogClose button programmatically
+        }
+        window.location.reload();
+      } else {
+        console.error("File upload failed", await response.text());
+      }
+    } catch (error) {
+      console.error("Error uploading file", error);
+    } finally {
+      setLoading(false);
+    }
 
     // Set loading icon back to false
     setLoading(false);
@@ -65,7 +98,7 @@ const UploadScreen = ({ children }) => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-end">
-            <DialogClose asChild>
+            <DialogClose ref={dialogCloseRef} asChild>
               <Button type="Button" variant="secondary">
                 Close
               </Button>

@@ -1,18 +1,21 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import { useUser } from "@/app/context/UserContext";
 
-const NoteDashboard = ({ userId }) => {
+const NoteDashboard = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useUser();
+  const userId = user?.id ?? 10;
 
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
         const fileList = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/file/10/files`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/file/${userId}/files`,
           {
-            method: "GET", // Method is optional, GET is the default
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
