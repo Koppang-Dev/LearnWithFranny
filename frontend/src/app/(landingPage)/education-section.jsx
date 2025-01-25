@@ -1,6 +1,6 @@
+"use client";
 import Image from "next/image";
 import React from "react";
-
 import { Lora } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -79,11 +79,11 @@ const EducationSection = () => {
 
       <div className="items-center flex justify-center flex-col">
         <Image
-          src="/assets/meditatingDoodle.svg"
+          src="/assets/MeditatingDoodle.svg"
           alt="logo"
-          width={200} // Adjust this value to your desired width
-          height={200} // Adjust this value to maintain the aspect ratio
-          className="pt-2 xl:pt-5 w-40 xl:w-80" // Tailwind classes for width control
+          width={200}
+          height={200}
+          className="pt-2 xl:pt-5 w-40 xl:w-80"
         />
 
         <div className="text-center">
