@@ -79,7 +79,7 @@ const NotesChart = () => {
   return (
     <div className="bg-white rounded-xl w-full h-full p-4">
       <div className="flex justify-between items-center">
-        <hi className="text-lg font-semibold">Notes Completed</hi>
+        <h1 className="text-lg font-semibold">Notes Completed</h1>
         <Image src="/images/more.png" alt="" width={20} height={20} />
       </div>
       <ResponsiveContainer width="100%" height="90%">
