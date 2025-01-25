@@ -17,7 +17,7 @@ const ActionButtons = () => {
         <div className="flex lg:space-x-4 items-center pr-4 pl-5">
           <div>
             <Link href="/register">
-              <Button className="hidden lg:flex items-center border-none text-md">
+              <Button className="hidden lg:flex items-center border-none text-lg">
                 Sign Up For Free
               </Button>
             </Link>

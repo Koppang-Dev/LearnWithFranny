@@ -80,10 +80,10 @@ const EducationSection = () => {
       <div className="items-center flex justify-center flex-col">
         <Image
           src="/assets/meditatingDoodle.svg"
-          alt="Canva logo"
-          width={100}
-          height={100}
-          className="pt-2 xl:pt-0 w-10 xl:w-14"
+          alt="logo"
+          width={200} // Adjust this value to your desired width
+          height={200} // Adjust this value to maintain the aspect ratio
+          className="pt-2 xl:pt-5 w-40 xl:w-80" // Tailwind classes for width control
         />
 
         <div className="text-center">
