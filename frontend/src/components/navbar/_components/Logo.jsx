@@ -8,12 +8,12 @@ const Logo = () => {
         <Image
           src="/images/logo.png"
           alt="logo"
-          width={150}
-          height={150}
-          className="w-24"
+          width={100}
+          height={100}
+          className="w-10"
         />
       </Link>
-      <h2 className="text-lg last:font-bold ml-2">LearnWithFranny</h2>
+      <h2 className="text-md last:font-bold ml-2">LearnWithFranny</h2>
     </div>
   );
 };
