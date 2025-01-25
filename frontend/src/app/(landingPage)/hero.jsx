@@ -21,7 +21,7 @@ const tabs = [
       <PiSparkleLight className="text-3xl mr-2 text-purple-600 bg-purple-100 rounded-full p-1" />
     ),
     name: "AI",
-    feature: "Now with Voice",
+    feature: "Voice Integration",
     description: "Build notes and tests with AI",
     LearnMore: (
       <div className="text-purple-600 flex items-center">
@@ -34,8 +34,8 @@ const tabs = [
     icon: (
       <PiBookOpenTextLight className="text-3xl mr-2 text-red-600 bg-red-100 rounded-full p-1" />
     ),
-    name: "Quizzes",
-    description: "Test yourself with built in Anki templates",
+    name: "Custom Quizzes",
+    description: "Test yourself with Anki templates",
     LearnMore: (
       <div className="text-purple-600 flex items-center">
         Learn More <PiArrowRight className="text-sm ml-1" />
@@ -47,8 +47,8 @@ const tabs = [
     icon: (
       <PiSparkleLight className="text-3xl mr-2 text-blue-600 bg-blue-100 rounded-full p-1" />
     ),
-    name: "Docs",
-    description: "Have all your files in one place",
+    name: "Document Hub",
+    description: "Store all your study materials in one place",
     LearnMore: (
       <div className="text-blue-600 flex items-center">
         Learn More <PiArrowRight className="text-sm ml-1" />
@@ -60,8 +60,8 @@ const tabs = [
     icon: (
       <PiSparkleLight className="text-3xl mr-2 text-yellow-600 bg-yellow-100 rounded-full p-1" />
     ),
-    name: "Fenman",
-    description: "Use study techniques such as fenyman",
+    name: "Feynman Technique",
+    description: "Apply study techniques.",
     LearnMore: (
       <div className="text-yellow-600 flex items-center">
         Learn More <PiArrowRight className="text-sm ml-1" />

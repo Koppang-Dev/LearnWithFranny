@@ -11,7 +11,7 @@ import Link from "next/link";
 
 import { IoPersonCircle } from "react-icons/io5";
 
-import { MdLockOutline } from "react-icons/md";
+import { MdLockOutline, MdVisibilityOff, MdVisibility } from "react-icons/md";
 
 // SignIn component handles user login
 export default function Register() {
@@ -28,6 +28,7 @@ export default function Register() {
   });
 
   const [requestError, setRequestError] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const router = useRouter();
 
@@ -37,6 +38,11 @@ export default function Register() {
     copy[e.target.name] = e.target.value;
     setState(copy);
   }
+
+  // Toggle password visibility
+  const handleTogglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
   // Form Validation
   function validateForm() {
@@ -118,11 +124,11 @@ export default function Register() {
           <div className="w-3/5 p-5">
             <div className="text-left font-bold">
               <Link href="/">
-                <span className="text-lamaPurple">LearnWithFranny</span>
+                <span className="text-[#444054]">LearnWithFranny</span>
               </Link>
             </div>
             <div className="py-10">
-              <h1 className="text-3xl font-bold text-lamaPurple mb-2">
+              <h1 className="text-3xl font-bold text-[#444054] mb-2">
                 Create Account
               </h1>
               <div className="border-2 w-20 border-lamaPurple inline-block mb-2"></div>
@@ -194,6 +200,17 @@ export default function Register() {
                     placeholder="Password"
                     className="bg-gray-100 outline-none flex-1"
                   />
+                  <button
+                    type="button"
+                    onClick={handleTogglePasswordVisibility}
+                    className="ml-2 text-gray-400"
+                  >
+                    {passwordVisible ? (
+                      <MdVisibilityOff className="text-xl" />
+                    ) : (
+                      <MdVisibility className="text-xl" />
+                    )}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm mb-2">{errors.password}</p>
@@ -210,7 +227,7 @@ export default function Register() {
                 </div>
                 <button
                   onClick={handleSubmit}
-                  className=" text-lamaPurple border-2 border-lamaPurple rounded-full px-12 py-2 inline-block font-semibold hover:bg-lamaPurple hover:text-white"
+                  className=" text-[#222A68] border-2 border-[#222A68] rounded-full px-12 py-2 inline-block font-semibold hover:bg-[#222A68] hover:text-white"
                 >
                   Sign Up
                 </button>
@@ -218,17 +235,20 @@ export default function Register() {
             </div>
           </div>
           {/* SIGN UP SECTION */}
-          <div className="w-2/5 bg-lamaPurple rounded-tr-2xl rounded-br-2xl py-36 px-12">
+          <div className="w-2/5 bg-[#222A68] rounded-tr-2xl rounded-br-2xl py-36 px-12">
             <h2 className="text-3xl text-white font-bold mb-2">
-              Hello Studier!
+              Welcome Back, Studier!
             </h2>
             <div className="border-2 w-10 border-white inline-block mb-2"></div>
-            <p className="mb-10">Already have an account? Login instead.</p>
+            <p className="text-white mb-10">
+              Already have an account? Log in and continue your learning
+              journey.
+            </p>
             <button
               onClick={handleLoginClicked}
-              className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-lamaPurple"
+              className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-[#222A68]"
             >
-              Login
+              Log In
             </button>
           </div>
         </div>

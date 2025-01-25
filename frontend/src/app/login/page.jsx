@@ -10,7 +10,7 @@ import Link from "next/link";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MdLockOutline } from "react-icons/md";
+import { MdLockOutline, MdVisibilityOff, MdVisibility } from "react-icons/md";
 import { useUser } from "../context/UserContext";
 
 export default function Login() {
@@ -27,6 +27,7 @@ export default function Login() {
   });
 
   const [requestError, setRequestError] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const router = useRouter();
   const { setUser } = useUser();
 
@@ -36,6 +37,11 @@ export default function Login() {
     setState(copy);
     setErrors({ ...errors, [e.target.name]: "" });
   }
+
+  // Toggle password visibility
+  const handleTogglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
   // Form Validation
   function validateForm() {
@@ -123,11 +129,11 @@ export default function Login() {
           <div className="w-3/5 p-5">
             <div className="text-left font-bold">
               <Link href="/">
-                <span className="text-lamaPurple">LearnWithFranny</span>
+                <span className="text-[#444054]">LearnWithFranny</span>
               </Link>
             </div>
             <div className="py-10">
-              <h1 className="text-3xl font-bold text-lamaPurple mb-2">
+              <h1 className="text-3xl font-bold text-[#444054] mb-2">
                 Sign Into Account
               </h1>
               <div className="border-2 w-10 border-lamaPurple inline-block mb-2"></div>
@@ -158,7 +164,7 @@ export default function Login() {
                   <FaGoogle className="text-sm" />
                 </a>
               </div>
-              <p className="text-gray-400">or use your email account</p>
+              <p className="text-gray-400">or use your email to log in</p>
               {/* ENTER INFORMATION */}
               <div className="flex flex-col items-center">
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
@@ -192,13 +198,24 @@ export default function Login() {
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
                   <MdLockOutline className="text-gray-400 m-2" />
                   <input
-                    type="password"
+                    type={passwordVisible ? "text" : "password"}
                     name="password"
                     value={state.password}
                     onChange={handleChange}
                     placeholder="Password"
                     className="bg-gray-100 outline-none flex-1"
                   />
+                  <button
+                    type="button"
+                    onClick={handleTogglePasswordVisibility}
+                    className="ml-2 text-gray-400"
+                  >
+                    {passwordVisible ? (
+                      <MdVisibilityOff className="text-xl" />
+                    ) : (
+                      <MdVisibility className="text-xl" />
+                    )}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm mb-2">{errors.password}</p>
@@ -216,7 +233,7 @@ export default function Login() {
                 </div>
                 <button
                   onClick={handleSubmit}
-                  className=" text-lamaPurple border-2 border-lamaPurple rounded-full px-12 py-2 inline-block font-semibold hover:bg-lamaPurple hover:text-white"
+                  className=" text-[#222A68] border-2 border-[#222A68] rounded-full px-12 py-2 inline-block font-semibold hover:bg-[#222A68] hover:text-white"
                 >
                   Login
                 </button>
@@ -224,19 +241,20 @@ export default function Login() {
             </div>
           </div>
           {/* SIGN UP SECTION */}
-          <div className="w-2/5 bg-lamaPurple rounded-tr-2xl rounded-br-2xl py-36 px-12">
+          <div className="w-2/5 bg-[#222A68] rounded-tr-2xl rounded-br-2xl py-36 px-12">
             <h2 className="text-3xl text-white font-bold mb-2">
-              Hello Studier!
+              Welcome, Future Studier!
             </h2>
             <div className="border-2 w-10 border-white inline-block mb-2"></div>
-            <p className="mb-10">
-              Fill up personal information and start the journey
+            <p className="mb-10 text-white">
+              Create an account to unlock personalized learning tools and start
+              your journey today.
             </p>
             <button
               onClick={handleSignupClicked}
-              className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-lamaPurple"
+              className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-[#222A68]"
             >
-              Signup
+              Sign Up Now
             </button>
           </div>
         </div>

@@ -7,13 +7,13 @@ const Logo = () => {
       <Link href="/">
         <Image
           src="/images/logo.png"
-          alt="logo"
+          alt=""
           width={100}
           height={100}
-          className="w-10"
+          className="w-13"
         />
       </Link>
-      <h2 className="text-md last:font-bold ml-2">LearnWithFranny</h2>
+      <h2 className="text-3xl last:font-bold ml-5">LearnWithFranny</h2>
     </div>
   );
 };
