@@ -12,7 +12,6 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
-
 @Entity
 @Table(name = "user_file_metadata")
 public class UserFileMetaData {
@@ -27,13 +26,18 @@ public class UserFileMetaData {
 
     @Column(name = "file_name", nullable = false)
     @NotBlank
-    private String fileName; 
+    private String fileName;
+    
+    @ManyToOne
+    @JoinColumn(name = "folder_id", nullable = true)
+    private Folder folder;
 
     @Column(name = "s3_key", nullable = false, unique = true)
     private String s3Key; 
 
     @Column(name = "file_type", nullable = false)
     private String fileType;
+
     @Column(name = "file_size")
     private Long fileSize;
 
@@ -67,6 +71,14 @@ public class UserFileMetaData {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public Folder getFolder() {
+        return folder;
+    }
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
     }
 
     public String getS3Key() {
