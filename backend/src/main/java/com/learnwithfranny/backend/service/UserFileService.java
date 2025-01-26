@@ -41,7 +41,7 @@ public class UserFileService {
      * @param user the user who uploaded the file (foreign key reference).
      * @return the saved UserFile entity with generated ID and timestamp.
      */
-     public String saveFile(MultipartFile file, Long userId) {
+     public String saveFile(MultipartFile file, String fileName, Long userId) {
 
         // Saving the file information in s3 storage
         String fileUrl = storageService.uploadFile(file);
@@ -53,7 +53,7 @@ public class UserFileService {
         // Saving the file metadata
         UserFileMetaData userFileMetaData = new UserFileMetaData();
         userFileMetaData.setUser(user);
-        userFileMetaData.setFileName(file.getOriginalFilename());
+        userFileMetaData.setFileName(fileName);
         userFileMetaData.setS3Key(fileUrl);
         userFileMetaData.setFileType(file.getContentType());
         userFileMetaData.setFileSize(file.getSize());

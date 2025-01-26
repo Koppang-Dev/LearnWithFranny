@@ -110,8 +110,9 @@ export default function Login() {
           type: response.type,
         });
 
-        // Storing token in local storage for persistence
+        // Storing token and userID in local storage for persistence
         localStorage.setItem("token", `${response.type} ${response.token}`);
+        localStorage.setItem("uuid");
 
         router.push("/dashboard");
       }

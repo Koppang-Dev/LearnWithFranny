@@ -31,10 +31,12 @@ public class FileController {
 
     // Uploading file endpoint
     @PostMapping("/{userId}/upload")
-    public ResponseEntity<String> handleFileUpload(@PathVariable("userId") Long userId, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> handleFileUpload(@PathVariable("userId") Long userId,
+            @RequestParam("file") MultipartFile file, @RequestParam("fileName") String fileName) {
+        
         try {
             // Call the service method to upload the file and save the metadata
-            String result = userFileService.saveFile(file, userId);  // Pass both file and userId to the service
+            String result = userFileService.saveFile(file, fileName, userId);  // Pass both file and userId to the service
             return new ResponseEntity<>(result, HttpStatus.OK);  // Return success message
         } catch (Exception e) {
             return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
