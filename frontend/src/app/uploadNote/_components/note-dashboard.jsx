@@ -1,10 +1,13 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useUser } from "@/app/context/UserContext";
+import SearchBar from "@/components/custom/SearchBar";
 
 const NoteDashboard = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [error, setError] = useState(null);
   const { user } = useUser();
   const userId = user?.id ?? 10;
@@ -51,11 +54,22 @@ const NoteDashboard = () => {
     return <div>{error}</div>;
   }
 
+  // Filter documents based on search term
+  const filteredDocuments = documents.filter((file) =>
+    file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
-      <h2 className="font-bold text-3xl">Workspace</h2>
+      <div className="">
+        <h2 className="font-bold text-3xl mr-auto">Workspace</h2>
+        <div className="w-full flex justify-center">
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-5 mt-10">
-        {documents.map((file) => (
+        {filteredDocuments.map((file) => (
           <div
             key={file.id}
             className="flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
