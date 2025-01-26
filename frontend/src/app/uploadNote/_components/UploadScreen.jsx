@@ -20,18 +20,32 @@ import { useRef } from "react";
 const UploadScreen = ({ children }) => {
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
-  const [fileName, setFileName] = useState();
+  const [fileName, setFileName] = useState("");
   const { user } = useUser();
   const userId = user?.id ?? 10;
   const dialogCloseRef = useRef(null);
 
   // File is selected
   const OnFileSelect = (event) => {
-    setFile(event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+
+    // Initialize the file name with the selected file's name
+    if (selectedFile) {
+      const nameWithoutExtension = selectedFile.name.replace(/\.[^/.]+$/, ""); // Remove file extension
+      setFileName(nameWithoutExtension);
+    }
   };
 
   // Upload the PDF to convex
   const OnUpload = async () => {
+    // Ensure the fileName is not blank or empty
+    if (!fileName || fileName.trim() === "") {
+      alert("File name cannnot be empty or blank");
+      return;
+    }
+
+    // Starting loading indicator
     setLoading(true);
 
     // FormData Object to hold the file
@@ -88,9 +102,10 @@ const UploadScreen = ({ children }) => {
                   />
                 </div>
                 <div className="mt-2">
-                  <label>FIle Name *</label>
+                  <label>File Name *</label>
                   <Input
                     placeholder="File Name"
+                    value={fileName}
                     onChange={(e) => setFileName(e.target.value)}
                   />
                 </div>
