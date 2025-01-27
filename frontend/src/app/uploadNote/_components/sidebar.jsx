@@ -4,11 +4,14 @@ import { Layout, Shield } from "lucide-react";
 import Image from "next/image";
 import CreateFolderScren from "./CreateFolderScreen";
 import UploadScreen from "./UploadScreen";
+import Link from "next/link";
 
 const Sidebar = () => {
   return (
     <div className="shadow-md h-screen p-7">
-      <Image src="/images/logo.png" alt="Sidebar" width={120} height={120} />
+      <Link href="/dashboard">
+        <Image src="/images/logo.png" alt="Sidebar" width={120} height={120} />
+      </Link>
 
       {/* Contains options and button */}
       <div className="mt-10">
