@@ -60,7 +60,7 @@ const UploadScreen = ({ children }) => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
+            // Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
           },
           body: formData, // Sending file and other form data
         }

@@ -1,4 +1,5 @@
 package com.learnwithfranny.backend.model;
+
 import jakarta.persistence.*;
 
 import java.util.List;

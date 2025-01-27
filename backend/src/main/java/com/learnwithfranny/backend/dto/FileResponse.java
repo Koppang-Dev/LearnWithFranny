@@ -6,15 +6,28 @@ public class FileResponse {
     private String fileUrl;
     private String fileType;
     private Long fileSize;
+    private String folderName;  // New field for folder name
 
-    public FileResponse(Long id, String fileName, String fileUrl, String fileType, Long fileSize) {
+    // Updated constructor
+    public FileResponse(Long id, String fileName, String fileUrl, String fileType, Long fileSize, String folderName) {
         this.id = id;
         this.fileName = fileName;
         this.fileUrl = fileUrl;
         this.fileType = fileType;
         this.fileSize = fileSize;
+        this.folderName = folderName;  // Initialize folder name
     }
 
+    // Getters and setters for the new folderName field
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    // Existing getters and setters
     public Long getId() {
         return id;
     }

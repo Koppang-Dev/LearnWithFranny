@@ -1,21 +1,21 @@
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
 import { useUser } from "@/app/context/UserContext";
 import SearchBar from "@/components/custom/SearchBar";
 
 const NoteDashboard = () => {
-  const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [documents, setDocuments] = useState([]); // State to hold documents
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(""); // Error state
+  const [searchTerm, setSearchTerm] = useState(""); // Search term for filtering
 
-  const [error, setError] = useState(null);
   const { user } = useUser();
   const userId = user?.id ?? 10;
 
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const fileList = await fetch(
+        const folderList = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/file/${userId}/files`,
           {
             method: "GET",
@@ -25,16 +25,26 @@ const NoteDashboard = () => {
           }
         );
 
-        if (!fileList.ok) {
-          // If response status is not 2xx, throw an error
-          throw new Error("Failed to load documents");
-        }
+        const data = await folderList.json();
+        console.log("Fetched data:", data); // Log the data returned by the API
 
-        // Parse the JSON response
-        const data = await fileList.json();
+        // Mapping over each file in each folder
+        const formattedDocuments = data.map((folder) => ({
+          folderId: folder.folderId,
+          folderName: folder.folderName,
+          files: folder.files.map((file) => ({
+            fileId: file.id,
+            fileName: file.fileName,
+            fileUrl: file.fileUrl,
+            fileType: file.fileType,
+            fileSize: file.fileSize,
+          })),
+        }));
+
+        console.log("Formatetd Data:", formattedDocuments); // Log the data returned by the API
 
         // Set the documents state with the fetched data
-        setDocuments(data);
+        setDocuments(formattedDocuments);
         setLoading(false);
       } catch (err) {
         // Handle errors
@@ -44,7 +54,7 @@ const NoteDashboard = () => {
     };
 
     fetchDocuments();
-  }, []);
+  }, []); // Run once when component mounts
 
   if (loading) {
     return <div>Loading documents...</div>;
@@ -55,10 +65,21 @@ const NoteDashboard = () => {
   }
 
   // Filter documents based on search term
-  const filteredDocuments = documents.filter((file) =>
-    file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredDocuments = documents
+    .map((folder) => ({
+      ...folder,
+      files: folder.files.filter((file) =>
+        file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    }))
+    .filter((folder) => folder.files.length > 0); // Only include folders with matching files
 
+  filteredDocuments.forEach((folder) => {
+    console.log("Folder ID:", folder.folderId);
+    folder.files.forEach((file) => {
+      console.log("File ID:", file.fileId);
+    });
+  });
   return (
     <div>
       <div className="">
@@ -69,13 +90,27 @@ const NoteDashboard = () => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-5 mt-10">
-        {filteredDocuments.map((file) => (
+        {filteredDocuments.map((folder) => (
           <div
-            key={file.id}
-            className="flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+            key={folder.folderId}
+            className="flex flex-col p-5 shadow-md rounded-md"
           >
-            <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
-            <h2 className="mt-3 font-medium text-xl">{file.fileName}</h2>
+            <h3 className="font-bold text-xl mb-4">{folder.folderName}</h3>
+            {/* Loop through the files in each folder */}
+            {folder.files.map((file) => (
+              <div
+                key={`${folder.folderId}-${file.fileId}`}
+                className="flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+              >
+                <Image
+                  src="/images/pdf-file.png"
+                  alt=""
+                  width={50}
+                  height={50}
+                />
+                <h2 className="mt-3 font-medium text-xl">{file.fileName}</h2>
+              </div>
+            ))}
           </div>
         ))}
       </div>
