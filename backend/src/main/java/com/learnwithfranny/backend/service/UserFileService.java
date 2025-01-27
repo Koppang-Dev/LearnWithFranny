@@ -49,62 +49,89 @@ public class UserFileService {
      */
      public String saveFile(MultipartFile file, String fileName, Long userId, Long folderId) {
 
-        // Saving the file information in s3 storage
-        String fileUrl = storageService.uploadFile(file);
+         // Saving the file information in s3 storage
+         String fileUrl = storageService.uploadFile(file);
 
+         // Find the user based on the unique ID
+         User user = userRepository.findById(userId)
+                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+         // Find the default folder for the user (or create one if it doesn't exist)
+         Optional<Folder> optionalFolder = folderRepository.findDefaultFolderByUserId(userId);
+         Folder folderToUse;
+
+         // If no default folder exists, create one and assign it to folderToUse
+         if (optionalFolder.isPresent()) {
+             folderToUse = optionalFolder.get();
+         } else {
+             // No default folder, so create a new one
+             folderToUse = new Folder("Default Folder", user);
+             folderRepository.save(folderToUse); // Save the new default folder
+         }
+
+         // Saving the file metadata
+         UserFileMetaData userFileMetaData = new UserFileMetaData();
+         userFileMetaData.setFolder(folderToUse);
+         userFileMetaData.setFileName(fileName);
+         userFileMetaData.setS3Key(fileUrl);
+         userFileMetaData.setFileType(file.getContentType());
+         userFileMetaData.setFileSize(file.getSize());
+         userFileMetaData.setUploadDate(new Date());
+         userFileMetaData.setUser(user);
+         userFileRepository.save(userFileMetaData);
+
+         return "File uploaded successfully. File URL: " + fileUrl;
+     }
+    
+
+    /**
+     * Creates a new folder for the specified user.
+     * 
+     * @param folderName The name of the new folder to create.
+     * @param userId     The ID of the user who owns the folder.
+     * @return           A success message indicating the folder has been created.
+     */
+    public String createFolder(String folderName, Long userId) {
         // Find the user based on the unique ID
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
-            // Find the default folder for the user (or create one if it doesn't exist)
-        Optional<Folder> optionalFolder = folderRepository.findDefaultFolderByUserId(userId);
-        Folder folderToUse;
 
-        // If no default folder exists, create one and assign it to folderToUse
-        if (optionalFolder.isPresent()) {
-            folderToUse = optionalFolder.get();
-        } else {
-            // No default folder, so create a new one
-            folderToUse = new Folder("Default Folder", user);
-            folderRepository.save(folderToUse); // Save the new default folder
+        // Check if a folder with the same name already exists for the user
+        boolean folderExists = folderRepository.existsByNameAndUser_Id(folderName, userId);
+        if (folderExists) {
+            throw new RuntimeException("Folder with the same name already exists");
         }
 
-        // Saving the file metadata
-        UserFileMetaData userFileMetaData = new UserFileMetaData();
-        userFileMetaData.setFolder(folderToUse);
-        userFileMetaData.setFileName(fileName);
-        userFileMetaData.setS3Key(fileUrl);
-        userFileMetaData.setFileType(file.getContentType());
-        userFileMetaData.setFileSize(file.getSize());
-        userFileMetaData.setUploadDate(new Date());
-        userFileMetaData.setUser(user);
-        userFileRepository.save(userFileMetaData);
+        // Create and save the new folder
+        Folder folder = new Folder(folderName, user);
+        folderRepository.save(folder);
 
-
-        return "File uploaded successfully. File URL: " + fileUrl;
+        return "Folder '" + folderName + "' created successfully";
     }
 
-    // /**
-    //  * Retrieves all files associated with a specific user.
-    //  * 
-    //  * @param userId the UUID of the user whose files are being retrieved.
-    //  * @return a list of UserFile entities belonging to the specified user.
-    //  */
+    /**
+     * Retrieves all files associated with a specific user.
+     * 
+     * @param userId the UUID of the user whose files are being retrieved.
+     * @return a list of UserFile entities belonging to the specified user.
+     */
 
     
-    // public List<FileResponse> getAllFilesByUserId(Long userId) {
+    public List<FileResponse> getAllFilesByUserId(Long userId) {
 
-    //     // Get all of the users files
-    //     List<UserFileMetaData> userFiles = userFileRepository.findByUser_Id(userId);
+        // Get all of the users files
+        List<UserFileMetaData> userFiles = userFileRepository.findByUser_Id(userId);
 
-    //     // Generate file URLS using StorageService
-    //     return userFiles.stream().map(file -> {
-    //         // Retrieve the forle from s3
-    //         String fileUrl = storageService.getFileUrl(file.getS3Key());
-    //         return new FileResponse(file.getFileId(), file.getFileName(), fileUrl, file.getFileType(),
-    //                 file.getFileSize());
-    //     }).collect(Collectors.toList());
-    // }
+        // Generate file URLS using StorageService
+        return userFiles.stream().map(file -> {
+            // Retrieve the forle from s3
+            String fileUrl = storageService.getFileUrl(file.getS3Key());
+            String folderName = file.getFolder() != null ? file.getFolder().getName() : "";
+
+            return new FileResponse(file.getFileId(), file.getFileName(), fileUrl, file.getFileType(),
+                    file.getFileSize(), folderName);
+        }).collect(Collectors.toList());
+    }
 
 
     // Retrieves all of the clients folders

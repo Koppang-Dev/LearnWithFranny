@@ -33,18 +33,22 @@ const CreateFolderScreen = ({ children }) => {
     }
 
     // Starting loading indicator
+    // FormData Object to hold the file
+    const formData = new FormData();
+    formData.append("folderName", folderName);
+
     setLoading(true);
 
     // Tell the backend a folder was created
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/folder/create`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/file/${userId}/create-folder`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
           },
-          body: JSON.stringify({ userId, folderName }),
+          body: formData,
         }
       );
 

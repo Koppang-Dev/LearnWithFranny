@@ -53,16 +53,39 @@ public class FileController {
      */
     @PostMapping("/{userId}/upload")
     public ResponseEntity<String> handleFileUpload(@PathVariable("userId") Long userId,
-            @RequestParam("file") MultipartFile file, @RequestParam("fileName") String fileName, @RequestParam(value = "folderId", required = false) Long folderId) {
-        
+            @RequestParam("file") MultipartFile file, @RequestParam("fileName") String fileName,
+            @RequestParam(value = "folderId", required = false) Long folderId) {
+
         try {
             // Call the service method to upload the file and save the metadata
-            String result = userFileService.saveFile(file, fileName, userId, folderId);  // Pass both file and userId to the service
-            return new ResponseEntity<>(result, HttpStatus.OK);  // Return success message
+            String result = userFileService.saveFile(file, fileName, userId, folderId); // Pass both file and userId to the service
+            return new ResponseEntity<>(result, HttpStatus.OK); // Return success message
         } catch (Exception e) {
             return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }   
+    }
+
+    /**
+     * Endpoint to create a new folder for a specific user.
+     * 
+     * @param userId The ID of the user for whom the folder is being created.
+     * @param folderName The name of the new folder to be created.
+     * @return ResponseEntity containing the result message and HTTP status code.
+     */
+    @PostMapping("/{userId}/create-folder")
+    public ResponseEntity<String> createFolder(@PathVariable("userId") Long userId, 
+                                           @RequestParam("folderName") String folderName) {
+    try {
+        // Call the service method to create a new folder
+        String result = userFileService.createFolder(folderName, userId);
+        return new ResponseEntity<>(result, HttpStatus.CREATED); // Return success message with status 201
+    } catch (Exception e) {
+        return new ResponseEntity<>("Folder creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+    
+
+
 
     // Retrieves all of the files from a users account
     @GetMapping("/{userId}/files")

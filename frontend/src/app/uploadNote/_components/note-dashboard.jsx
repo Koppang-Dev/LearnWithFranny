@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useUser } from "@/app/context/UserContext";
 import SearchBar from "@/components/custom/SearchBar";
+import { FaFolder } from "react-icons/fa";
 
 const NoteDashboard = () => {
   const [documents, setDocuments] = useState([]); // State to hold documents
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(""); // Error state
   const [searchTerm, setSearchTerm] = useState(""); // Search term for filtering
+  const [defaultFolderFiles, setDefaultFolderFiles] = useState([]); // Used for files not in a folder
 
   const { user } = useUser();
   const userId = user?.id ?? 10;
@@ -28,22 +30,32 @@ const NoteDashboard = () => {
         const data = await folderList.json();
         console.log("Fetched data:", data); // Log the data returned by the API
 
-        // Mapping over each file in each folder
-        const formattedDocuments = data.map((folder) => ({
-          folderId: folder.folderId,
-          folderName: folder.folderName,
-          files: folder.files.map((file) => ({
-            fileId: file.id,
-            fileName: file.fileName,
-            fileUrl: file.fileUrl,
-            fileType: file.fileType,
-            fileSize: file.fileSize,
-          })),
-        }));
+        // Separate files in the "Default Folder"
+        const defaultFolder = data.find(
+          (folder) => folder.folderName === "Default Folder"
+        );
+        const defaultFiles = defaultFolder ? defaultFolder.files : [];
 
+        // Mapping over each file in each folder
+        const formattedDocuments = data
+          .filter((folder) => folder.folderName !== "Default Folder")
+          .map((folder) => ({
+            folderId: folder.folderId,
+            folderName: folder.folderName,
+            files: folder.files.map((file) => ({
+              fileId: file.id,
+              fileName: file.fileName,
+              fileUrl: file.fileUrl,
+              fileType: file.fileType,
+              fileSize: file.fileSize,
+            })),
+          }));
+
+        console.log("Default files:", defaultFiles); // Log the data returned by the API
         console.log("Formatetd Data:", formattedDocuments); // Log the data returned by the API
 
         // Set the documents state with the fetched data
+        setDefaultFolderFiles(defaultFiles);
         setDocuments(formattedDocuments);
         setLoading(false);
       } catch (err) {
@@ -65,21 +77,14 @@ const NoteDashboard = () => {
   }
 
   // Filter documents based on search term
-  const filteredDocuments = documents
-    .map((folder) => ({
-      ...folder,
-      files: folder.files.filter((file) =>
-        file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    }))
-    .filter((folder) => folder.files.length > 0); // Only include folders with matching files
+  const filteredDefaultFiles = defaultFolderFiles.filter((file) =>
+    file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  filteredDocuments.forEach((folder) => {
-    console.log("Folder ID:", folder.folderId);
-    folder.files.forEach((file) => {
-      console.log("File ID:", file.fileId);
-    });
-  });
+  const filteredFolders = documents.filter((folder) =>
+    folder.folderName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       <div className="">
@@ -89,17 +94,14 @@ const NoteDashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-5 mt-10">
-        {filteredDocuments.map((folder) => (
-          <div
-            key={folder.folderId}
-            className="flex flex-col p-5 shadow-md rounded-md"
-          >
-            <h3 className="font-bold text-xl mb-4">{folder.folderName}</h3>
-            {/* Loop through the files in each folder */}
-            {folder.files.map((file) => (
+      {/* Render files from "Default Folder" */}
+      {filteredDefaultFiles.length > 0 && (
+        <div className="mt-10">
+          <h3 className="font-bold text-2xl mb-4">Files</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+            {filteredDefaultFiles.map((file) => (
               <div
-                key={`${folder.folderId}-${file.fileId}`}
+                key={file.fileUrl}
                 className="flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
               >
                 <Image
@@ -112,8 +114,28 @@ const NoteDashboard = () => {
               </div>
             ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Render Each Folder */}
+      {filteredFolders.length > 0 && (
+        <div className="mt-10">
+          <h3 className="font-bold text-2xl mb-4">Folders</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+            {filteredFolders.map((folder) => (
+              <div
+                key={folder.folderId}
+                className="flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+              >
+                <FaFolder width={50} height={50} />
+                <h2 className="mt-3 font-medium text-xl">
+                  {folder.folderName}
+                </h2>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

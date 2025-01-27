@@ -21,4 +21,7 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     // Find all folders for a specific user
     List<Folder> findByUser_Id(Long userId);
+
+    // Check if the folder already exists
+    Boolean existsByNameAndUser_Id(String folderName, Long userId);
 }
