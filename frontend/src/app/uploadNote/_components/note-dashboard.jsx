@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useUser } from "@/app/context/UserContext";
 import SearchBar from "@/components/custom/SearchBar";
-import { FaFolder } from "react-icons/fa";
+import { FaFolder, FaEllipsisV } from "react-icons/fa";
 
 const NoteDashboard = () => {
   const [documents, setDocuments] = useState([]); // State to hold documents
@@ -10,9 +10,31 @@ const NoteDashboard = () => {
   const [error, setError] = useState(""); // Error state
   const [searchTerm, setSearchTerm] = useState(""); // Search term for filtering
   const [defaultFolderFiles, setDefaultFolderFiles] = useState([]); // Used for files not in a folder
-
+  const [activeFile, setActiveFile] = useState(null); // Track which file is active
+  const [activeFolder, setActiveFolder] = useState(null); // Track which folder is active
+  const [showFileDropdown, setShowFileDropdown] = useState(false); // When the user clicks on the more button for files
+  const [showFolderDropdown, setShowFolderDropdown] = useState(false); // When the user clicks on the more button for folders
   const { user } = useUser();
   const userId = user?.id ?? 10;
+
+  // Handle dropdown toggle for each file
+  const toggleFileDropdown = (fileUrl) => {
+    setActiveFile(fileUrl);
+    setShowFileDropdown((prev) => (prev !== fileUrl ? fileUrl : null)); // Toggle the dropdown for the specific file
+  };
+
+  // Handle dropdown toggle for each folder
+  const toggleFolderDropdown = (folderId) => {
+    setActiveFolder(folderId);
+    setShowFolderDropdown((prev) => (prev !== folderId ? folderId : null)); // Toggle the dropdown for the specific folder
+  };
+
+  // Handle action selection
+  const handleAction = (action) => {
+    console.log(`${action} clicked for ${activeFile || activeFolder}`);
+    setShowFileDropdown(false); // Close file dropdown after action
+    setShowFolderDropdown(false); // Close folder dropdown after action
+  };
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -28,7 +50,6 @@ const NoteDashboard = () => {
         );
 
         const data = await folderList.json();
-        console.log("Fetched data:", data); // Log the data returned by the API
 
         // Separate files in the "Default Folder"
         const defaultFolder = data.find(
@@ -50,9 +71,6 @@ const NoteDashboard = () => {
               fileSize: file.fileSize,
             })),
           }));
-
-        console.log("Default files:", defaultFiles); // Log the data returned by the API
-        console.log("Formatetd Data:", formattedDocuments); // Log the data returned by the API
 
         // Set the documents state with the fetched data
         setDefaultFolderFiles(defaultFiles);
@@ -102,14 +120,51 @@ const NoteDashboard = () => {
             {filteredDefaultFiles.map((file) => (
               <div
                 key={file.fileUrl}
-                className="flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+                className="relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+                onMouseEnter={() => setActiveFile(file.fileUrl)} // Show dropdown when hovered
+                onMouseLeave={() => setActiveFile(null)} // Hide dropdown when mouse leaves
               >
+                {/* PDF Image */}
                 <Image
                   src="/images/pdf-file.png"
                   alt=""
                   width={50}
                   height={50}
                 />
+
+                {/* More Options Button */}
+                <div className="absolute top-2 right-2">
+                  <FaEllipsisV
+                    className="cursor-pointer"
+                    onClick={() => toggleFileDropdown(file.fileUrl)} // Toggle dropdown for this specific file
+                  />
+                </div>
+
+                {/* Dropdown menu */}
+                {showFileDropdown === file.fileUrl && (
+                  <div className="absolute top-8 right-0 bg-white border shadow-md rounded-md w-40">
+                    <ul className="list-none p-2">
+                      <li
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                        onClick={() => handleAction("Rename")}
+                      >
+                        Rename
+                      </li>
+                      <li
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                        onClick={() => handleAction("Delete")}
+                      >
+                        Delete
+                      </li>
+                      <li
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                        onClick={() => handleAction("Share")}
+                      >
+                        Share
+                      </li>
+                    </ul>
+                  </div>
+                )}
                 <h2 className="mt-3 font-medium text-xl">{file.fileName}</h2>
               </div>
             ))}
@@ -125,9 +180,44 @@ const NoteDashboard = () => {
             {filteredFolders.map((folder) => (
               <div
                 key={folder.folderId}
-                className="flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+                className="relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+                onMouseEnter={() => setActiveFolder(folder.folderId)} // Show dropdown when hovered
+                onMouseLeave={() => setActiveFolder(null)} // Hide dropdown when mouse leaves
               >
                 <FaFolder width={50} height={50} />
+                {/* More Options Button */}
+                <div className="absolute top-2 right-2">
+                  <FaEllipsisV
+                    className="cursor-pointer"
+                    onClick={() => toggleFolderDropdown(folder.folderId)} // Toggle dropdown for this specific folder
+                  />
+                </div>
+
+                {/* Dropdown menu */}
+                {showFolderDropdown === folder.folderId && (
+                  <div className="absolute top-8 right-0 bg-white border shadow-md rounded-md w-40">
+                    <ul className="list-none p-2">
+                      <li
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                        onClick={() => handleAction("Rename")}
+                      >
+                        Rename
+                      </li>
+                      <li
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                        onClick={() => handleAction("Delete")}
+                      >
+                        Delete
+                      </li>
+                      <li
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                        onClick={() => handleAction("Share")}
+                      >
+                        Share
+                      </li>
+                    </ul>
+                  </div>
+                )}
                 <h2 className="mt-3 font-medium text-xl">
                   {folder.folderName}
                 </h2>
