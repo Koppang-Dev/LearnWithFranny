@@ -11,6 +11,9 @@ import com.learnwithfranny.backend.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -139,23 +142,55 @@ public class UserFileService {
 
         List<Folder> userFolders = folderRepository.findByUser_Id(userId);
 
-            // Iterate through each folder and get the files associated with it
+        // Iterate through each folder and get the files associated with it
         List<FolderWithFilesResponse> folderWithFilesResponses = userFolders.stream()
-        .map(folder -> {
-            // Get all files for the current folder
-            List<UserFileMetaData> folderFiles = userFileRepository.findByFolder_Id(folder.getId());
+                .map(folder -> {
+                    // Get all files for the current folder
+                    List<UserFileMetaData> folderFiles = userFileRepository.findByFolder_Id(folder.getId());
 
-            // Generate file URLs and gather file information, including folder name
-            List<FileResponse> fileResponses = folderFiles.stream().map(file -> {
-                String fileUrl = storageService.getFileUrl(file.getS3Key());
-                return new FileResponse(file.getFileId(), file.getFileName(), fileUrl, file.getFileType(), file.getFileSize(), folder.getName());
-            }).collect(Collectors.toList());
+                    // Generate file URLs and gather file information, including folder name
+                    List<FileResponse> fileResponses = folderFiles.stream().map(file -> {
+                        String fileUrl = storageService.getFileUrl(file.getS3Key());
+                        return new FileResponse(file.getFileId(), file.getFileName(), fileUrl, file.getFileType(),
+                                file.getFileSize(), folder.getName());
+                    }).collect(Collectors.toList());
 
-            // Create a response object for the folder with the associated files
-            return new FolderWithFilesResponse(folder.getId(), folder.getName(), fileResponses);
-        })
-        .collect(Collectors.toList()); // Collect results into a List
+                    // Create a response object for the folder with the associated files
+                    return new FolderWithFilesResponse(folder.getId(), folder.getName(), fileResponses);
+                })
+                .collect(Collectors.toList()); // Collect results into a List
 
-    return folderWithFilesResponses;
-}
+        return folderWithFilesResponses;
+    }
+
+
+    // Deletes specific file for user
+    public ResponseEntity<String> deleteFile(Long userId, String fileName, Long folderId) {
+        
+        try {
+            // See if the file exists
+            Optional<UserFileMetaData> file = userFileRepository.findByUser_IdAndFileNameAndFolder_Id(userId, fileName,
+                    folderId);
+            
+            if (file.isPresent()) {
+                userFileRepository.delete(file.get());
+                return ResponseEntity.status(200).body("File deleted successfully");
+
+            } else {
+                return ResponseEntity.status(404).body("File not found");
+            }
+
+
+
+        } catch (Exception e) {
+
+        }
+
+        // Delete the file from the users file list
+
+
+
+        return ResponseEntity.ok("File Deleted");
+
+    }
 }

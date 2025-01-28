@@ -26,9 +26,6 @@ import com.learnwithfranny.backend.service.UserFileService;
 public class FileController {
 
     @Autowired
-    private StorageService service;
-
-    @Autowired
     private UserFileService userFileService;
 
     /**
@@ -83,7 +80,6 @@ public class FileController {
         return new ResponseEntity<>("Folder creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-    
 
 
 
@@ -110,8 +106,8 @@ public class FileController {
     
 
     // Deleting the file
-    @DeleteMapping("/delete/{fileName}")
-    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
-        return new ResponseEntity<>(service.deleteFile(fileName), HttpStatus.OK);
+    @DeleteMapping()
+    public ResponseEntity<String> deleteFile(@RequestParam("fileName") String fileName, @RequestParam("userId") Long userId, @RequestParam("folderId") Long folderId) {
+        return new ResponseEntity<>(userFileService.deleteFile(userId, fileName, folderId), HttpStatus.OK);
     }
 }
