@@ -173,24 +173,28 @@ public class UserFileService {
                     folderId);
             
             if (file.isPresent()) {
-                userFileRepository.delete(file.get());
+
+                // Retrieving the file
+                UserFileMetaData userFile = file.get();
+
+                // Retrieving the unique s3 key
+                String file_s3_key = userFile.getS3Key();
+
+                // Deleting the file from S3 Storage
+                storageService.deleteFile(file_s3_key);
+
+                // Delete from File and Folder Table
+                userFileRepository.delete(userFile);
+
+                // Delete from S3
                 return ResponseEntity.status(200).body("File deleted successfully");
 
             } else {
                 return ResponseEntity.status(404).body("File not found");
             }
 
-
-
         } catch (Exception e) {
-
+            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
         }
-
-        // Delete the file from the users file list
-
-
-
-        return ResponseEntity.ok("File Deleted");
-
     }
 }

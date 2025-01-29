@@ -27,6 +27,7 @@ public class FileController {
 
     @Autowired
     private UserFileService userFileService;
+    private StorageService storageService;
 
     /**
      * Endpoint for uploading a file for a specific user.
@@ -94,7 +95,7 @@ public class FileController {
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) {
 
         // Converting to ByteArrayResource
-        byte[] data = service.downloadFile(fileName);
+        byte[] data = storageService.downloadFile(fileName);
         ByteArrayResource resource = new ByteArrayResource(data);
 
         return ResponseEntity.ok()
@@ -107,7 +108,10 @@ public class FileController {
 
     // Deleting the file
     @DeleteMapping()
-    public ResponseEntity<String> deleteFile(@RequestParam("fileName") String fileName, @RequestParam("userId") Long userId, @RequestParam("folderId") Long folderId) {
-        return new ResponseEntity<>(userFileService.deleteFile(userId, fileName, folderId), HttpStatus.OK);
+    public ResponseEntity<String> deleteFile(@RequestParam("fileName") String fileName,
+            @RequestParam("userId") Long userId, @RequestParam("folderId") Long folderId) {
+        
+        return userFileService.deleteFile(userId, fileName, folderId);
+        
     }
 }
