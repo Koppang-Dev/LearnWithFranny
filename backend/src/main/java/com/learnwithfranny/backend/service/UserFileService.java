@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.StackWalker.Option;
 import java.util.Collections;
 import java.util.Date;
 
@@ -63,23 +64,39 @@ public class UserFileService {
          // Saving the file information in s3 storage
          String fileUrl = storageService.uploadFile(file, uniqueFileName);
 
-         // Find the default folder for the user (or create one if it doesn't exist)
-         String default_folder_name = "Default Folder";
-         Optional<Folder> optionalFolder = folderRepository.findByUserIdAndName(userId, default_folder_name);
-         Folder folderToUse;
 
-         // If no default folder exists, create one and assign it to folderToUse
-         if (optionalFolder.isPresent()) {
-             folderToUse = optionalFolder.get();
+         // If no folderID was given then save it to the default folder
+         Folder folder;
+
+         if (folderId == null) {
+             // Save the file in the given folder
+             String default_folder_name = "Default Folder";
+             Optional<Folder> optionalFolder = folderRepository.findByUserIdAndName(userId, default_folder_name);
+
+             // If no default folder exists, create one and assign it to folderToUse
+             if (optionalFolder.isPresent()) {
+                 folder = optionalFolder.get();
+             } else {
+                 // No default folder, so create a new one
+                 folder = new Folder("Default Folder", user);
+                 folderRepository.save(folder);
+             }
+
+             //  Find the folder for the file to be saved in 
          } else {
-             // No default folder, so create a new one
-             folderToUse = new Folder("Default Folder", user);
-             folderRepository.save(folderToUse); // Save the new default folder
-         }
+             Optional<Folder> desiredFolder = folderRepository.findByUser_IdAndId(userId, folderId);
 
+             if (desiredFolder.isPresent()) {
+                folder = desiredFolder.get();
+            } else {
+                throw new RuntimeException("Folder not found for user with ID " + userId + " and folder ID " + folderId);
+            }
+         }
+          
+        
          // Saving the file metadata
          UserFileMetaData userFileMetaData = new UserFileMetaData();
-         userFileMetaData.setFolder(folderToUse);
+         userFileMetaData.setFolder(folder);
          userFileMetaData.setFileName(fileName);
          userFileMetaData.setS3Key(uniqueFileName);
          userFileMetaData.setFileType(file.getContentType());
@@ -171,12 +188,21 @@ public class UserFileService {
 
     // Deletes specific file for user
     public ResponseEntity<String> deleteFile(Long userId, String fileName, Long folderId) {
-        
+
         try {
-            // See if the file exists
-            Optional<UserFileMetaData> file = userFileRepository.findByUser_IdAndFileNameAndFolder_Id(userId, fileName,
-                    folderId);
-            
+
+            Optional<UserFileMetaData> file;
+
+            if (folderId == null) {
+                file = userFileRepository.findByUser_IdAndFileNameAndFolderName(userId, fileName,
+                        "Default Folder");
+
+            } else {
+                // See if the file exists
+                file = userFileRepository.findByUser_IdAndFileNameAndFolder_Id(userId, fileName,
+                        folderId);
+            }
+
             if (file.isPresent()) {
 
                 // Retrieving the file
@@ -196,6 +222,32 @@ public class UserFileService {
 
             } else {
                 return ResponseEntity.status(404).body("File not found");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+    
+
+    // Deletes a specified folder for a user
+    public ResponseEntity<String> deleteFolder(Long userId, Long folderId) {
+
+        try {
+
+            // See if the folder exists
+            Optional<Folder> folder = folderRepository.findByUser_IdAndId(userId, folderId);
+
+            if (folder.isPresent()) {
+                Folder folderToDelete = folder.get();
+                
+                // Deleting the folder
+                userFileRepository.deleteByFolder_Id(folderId);
+                folderRepository.delete(folderToDelete);
+                return ResponseEntity.status(200).body("Folder and all associated files deleted successfully");
+            } else {
+                // Folder does not exist
+                return ResponseEntity.status(404).body("Folder not found");
             }
 
         } catch (Exception e) {

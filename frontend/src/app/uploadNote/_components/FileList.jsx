@@ -6,7 +6,7 @@ const FileList = ({ files }) => (
     <h3 className="font-bold text-2xl mb-4">Files</h3>
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
       {files.map((file) => (
-        <FileCard key={file.fileId} file={file} />
+        <FileCard key={`${file.fileId}-${file.name}`} file={file} />
       ))}
     </div>
   </div>

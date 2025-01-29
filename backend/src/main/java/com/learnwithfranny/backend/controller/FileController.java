@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,9 @@ import com.learnwithfranny.backend.service.StorageService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.learnwithfranny.backend.dto.DeleteFolderRequest;
+import com.learnwithfranny.backend.dto.DeleteRequest;
 import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.dto.FolderWithFilesResponse;
 
@@ -56,8 +60,8 @@ public class FileController {
 
         try {
             // Call the service method to upload the file and save the metadata
-            String result = userFileService.saveFile(file, fileName, userId, folderId); 
-            return new ResponseEntity<>(result, HttpStatus.OK); 
+            String result = userFileService.saveFile(file, fileName, userId, folderId);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -71,18 +75,16 @@ public class FileController {
      * @return ResponseEntity containing the result message and HTTP status code.
      */
     @PostMapping("/{userId}/create-folder")
-    public ResponseEntity<String> createFolder(@PathVariable("userId") Long userId, 
-                                           @RequestParam("folderName") String folderName) {
-    try {
-        // Call the service method to create a new folder
-        String result = userFileService.createFolder(folderName, userId);
-        return new ResponseEntity<>(result, HttpStatus.CREATED); // Return success message with status 201
-    } catch (Exception e) {
-        return new ResponseEntity<>("Folder creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<String> createFolder(@PathVariable("userId") Long userId,
+            @RequestParam("folderName") String folderName) {
+        try {
+            // Call the service method to create a new folder
+            String result = userFileService.createFolder(folderName, userId);
+            return new ResponseEntity<>(result, HttpStatus.CREATED); // Return success message with status 201
+        } catch (Exception e) {
+            return new ResponseEntity<>("Folder creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-}
-
-
 
     // Retrieves all of the files from a users account
     @GetMapping("/{userId}/files")
@@ -104,14 +106,39 @@ public class FileController {
                 .header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
                 .body(resource);
     }
-    
 
-    // Deleting the file
     @DeleteMapping()
-    public ResponseEntity<String> deleteFile(@RequestParam("fileName") String fileName,
-            @RequestParam("userId") Long userId, @RequestParam("folderId") Long folderId) {
-        
-        return userFileService.deleteFile(userId, fileName, folderId);
-        
+    public ResponseEntity<String> deleteFile(@RequestBody DeleteRequest deleteRequest) {
+        try {
+            // Calling the service to delete the file
+            ResponseEntity<String> response = userFileService.deleteFile(
+                    deleteRequest.getUserId(),
+                    deleteRequest.getFileName(),
+                    deleteRequest.getFolderId());
+
+            // Return the service's response (success or failure message)
+            return response;
+
+        } catch (Exception e) {
+            // Handle any unexpected errors
+            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/folder/delete")
+    public ResponseEntity<String> deleteFolder(@RequestBody DeleteFolderRequest deleteRequest) {
+        try {
+            // Calling the service to delete the file
+            ResponseEntity<String> response = userFileService.deleteFolder(
+                    deleteRequest.getUserId(),
+                    deleteRequest.getFolderId());
+
+            // Return the service's response (success or failure message)
+            return response;
+
+        } catch (Exception e) {
+            // Handle any unexpected errors
+            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+        }
     }
 }

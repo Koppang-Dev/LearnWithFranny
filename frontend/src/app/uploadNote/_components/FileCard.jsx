@@ -2,28 +2,33 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { FaEllipsisV } from "react-icons/fa";
 import DropdownMenu from "./DropdownMenu";
+import { deleteFile } from "@/app/utils/FileApi";
 
-const FileCard = ({ file }) => {
+const FileCard = ({ file, folder }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleDelete = async () => {
     console.log(`Deleting file: ${file.fileName}`);
+    const folderId = folder ? folder.folderId : null;
+    deleteFile(10, file.fileName, folderId);
+    window.location.reload();
+
     setShowConfirmDialog(false); // Close the dialog after confirming
+  };
+
+  const toggleDropdown = () => {
+    setShowDropdown((prev) => !prev);
   };
 
   return (
     <div
       className="relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
-      onMouseEnter={() => setShowDropdown(true)}
       onMouseLeave={() => setShowDropdown(false)}
     >
       <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
       <div className="absolute top-2 right-2">
-        <FaEllipsisV
-          className="cursor-pointer"
-          onClick={() => setShowDropdown((prev) => !prev)}
-        />
+        <FaEllipsisV className="cursor-pointer" onClick={toggleDropdown} />
       </div>
       {showDropdown && (
         <DropdownMenu
