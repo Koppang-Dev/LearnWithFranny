@@ -52,15 +52,20 @@ public class UserFileService {
      */
      public String saveFile(MultipartFile file, String fileName, Long userId, Long folderId) {
 
-         // Saving the file information in s3 storage
-         String fileUrl = storageService.uploadFile(file);
+        // Find the user based on the unique ID
+        User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
 
-         // Find the user based on the unique ID
-         User user = userRepository.findById(userId)
-                 .orElseThrow(() -> new RuntimeException("User not found"));
+         // Generating a unique file name for every users'
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        String uniqueFileName = userId + "_" + timestamp + "_" + fileName;
+
+         // Saving the file information in s3 storage
+         String fileUrl = storageService.uploadFile(file, uniqueFileName);
 
          // Find the default folder for the user (or create one if it doesn't exist)
-         Optional<Folder> optionalFolder = folderRepository.findDefaultFolderByUserId(userId);
+         String default_folder_name = "Default Folder";
+         Optional<Folder> optionalFolder = folderRepository.findByUserIdAndName(userId, default_folder_name);
          Folder folderToUse;
 
          // If no default folder exists, create one and assign it to folderToUse
@@ -76,7 +81,7 @@ public class UserFileService {
          UserFileMetaData userFileMetaData = new UserFileMetaData();
          userFileMetaData.setFolder(folderToUse);
          userFileMetaData.setFileName(fileName);
-         userFileMetaData.setS3Key(fileUrl);
+         userFileMetaData.setS3Key(uniqueFileName);
          userFileMetaData.setFileType(file.getContentType());
          userFileMetaData.setFileSize(file.getSize());
          userFileMetaData.setUploadDate(new Date());
@@ -178,10 +183,10 @@ public class UserFileService {
                 UserFileMetaData userFile = file.get();
 
                 // Retrieving the unique s3 key
-                String file_s3_key = userFile.getS3Key();
+                String s3_key = userFile.getS3Key();
 
                 // Deleting the file from S3 Storage
-                storageService.deleteFile(file_s3_key);
+                storageService.deleteFile(s3_key);
 
                 // Delete from File and Folder Table
                 userFileRepository.delete(userFile);

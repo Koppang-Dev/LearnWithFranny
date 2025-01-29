@@ -56,8 +56,8 @@ public class FileController {
 
         try {
             // Call the service method to upload the file and save the metadata
-            String result = userFileService.saveFile(file, fileName, userId, folderId); // Pass both file and userId to the service
-            return new ResponseEntity<>(result, HttpStatus.OK); // Return success message
+            String result = userFileService.saveFile(file, fileName, userId, folderId); 
+            return new ResponseEntity<>(result, HttpStatus.OK); 
         } catch (Exception e) {
             return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

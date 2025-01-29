@@ -25,21 +25,20 @@ public class StorageService {
     private AmazonS3 s3Client;
 
     // Uploading a file
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file, String uniqueFileName) {
 
         // Transforming file 
         File fileObj = convertMultiPartFileToFile(file);
 
         // Creating unique file name
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
         // Uploads a new object to the specified amazon bucket
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        s3Client.putObject(new PutObjectRequest(bucketName, uniqueFileName, fileObj));
 
         // Deleting file after uploaded to S3 bucket
         fileObj.delete();
 
-        return "File uploaded: " + fileName;
+        return "File uploaded: " + uniqueFileName;
     }
     
 
