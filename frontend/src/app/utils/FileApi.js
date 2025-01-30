@@ -115,17 +115,11 @@ export const renameFolder = async (userId, folderId, newFolderName) => {
  * @returns {Promise<Object>} - A promise that resolves to the server's response in JSON format.
  * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
  */
-export const renameFile = async (
-  userId,
-  oldFileName,
-  newFileName,
-  folderId
-) => {
+export const renameFile = async (userId, fileId, newFileName) => {
   const requestData = {
     userId,
-    oldFileName,
+    fileId,
     newFileName,
-    folderId,
   };
 
   // Make an HTTP PUT request to rename the specified file
@@ -140,5 +134,5 @@ export const renameFile = async (
 
   if (!response.ok) throw new Error("Failed to rename file");
 
-  return await response.json();
+  return await response.text();
 };

@@ -20,6 +20,7 @@ import com.learnwithfranny.backend.dto.DeleteFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteRequest;
 import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.dto.FolderWithFilesResponse;
+import com.learnwithfranny.backend.dto.RenameFileRequest;
 import com.learnwithfranny.backend.dto.RenameFolderRequest;
 
 import java.util.List;
@@ -153,6 +154,19 @@ public class FileController {
 
         try {
             userFileService.renameFolder(request.getUserId(), request.getFolderId(), request.getNewFolderName());
+            return new ResponseEntity<>(HttpStatus.CREATED); // Return success message with status 201
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    // Renaming a file
+    @PutMapping("/rename")
+    public ResponseEntity<String> renameFile(@RequestBody RenameFileRequest request) {
+
+        try {
+            userFileService.renameFile(request.getUserId(), request.getFileId(), request.getNewFileName());
             return new ResponseEntity<>(HttpStatus.CREATED); // Return success message with status 201
 
         } catch (Exception e) {

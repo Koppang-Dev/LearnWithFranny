@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { FaEllipsisV } from "react-icons/fa";
 import DropdownMenu from "./DropdownMenu";
-import { deleteFile } from "@/app/utils/FileApi";
+import { deleteFile, renameFile } from "@/app/utils/FileApi";
 
 const FileCard = ({ file, folder }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newFileName, setNewFileName] = useState(file.fileName);
 
   const handleDelete = async () => {
     console.log(`Deleting file: ${file.fileName}`);
@@ -15,6 +17,15 @@ const FileCard = ({ file, folder }) => {
     window.location.reload();
 
     setShowConfirmDialog(false); // Close the dialog after confirming
+  };
+
+  // Handling the renaming of the folder
+  const handleRename = async () => {
+    console.log(`Renaming folder to: ${newFileName}`);
+    setShowDropdown(false);
+    await renameFile(10, file.fileId, newFileName);
+    setIsRenaming(false);
+    window.location.reload();
   };
 
   const toggleDropdown = () => {
@@ -33,13 +44,42 @@ const FileCard = ({ file, folder }) => {
       {showDropdown && (
         <DropdownMenu
           actions={[
-            { label: "Rename", onClick: () => console.log("Rename clicked") },
+            {
+              label: "Rename",
+              onClick: () => {
+                setShowDropdown(false);
+                setIsRenaming(true);
+              },
+            },
             { label: "Delete", onClick: () => setShowConfirmDialog(true) },
             { label: "Share", onClick: () => console.log("Share clicked") },
           ]}
         />
       )}
       <h2 className="mt-3 font-medium text-xl">{file.fileName}</h2>
+      {/* Rename File */}
+      {isRenaming && (
+        <div className="mt-4 flex gap-2">
+          <input
+            type="text"
+            className="border rounded-md p-2"
+            value={newFileName}
+            onChange={(e) => setNewFileName(e.target.value)}
+          />
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+            onClick={handleRename}
+          >
+            Save
+          </button>
+          <button
+            className="px-4 py-2 bg-gray-200 rounded-md"
+            onClick={() => setIsRenaming(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       {/* Confirmation Dialog */}
       {showConfirmDialog && (

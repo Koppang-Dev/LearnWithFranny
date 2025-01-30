@@ -274,4 +274,24 @@ public class UserFileService {
             return ResponseEntity.status(500).body("Folder was not found " + e.getMessage());
         }
     }
+
+    public ResponseEntity<String> renameFile(Long userId, Long fileId, String newName) {
+
+        try {
+            // See if the file exists
+            Optional<UserFileMetaData> file = userFileRepository.findByUser_IdAndFileId(userId, fileId);
+
+            if (file.isPresent()) {
+                UserFileMetaData newFile = file.get();
+                newFile.setFileName(newName);
+                userFileRepository.save(newFile);
+                return ResponseEntity.ok("File name updated successfully");
+
+            } else {
+                return ResponseEntity.status(404).body("File not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("File was not found " + e.getMessage());
+        }
+    }
 }

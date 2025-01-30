@@ -24,5 +24,8 @@ public interface UserFileRepository extends JpaRepository<UserFileMetaData, Long
     // Deleting all files with an associated folderID
     void deleteByFolder_Id(Long folderId);
 
+    // Find specific file by user id and file id
+    Optional<UserFileMetaData> findByUser_IdAndFileId(Long userId, Long fileId);
+
 
 }
