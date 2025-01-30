@@ -234,13 +234,12 @@ public class UserFileService {
     public ResponseEntity<String> deleteFolder(Long userId, Long folderId) {
 
         try {
-
             // See if the folder exists
             Optional<Folder> folder = folderRepository.findByUser_IdAndId(userId, folderId);
 
             if (folder.isPresent()) {
                 Folder folderToDelete = folder.get();
-                
+
                 // Deleting the folder
                 userFileRepository.deleteByFolder_Id(folderId);
                 folderRepository.delete(folderToDelete);
@@ -252,6 +251,27 @@ public class UserFileService {
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+    
+
+    public ResponseEntity<String> renameFolder(Long userId, Long folderId, String newName) {
+
+        try {
+            // See if the folder exists
+            Optional<Folder> folder = folderRepository.findByUser_IdAndId(userId, folderId);
+
+            if (folder.isPresent()) {
+                Folder newFolder = folder.get();
+                newFolder.setName(newName);
+                folderRepository.save(newFolder);
+                return ResponseEntity.ok("Folder name updated successfully");
+
+            } else {
+                return ResponseEntity.status(404).body("Folder not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Folder was not found " + e.getMessage());
         }
     }
 }

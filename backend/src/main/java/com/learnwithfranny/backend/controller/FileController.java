@@ -15,13 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.DeleteFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteRequest;
 import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.dto.FolderWithFilesResponse;
+import com.learnwithfranny.backend.dto.RenameFolderRequest;
 
 import java.util.List;
 import com.learnwithfranny.backend.service.UserFileService;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 
@@ -138,6 +142,20 @@ public class FileController {
 
         } catch (Exception e) {
             // Handle any unexpected errors
+            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+
+    // Renaming a folder
+    @PutMapping("/folder/rename")
+    public ResponseEntity<String> renameFolder(@RequestBody RenameFolderRequest request) {
+
+        try {
+            userFileService.renameFolder(request.getUserId(), request.getFolderId(), request.getNewFolderName());
+            return new ResponseEntity<>(HttpStatus.CREATED); // Return success message with status 201
+
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
         }
     }
