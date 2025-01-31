@@ -28,6 +28,7 @@ const FileCard = ({ file, folder }) => {
     window.location.reload();
   };
 
+  //   Toggle is dropped down
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
