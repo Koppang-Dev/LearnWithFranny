@@ -4,15 +4,50 @@ import SearchBar from "@/components/custom/SearchBar";
 import FileList from "./FileList";
 import FolderList from "./FolderList";
 import { fetchDocuments } from "@/app/utils/FileApi";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const NoteDashboard = () => {
   const [documents, setDocuments] = useState([]);
+  const [selectedFolder, setSelectedFolder] = useState(null); // Track selected folder
   const [defaultFolderFiles, setDefaultFolderFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUser();
   const userId = user?.id ?? 10;
+
+  // Handle drag-and-drop functionality
+  const handleDrop = (item, folderId) => {
+    const file = documents
+      .flatMap((folder) => folder.files)
+      .find((f) => f.id === item.id);
+    if (file) {
+      // Move the file to the target folder
+      const updatedFolders = documents.map((folder) => {
+        if (folder.id === folderId) {
+          return {
+            ...folder,
+            files: [...folder.files, file], // Add the file to the new folder
+          };
+        }
+        return folder;
+      });
+
+      // Remove the file from its previous folder
+      const updatedFiles = updatedFolders.map((folder) => {
+        if (folder.id === file.folderId) {
+          return {
+            ...folder,
+            files: folder.files.filter((f) => f.id !== file.id),
+          };
+        }
+        return folder;
+      });
+
+      setDocuments(updatedFiles);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,19 +76,64 @@ const NoteDashboard = () => {
   const filteredDefaultFiles = defaultFolderFiles.filter((file) =>
     file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   const filteredFolders = documents.filter((folder) =>
     folder.folderName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleFolderClick = (folder) => {
+    console.log("Going to new folder");
+    setSelectedFolder(folder); // Set the selected folder
+  };
+
+  const handleBackClick = () => {
+    setSelectedFolder(null); // Go back to the main folder view
+  };
+
   return (
-    <div>
-      <h2 className="font-bold text-3xl">Workspace</h2>
-      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      {filteredDefaultFiles.length > 0 && (
-        <FileList files={filteredDefaultFiles} />
-      )}
-      {filteredFolders.length > 0 && <FolderList folders={filteredFolders} />}
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div>
+        <h2 className="font-bold text-3xl">Workspace</h2>
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        {selectedFolder ? (
+          <div>
+            <button
+              onClick={handleBackClick}
+              className="text-blue-500 hover:underline mb-4"
+            >
+              Back to Folders
+            </button>
+            <h3 className="font-bold text-2xl">{selectedFolder.folderName}</h3>
+            {/* Render files inside the selected folder */}
+            <FileList
+              files={selectedFolder.files.filter((file) =>
+                file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
+              )}
+            />
+            {/* Render subfolders inside the selected folder */}
+            <FolderList
+              folders={selectedFolder.subfolders || []}
+              onFileDrop={handleDrop}
+            />
+          </div>
+        ) : (
+          <div>
+            {/* Render default files if no folder is selected */}
+            {filteredDefaultFiles.length > 0 && (
+              <FileList files={filteredDefaultFiles} />
+            )}
+            {/* Render all folders if no folder is selected */}
+            {filteredFolders.length > 0 && (
+              <FolderList
+                folders={filteredFolders}
+                onFileDrop={handleDrop}
+                onFolderClick={handleFolderClick} // Pass the click handler to each folder
+              />
+            )}
+          </div>
+        )}
+      </div>
+    </DndProvider>
   );
 };
 

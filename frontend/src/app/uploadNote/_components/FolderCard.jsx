@@ -2,8 +2,9 @@ import { deleteFolder, renameFolder } from "@/app/utils/FileApi";
 import React, { useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import DropdownMenu from "./DropdownMenu";
+import { useDrop } from "react-dnd";
 
-const FolderCard = ({ folder }) => {
+const FolderCard = ({ folder, onFileDrop, onClick }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
@@ -30,10 +31,28 @@ const FolderCard = ({ folder }) => {
     setShowDropdown((prev) => !prev);
   };
 
+  // Drag and drop logic for the folder
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: "FILE", // The folder accepts files as the drop target
+    drop: (item) => {
+      console.log(
+        `Dropped file: ${item.fileName} into folder: ${folder.folderName}`
+      );
+      // Call the onFileDrop callback when a file is dropped into the folder
+      onFileDrop(item.file, folder);
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(), // Is the folder currently being hovered over by a draggable item?
+    }),
+  }));
+
   return (
     <div
-      className="relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+      ref={drop}
+      className={`relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all
+      ${isOver ? "bg-green-100 border-green-500" : "bg-white"}`}
       onMouseLeave={() => setShowDropdown(false)}
+      onClick={onClick}
     >
       <div className="absolute top-2 right-2">
         <FaEllipsisV className="cursor-pointer" onClick={toggleDropdown} />

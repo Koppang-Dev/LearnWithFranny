@@ -3,6 +3,7 @@ import Image from "next/image";
 import { FaEllipsisV } from "react-icons/fa";
 import DropdownMenu from "./DropdownMenu";
 import { deleteFile, renameFile } from "@/app/utils/FileApi";
+import { useDrag } from "react-dnd";
 
 const FileCard = ({ file, folder }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -18,6 +19,18 @@ const FileCard = ({ file, folder }) => {
 
     setShowConfirmDialog(false); // Close the dialog after confirming
   };
+
+  // Dragging logic
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "FILE", // Type of draggable item
+    item: {
+      id: file.fileId,
+      fileName: file.fileName,
+    }, // Data passed with the drag
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
 
   // Handling the renaming of the folder
   const handleRename = async () => {
@@ -35,8 +48,9 @@ const FileCard = ({ file, folder }) => {
 
   return (
     <div
-      className="relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
-      onMouseLeave={() => setShowDropdown(false)}
+      ref={drag}
+      className={`relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all
+      ${isDragging ? "opacity-50" : ""}`}
     >
       <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
       <div className="absolute top-2 right-2">
