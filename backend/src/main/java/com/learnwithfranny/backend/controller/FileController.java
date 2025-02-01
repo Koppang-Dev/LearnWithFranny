@@ -20,6 +20,7 @@ import com.learnwithfranny.backend.dto.DeleteFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteRequest;
 import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.dto.FolderWithFilesResponse;
+import com.learnwithfranny.backend.dto.MoveFileRequest;
 import com.learnwithfranny.backend.dto.RenameFileRequest;
 import com.learnwithfranny.backend.dto.RenameFolderRequest;
 
@@ -171,6 +172,22 @@ public class FileController {
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/move")
+    public ResponseEntity<String> moveFileToFolder(@RequestBody MoveFileRequest request) {
+        try {
+            userFileService.moveFileToFolder(
+                request.getUserId(),
+                request.getFileId(),
+                request.getFromFolderId(),
+                request.getToFolderId()
+            );
+            return ResponseEntity.ok("File moved successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("Error moving file: " + e.getMessage());
         }
     }
 }

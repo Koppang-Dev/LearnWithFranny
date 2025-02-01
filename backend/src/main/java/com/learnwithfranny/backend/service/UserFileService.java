@@ -294,4 +294,23 @@ public class UserFileService {
             return ResponseEntity.status(500).body("File was not found " + e.getMessage());
         }
     }
+
+
+    public void moveFileToFolder(Long userId, Long fileId, Long fromFolderId, Long toFolderId) {
+        // Validate file ownership
+        UserFileMetaData file = userFileRepository.findById(fileId)
+            .orElseThrow(() -> new RuntimeException("File not found"));
+    
+        if (!file.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized file access");
+        }
+    
+        // Validate target folder
+        Folder targetFolder = folderRepository.findById(toFolderId)
+            .orElseThrow(() -> new RuntimeException("Target folder not found"));
+    
+        // Move file
+        file.setFolder(targetFolder);
+        userFileRepository.save(file);
+    }
 }

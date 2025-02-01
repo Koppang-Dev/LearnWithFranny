@@ -3,7 +3,7 @@ import { useUser } from "@/app/context/UserContext";
 import SearchBar from "@/components/custom/SearchBar";
 import FileList from "./FileList";
 import FolderList from "./FolderList";
-import { fetchDocuments } from "@/app/utils/FileApi";
+import { fetchDocuments, moveFileToFolder } from "@/app/utils/FileApi";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -18,46 +18,17 @@ const NoteDashboard = () => {
   const userId = user?.id ?? 10;
 
   // Handle drag-and-drop functionality
-  const handleDrop = async (item, folderId) => {
+  const handleDrop = async (item, targetFolderId) => {
+    console.log("Dropped File ID:", item.id);
     console.log("Dropped file:", item.fileName);
     console.log("Original folder:", item.folderId);
-    console.log("Target folder:", folderId);
+    console.log("Target folder:", targetFolderId);
 
-    const file = documents
-      .flatMap((folder) => folder.files)
-      .find((f) => f.id === item.id);
-
-    if (file) {
-      try {
-        // Call the API to move the file
-        await moveFileToFolder(userId, file.id, file.folderId, folderId);
-
-        // Update the state after the file has been moved
-        const updatedFolders = documents.map((folder) => {
-          if (folder.id === folderId) {
-            return {
-              ...folder,
-              files: [...folder.files, file], // Add the file to the new folder
-            };
-          }
-          return folder;
-        });
-
-        // Remove the file from its previous folder
-        const updatedFiles = updatedFolders.map((folder) => {
-          if (folder.id === file.folderId) {
-            return {
-              ...folder,
-              files: folder.files.filter((f) => f.id !== file.id),
-            };
-          }
-          return folder;
-        });
-
-        setDocuments(updatedFiles);
-      } catch (error) {
-        console.error("Error moving file:", error);
-      }
+    try {
+      await moveFileToFolder(userId, item.id, item.folderId, targetFolderId);
+      window.location.reload(); // Force refresh the screen
+    } catch (error) {
+      console.error("Error moving file:", error);
     }
   };
 

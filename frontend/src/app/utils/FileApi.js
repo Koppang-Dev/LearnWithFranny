@@ -172,5 +172,5 @@ export const moveFileToFolder = async (
 
   if (!response.ok) throw new Error("Failed to move file");
 
-  return await response.json();
+  return await response.text();
 };
