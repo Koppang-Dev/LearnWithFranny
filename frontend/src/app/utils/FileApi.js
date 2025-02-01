@@ -174,3 +174,35 @@ export const moveFileToFolder = async (
 
   return await response.text();
 };
+
+/**
+ * Downloads a specified file for the given user.
+ *
+ * @param {string} userId - The unique identifier of the user who owns the file.
+ * @param {string} fileId - The unique identifier of the file to be downloaded.
+ * @returns {Promise<void>} - A promise that resolves when the file is downloaded.
+ * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
+ */
+export const downloadFile = async (fileId) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/file/download`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fileId }),
+      }
+    );
+
+    if (response.ok) {
+      const blob = await response.blob(); // Get the file blob
+      return blob; // Return the blob to be handled by handleDownload
+    } else {
+      console.error("Error downloading file:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error downloading file:", error);
+  }
+};

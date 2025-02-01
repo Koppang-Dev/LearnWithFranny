@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.DeleteFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteRequest;
+import com.learnwithfranny.backend.dto.FileDownloadRequest;
 import com.learnwithfranny.backend.dto.FileDownloadResponse;
 import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.dto.FolderWithFilesResponse;
@@ -102,9 +103,12 @@ public class FileController {
     }
 
     // Downloading file endpoint
-    @GetMapping("/download/{fileId}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long fileId) {
+    @PostMapping("/download")
+    public ResponseEntity<ByteArrayResource> downloadFile(@RequestBody FileDownloadRequest request) {
         try {
+
+            Long fileId = request.getFileId();
+
             // Call service to handle the download logic
             FileDownloadResponse downloadResponse = userFileService.downloadFile(fileId);
     
@@ -120,9 +124,6 @@ public class FileController {
         }
     }
     
-
-
-
     @DeleteMapping()
     public ResponseEntity<String> deleteFile(@RequestBody DeleteRequest deleteRequest) {
         try {

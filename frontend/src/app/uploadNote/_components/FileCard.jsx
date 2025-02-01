@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { FaEllipsisV } from "react-icons/fa";
 import DropdownMenu from "./DropdownMenu";
-import { deleteFile, renameFile } from "@/app/utils/FileApi";
+import { deleteFile, downloadFile, renameFile } from "@/app/utils/FileApi";
 import { useDrag } from "react-dnd";
 
 const FileCard = ({ file, folderId }) => {
@@ -48,6 +48,32 @@ const FileCard = ({ file, folderId }) => {
     setShowDropdown((prev) => !prev);
   };
 
+  // Handling the file download
+  const handleDownload = async () => {
+    try {
+      console.log("Downloading file...");
+      setShowDropdown(false);
+
+      // Assuming `userId` and `fileId` are available in the component
+      const response = await downloadFile(file.fileId); // Use your `downloadFile` function here
+
+      // Create a Blob from the binary data
+      const blob = new Blob([response], {
+        type: "application/octet-stream",
+      });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+
+      // Use the filename from the response header or a default one
+      const filename = "downloaded-file"; // If the filename isn't returned by the response, you can specify a default one
+
+      link.download = filename; // Set the filename for download
+      link.click(); // Trigger download
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
+
   return (
     <div
       ref={drag}
@@ -71,7 +97,7 @@ const FileCard = ({ file, folderId }) => {
             },
             { label: "Delete", onClick: () => setShowConfirmDialog(true) },
             { label: "Share", onClick: () => console.log("Share clicked") },
-            { label: "Download", onClick: () => console.log("Share clicked") },
+            { label: "Download", onClick: () => handleDownload() },
           ]}
         />
       )}
