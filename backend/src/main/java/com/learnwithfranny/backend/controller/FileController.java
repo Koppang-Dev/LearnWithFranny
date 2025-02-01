@@ -27,6 +27,8 @@ import com.learnwithfranny.backend.dto.RenameFileRequest;
 import com.learnwithfranny.backend.dto.RenameFolderRequest;
 
 import java.util.List;
+import java.util.Map;
+
 import com.learnwithfranny.backend.service.UserFileService;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -65,7 +67,7 @@ public class FileController {
     public ResponseEntity<String> handleFileUpload(@PathVariable("userId") Long userId,
             @RequestParam("file") MultipartFile file, @RequestParam("fileName") String fileName,
             @RequestParam(value = "folderId", required = false) String folderIdString) {
-        
+
         long folderId = Long.parseLong(folderIdString);
 
         try {
@@ -111,7 +113,7 @@ public class FileController {
 
             // Call service to handle the download logic
             FileDownloadResponse downloadResponse = userFileService.downloadFile(fileId);
-    
+
             // Return file as a download response
             ByteArrayResource resource = new ByteArrayResource(downloadResponse.getData());
             return ResponseEntity.ok()
@@ -123,7 +125,7 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Handle other errors
         }
     }
-    
+
     @DeleteMapping()
     public ResponseEntity<String> deleteFile(@RequestBody DeleteRequest deleteRequest) {
         try {
@@ -159,7 +161,6 @@ public class FileController {
         }
     }
 
-
     // Renaming a folder
     @PutMapping("/folder/rename")
     public ResponseEntity<String> renameFolder(@RequestBody RenameFolderRequest request) {
@@ -190,15 +191,34 @@ public class FileController {
     public ResponseEntity<String> moveFileToFolder(@RequestBody MoveFileRequest request) {
         try {
             userFileService.moveFileToFolder(
-                request.getUserId(),
-                request.getFileId(),
-                request.getFromFolderId(),
-                request.getToFolderId()
-            );
+                    request.getUserId(),
+                    request.getFileId(),
+                    request.getFromFolderId(),
+                    request.getToFolderId());
             return ResponseEntity.ok("File moved successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                .body("Error moving file: " + e.getMessage());
+                    .body("Error moving file: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/get-presigned-url")
+    public ResponseEntity<String> getPresignedUrl(@RequestBody Map<String, Long> request) {
+        try {
+            Long fileId = request.get("fileId");
+            // Call the service to retrieve the pre-signed URL
+            String preSignedUrl = userFileService.RetrieveFileUrl(fileId);
+
+            // Return the pre-signed URL in the response
+            return ResponseEntity.ok(preSignedUrl);
+        } catch (RuntimeException e) {
+            // Handle the case where the file is not found or unauthorized access
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Unauthorized file access");
+        } catch (Exception e) {
+            // Handle any other unexpected errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while generating the pre-signed URL");
         }
     }
 }

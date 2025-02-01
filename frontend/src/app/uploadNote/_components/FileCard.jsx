@@ -2,14 +2,22 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { FaEllipsisV } from "react-icons/fa";
 import DropdownMenu from "./DropdownMenu";
-import { deleteFile, downloadFile, renameFile } from "@/app/utils/FileApi";
+import {
+  deleteFile,
+  downloadFile,
+  fetchPresignedUrl,
+  renameFile,
+} from "@/app/utils/FileApi";
 import { useDrag } from "react-dnd";
+import { useRouter } from "next/navigation";
 
 const FileCard = ({ file, folderId }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newFileName, setNewFileName] = useState(file.fileName);
+
+  const router = useRouter();
 
   console.log(folderId);
   const handleDelete = async () => {
@@ -48,6 +56,18 @@ const FileCard = ({ file, folderId }) => {
     setShowDropdown((prev) => !prev);
   };
 
+  // Handle file click to open PDF viewer
+  const handleFileClick = async () => {
+    try {
+      const preSignedUrl = await fetchPresignedUrl(file.fileId);
+      console.log("Pre-signed URL:", preSignedUrl);
+      // You can now use this URL to allow the user to download the file
+      window.open(preSignedUrl, "_blank");
+    } catch (error) {
+      console.error("Error fetching pre-signed URL:", error);
+    }
+  };
+
   // Handling the file download
   const handleDownload = async () => {
     try {
@@ -77,6 +97,7 @@ const FileCard = ({ file, folderId }) => {
   return (
     <div
       ref={drag}
+      onClick={handleFileClick}
       onMouseLeave={() => setShowDropdown(false)}
       className={`relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all
       ${isDragging ? "opacity-50" : ""}`}

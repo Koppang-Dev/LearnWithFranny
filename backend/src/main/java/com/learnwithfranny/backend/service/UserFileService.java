@@ -348,18 +348,32 @@ public class UserFileService {
      }
     
      public FileDownloadResponse downloadFile(Long fileId) throws Exception {
-        // Step 1: Retrieve the file metadata from the database
-        UserFileMetaData fileMetadata = userFileRepository.findById(fileId)
-                .orElseThrow(() -> new Exception("File not found"));
+         // Step 1: Retrieve the file metadata from the database
+         UserFileMetaData fileMetadata = userFileRepository.findById(fileId)
+                 .orElseThrow(() -> new Exception("File not found"));
 
-        // Step 2: Get the S3 key from metadata
-        String s3Key = fileMetadata.getS3Key();
-        String fileName = fileMetadata.getFileName();
+         // Step 2: Get the S3 key from metadata
+         String s3Key = fileMetadata.getS3Key();
+         String fileName = fileMetadata.getFileName();
 
-        // Step 3: Download the file from the storage service (e.g., S3)
-        byte[] data = storageService.downloadFile(s3Key);
+         // Step 3: Download the file from the storage service (e.g., S3)
+         byte[] data = storageService.downloadFile(s3Key);
 
-        // Step 4: Return a response object containing the file data and filename
-        return new FileDownloadResponse(data, fileName);
-    }
+         // Step 4: Return a response object containing the file data and filename
+         return new FileDownloadResponse(data, fileName);
+     }
+    
+
+     public String RetrieveFileUrl(Long fileId) throws Exception {
+         // Get the file s3 key
+         Optional<UserFileMetaData> file = userFileRepository.findById(fileId);
+
+         if (file.isPresent()) {
+            UserFileMetaData foundFile = file.get();
+            String url = storageService.generatePreSignedUrl(foundFile.getS3Key());
+            return url;
+        } else {
+            throw new RuntimeException("Unauthorized file access");
+        }
+     }
 }

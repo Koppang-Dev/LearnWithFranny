@@ -17,6 +17,11 @@ const logos = [
   "/images/ubc.svg",
   "/images/uofc.png",
   "/images/uoft.png",
+  "/images/virginia.png",
+  "/images/princeton.png",
+  "/images/georgia.png",
+  "/images/chicago.png",
+  "/images/arizona.png",
 ];
 
 const EducationCarousel = () => {

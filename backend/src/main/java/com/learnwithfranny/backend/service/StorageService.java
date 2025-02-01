@@ -79,5 +79,12 @@ public class StorageService {
     public String getFileUrl(String s3Key) {
         return s3Client.getUrl(bucketName, s3Key).toString();
     }
+
+    public String generatePreSignedUrl(String fileName) {
+        // Setting expiration time for the URL (5 minutes in this case)
+        java.util.Date expiration = new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 5);
+        // Generating the pre-signed URL
+        return s3Client.generatePresignedUrl(bucketName, fileName, expiration).toString();
+    }
     
 } 

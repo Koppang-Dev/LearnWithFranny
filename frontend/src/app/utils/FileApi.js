@@ -206,3 +206,32 @@ export const downloadFile = async (fileId) => {
     console.error("Error downloading file:", error);
   }
 };
+
+/**
+ * Fetches a pre-signed URL for downloading a file.
+ *
+ * @param {number} fileId - The unique identifier of the file.
+ * @returns {Promise<string>} - A promise that resolves to the pre-signed URL.
+ * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
+ */
+export const fetchPresignedUrl = async (fileId) => {
+  const requestData = { fileId };
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/file/get-presigned-url`,
+    {
+      method: "POST", // Use GET since it's still a retrieval operation
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData), // Send the fileId in the request body
+    }
+  );
+
+  if (!response.ok) {
+    const errorMessage = await response.text();
+    throw new Error(errorMessage || "Failed to fetch pre-signed URL");
+  }
+
+  return await response.text();
+};
