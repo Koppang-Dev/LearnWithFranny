@@ -1,4 +1,5 @@
 package com.learnwithfranny.backend.service;
+import com.learnwithfranny.backend.dto.FileDownloadResponse;
 import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.dto.FolderWithFilesResponse;
 import com.learnwithfranny.backend.model.Folder;
@@ -299,18 +300,66 @@ public class UserFileService {
     public void moveFileToFolder(Long userId, Long fileId, Long fromFolderId, Long toFolderId) {
         // Validate file ownership
         UserFileMetaData file = userFileRepository.findById(fileId)
-            .orElseThrow(() -> new RuntimeException("File not found"));
-    
+                .orElseThrow(() -> new RuntimeException("File not found"));
+
         if (!file.getUser().getId().equals(userId)) {
             throw new RuntimeException("Unauthorized file access");
         }
-    
+
         // Validate target folder
         Folder targetFolder = folderRepository.findById(toFolderId)
-            .orElseThrow(() -> new RuntimeException("Target folder not found"));
-    
+                .orElseThrow(() -> new RuntimeException("Target folder not found"));
+
         // Move file
         file.setFolder(targetFolder);
         userFileRepository.save(file);
+    }
+    
+     /**
+     * Retrieves a specific file by its ID and associated user ID.
+     * 
+     * @param userId the ID of the user who owns the file.
+     * @param fileId the ID of the file to retrieve.
+     * @return a response entity containing the file metadata or an error message.
+     */
+     public ResponseEntity<FileResponse> getFileById(Long userId, Long fileId) {
+         Optional<UserFileMetaData> userFileOpt = userFileRepository.findByUser_IdAndFileId(userId, fileId);
+
+         if (userFileOpt.isPresent()) {
+             UserFileMetaData userFile = userFileOpt.get();
+
+             // Generate file URL using StorageService
+             String fileUrl = storageService.getFileUrl(userFile.getS3Key());
+             String folderName = userFile.getFolder() != null ? userFile.getFolder().getName() : "";
+
+             FileResponse fileResponse = new FileResponse(
+                     userFile.getFileId(),
+                     userFile.getFileName(),
+                     fileUrl,
+                     userFile.getFileType(),
+                     userFile.getFileSize(),
+                     folderName,
+                     userFile.getFolder() != null ? userFile.getFolder().getId() : null);
+
+             return ResponseEntity.ok(fileResponse);
+         } else {
+             return ResponseEntity.status(HttpStatusCode.valueOf(404)).body(null);
+         }
+     }
+    
+     public FileDownloadResponse downloadFile(Long fileId) throws Exception {
+        // Step 1: Retrieve the file metadata from the database
+        UserFileMetaData fileMetadata = userFileRepository.findById(fileId)
+                .orElseThrow(() -> new Exception("File not found"));
+
+        // Step 2: Get the S3 key from metadata
+        String s3Key = fileMetadata.getS3Key();
+        String fileName = fileMetadata.getFileName();
+
+        // Step 3: Download the file from the storage service (e.g., S3)
+        byte[] data = storageService.downloadFile(s3Key);
+
+        // Step 4: Return a response object containing the file data and filename
+        return new FileDownloadResponse(data, fileName);
     }
 }

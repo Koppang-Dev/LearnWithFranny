@@ -51,6 +51,7 @@ const FileCard = ({ file, folderId }) => {
   return (
     <div
       ref={drag}
+      onMouseLeave={() => setShowDropdown(false)}
       className={`relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all
       ${isDragging ? "opacity-50" : ""}`}
     >
@@ -70,6 +71,7 @@ const FileCard = ({ file, folderId }) => {
             },
             { label: "Delete", onClick: () => setShowConfirmDialog(true) },
             { label: "Share", onClick: () => console.log("Share clicked") },
+            { label: "Download", onClick: () => console.log("Share clicked") },
           ]}
         />
       )}

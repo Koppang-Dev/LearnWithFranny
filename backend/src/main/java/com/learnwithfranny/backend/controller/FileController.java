@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.DeleteFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteRequest;
+import com.learnwithfranny.backend.dto.FileDownloadResponse;
 import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.dto.FolderWithFilesResponse;
 import com.learnwithfranny.backend.dto.MoveFileRequest;
@@ -101,19 +102,26 @@ public class FileController {
     }
 
     // Downloading file endpoint
-    @GetMapping("/download/{fileName}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) {
-
-        // Converting to ByteArrayResource
-        byte[] data = storageService.downloadFile(fileName);
-        ByteArrayResource resource = new ByteArrayResource(data);
-
-        return ResponseEntity.ok()
-                .contentLength(data.length)
-                .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
-                .body(resource);
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long fileId) {
+        try {
+            // Call service to handle the download logic
+            FileDownloadResponse downloadResponse = userFileService.downloadFile(fileId);
+    
+            // Return file as a download response
+            ByteArrayResource resource = new ByteArrayResource(downloadResponse.getData());
+            return ResponseEntity.ok()
+                    .contentLength(downloadResponse.getData().length)
+                    .header("Content-Type", "application/octet-stream")
+                    .header("Content-Disposition", "attachment; filename=\"" + downloadResponse.getFileName() + "\"")
+                    .body(resource);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Handle other errors
+        }
     }
+    
+
+
 
     @DeleteMapping()
     public ResponseEntity<String> deleteFile(@RequestBody DeleteRequest deleteRequest) {
