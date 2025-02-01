@@ -62,7 +62,9 @@ public class FileController {
     @PostMapping("/{userId}/upload")
     public ResponseEntity<String> handleFileUpload(@PathVariable("userId") Long userId,
             @RequestParam("file") MultipartFile file, @RequestParam("fileName") String fileName,
-            @RequestParam(value = "folderId", required = false) Long folderId) {
+            @RequestParam(value = "folderId", required = false) String folderIdString) {
+        
+        long folderId = Long.parseLong(folderIdString);
 
         try {
             // Call the service method to upload the file and save the metadata

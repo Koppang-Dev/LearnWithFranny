@@ -16,8 +16,10 @@ import { useState } from "react";
 import uuid4 from "uuid4";
 import { useUser } from "@/app/context/UserContext";
 import { useRef } from "react";
+import { useFolder } from "@/app/context/FolderProvider";
 
 const UploadScreen = ({ children }) => {
+  const { currentFolder } = useFolder();
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -45,6 +47,11 @@ const UploadScreen = ({ children }) => {
       return;
     }
 
+    if (!currentFolder?.folderId) {
+      alert("Folder ID is missing or invalid");
+      return;
+    }
+
     // Starting loading indicator
     setLoading(true);
 
@@ -52,6 +59,7 @@ const UploadScreen = ({ children }) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("fileName", fileName);
+    formData.append("folderId", currentFolder.folderId);
 
     // Send the file to the backend
     try {

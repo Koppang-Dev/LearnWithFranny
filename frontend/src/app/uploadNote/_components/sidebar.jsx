@@ -5,8 +5,14 @@ import Image from "next/image";
 import CreateFolderScren from "./CreateFolderScreen";
 import UploadScreen from "./UploadScreen";
 import Link from "next/link";
-
+import { useFolder } from "@/app/context/FolderProvider";
 const Sidebar = () => {
+  const { setCurrentFolder } = useFolder();
+
+  const handleFolderClick = (folderId) => {
+    setCurrentFolder({ folderId });
+  };
+
   return (
     <div className="shadow-md h-screen p-7">
       <Link href="/dashboard">
@@ -22,7 +28,10 @@ const Sidebar = () => {
         <CreateFolderScren>
           <Button className="w-full mt-5"> + Create Folder </Button>
         </CreateFolderScren>
-        <div className="flex gap-2 items-center p-3 mt-5 hover:bg-slate-100 rounded-lg cursor-pointer">
+        <div
+          className="flex gap-2 items-center p-3 mt-5 hover:bg-slate-100 rounded-lg cursor-pointer"
+          onClick={() => handleFolderClick("workspace")}
+        >
           <Layout />
           <h2>Workspace</h2>
         </div>

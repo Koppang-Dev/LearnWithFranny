@@ -6,6 +6,7 @@ import FolderList from "./FolderList";
 import { fetchDocuments, moveFileToFolder } from "@/app/utils/FileApi";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { useFolder } from "@/app/context/FolderProvider";
 
 const NoteDashboard = () => {
   const [documents, setDocuments] = useState([]);
@@ -15,6 +16,8 @@ const NoteDashboard = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useUser();
+  const { currentFolder, setCurrentFolder } = useFolder();
+
   const userId = user?.id ?? 10;
 
   // Handle drag-and-drop functionality
@@ -67,6 +70,7 @@ const NoteDashboard = () => {
   const handleFolderClick = (folder) => {
     console.log("Going to new folder");
     setSelectedFolder(folder); // Set the selected folder
+    setCurrentFolder(folder);
   };
 
   const handleBackClick = () => {
@@ -92,7 +96,7 @@ const NoteDashboard = () => {
               files={selectedFolder.files.filter((file) =>
                 file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
               )}
-              folderId={file.folderId}
+              folderId={filteredDefaultFiles[0]?.folderId}
             />
             {/* Render subfolders inside the selected folder */}
             <FolderList
