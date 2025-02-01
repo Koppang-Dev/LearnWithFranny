@@ -5,15 +5,16 @@ import DropdownMenu from "./DropdownMenu";
 import { deleteFile, renameFile } from "@/app/utils/FileApi";
 import { useDrag } from "react-dnd";
 
-const FileCard = ({ file, folder }) => {
+const FileCard = ({ file, folderId }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newFileName, setNewFileName] = useState(file.fileName);
 
+  console.log(folderId);
   const handleDelete = async () => {
     console.log(`Deleting file: ${file.fileName}`);
-    const folderId = folder ? folder.folderId : null;
+    const folderId = folderId ? folderId : null;
     deleteFile(10, file.fileName, folderId);
     window.location.reload();
 
@@ -26,6 +27,7 @@ const FileCard = ({ file, folder }) => {
     item: {
       id: file.fileId,
       fileName: file.fileName,
+      folderId: folderId,
     }, // Data passed with the drag
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),

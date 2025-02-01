@@ -36,10 +36,10 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
     accept: "FILE", // The folder accepts files as the drop target
     drop: (item) => {
       console.log(
-        `Dropped file: ${item.fileName} into folder: ${folder.folderName}`
+        `Dropped file: ${item.fileName} (original folder ID: ${item.folderId}) into folder: ${item.folderName}`
       );
       // Call the onFileDrop callback when a file is dropped into the folder
-      onFileDrop(item.file, folder);
+      onFileDrop(item, folder.folderId);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(), // Is the folder currently being hovered over by a draggable item?

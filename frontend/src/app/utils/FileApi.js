@@ -136,3 +136,41 @@ export const renameFile = async (userId, fileId, newFileName) => {
 
   return await response.text();
 };
+
+/**
+ * Moves a specified file to a different folder for the given user.
+ *
+ * @param {string} userId - The unique identifier of the user who owns the file.
+ * @param {string} fileId - The unique identifier of the file to be moved.
+ * @param {string} fromFolderId - The ID of the folder the file is currently in.
+ * @param {string} toFolderId - The ID of the folder where the file will be moved.
+ * @returns {Promise<Object>} - A promise that resolves to the server's response in JSON format.
+ * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
+ */
+export const moveFileToFolder = async (
+  userId,
+  fileId,
+  fromFolderId,
+  toFolderId
+) => {
+  const requestData = {
+    userId,
+    fileId,
+    fromFolderId,
+    toFolderId,
+  };
+
+  // Make an HTTP PUT request to move the file
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/file/move`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestData),
+    }
+  );
+
+  if (!response.ok) throw new Error("Failed to move file");
+
+  return await response.json();
+};

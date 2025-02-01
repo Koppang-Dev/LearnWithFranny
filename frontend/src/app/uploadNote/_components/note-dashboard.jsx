@@ -18,34 +18,46 @@ const NoteDashboard = () => {
   const userId = user?.id ?? 10;
 
   // Handle drag-and-drop functionality
-  const handleDrop = (item, folderId) => {
+  const handleDrop = async (item, folderId) => {
+    console.log("Dropped file:", item.fileName);
+    console.log("Original folder:", item.folderId);
+    console.log("Target folder:", folderId);
+
     const file = documents
       .flatMap((folder) => folder.files)
       .find((f) => f.id === item.id);
+
     if (file) {
-      // Move the file to the target folder
-      const updatedFolders = documents.map((folder) => {
-        if (folder.id === folderId) {
-          return {
-            ...folder,
-            files: [...folder.files, file], // Add the file to the new folder
-          };
-        }
-        return folder;
-      });
+      try {
+        // Call the API to move the file
+        await moveFileToFolder(userId, file.id, file.folderId, folderId);
 
-      // Remove the file from its previous folder
-      const updatedFiles = updatedFolders.map((folder) => {
-        if (folder.id === file.folderId) {
-          return {
-            ...folder,
-            files: folder.files.filter((f) => f.id !== file.id),
-          };
-        }
-        return folder;
-      });
+        // Update the state after the file has been moved
+        const updatedFolders = documents.map((folder) => {
+          if (folder.id === folderId) {
+            return {
+              ...folder,
+              files: [...folder.files, file], // Add the file to the new folder
+            };
+          }
+          return folder;
+        });
 
-      setDocuments(updatedFiles);
+        // Remove the file from its previous folder
+        const updatedFiles = updatedFolders.map((folder) => {
+          if (folder.id === file.folderId) {
+            return {
+              ...folder,
+              files: folder.files.filter((f) => f.id !== file.id),
+            };
+          }
+          return folder;
+        });
+
+        setDocuments(updatedFiles);
+      } catch (error) {
+        console.error("Error moving file:", error);
+      }
     }
   };
 
@@ -109,6 +121,7 @@ const NoteDashboard = () => {
               files={selectedFolder.files.filter((file) =>
                 file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
               )}
+              folderId={file.folderId}
             />
             {/* Render subfolders inside the selected folder */}
             <FolderList
@@ -120,7 +133,10 @@ const NoteDashboard = () => {
           <div>
             {/* Render default files if no folder is selected */}
             {filteredDefaultFiles.length > 0 && (
-              <FileList files={filteredDefaultFiles} />
+              <FileList
+                files={filteredDefaultFiles}
+                folderId={filteredDefaultFiles[0]?.folderId}
+              />
             )}
             {/* Render all folders if no folder is selected */}
             {filteredFolders.length > 0 && (
