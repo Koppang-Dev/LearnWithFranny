@@ -1,94 +1,179 @@
 "use client";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 const RecordingView = () => {
-  // Audio recording states
   const [isRecording, setIsRecording] = useState(false);
   const [recordingComplete, setRecordingComplete] = useState(false);
-  const [transcript, setTranscript] = useState(false);
+  const [transcript, setTranscript] = useState("");
   const recognitionRef = useRef(null);
+  const canvasRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const bufferLengthRef = useRef(null);
+  const dataArrayRef = useRef(null);
 
-  // Starts recording
+  // Start recording and audio visualization
   const startRecording = () => {
     setIsRecording(true);
 
-    // Check if webkitSpeechRecognition is available
     if (window.webkitSpeechRecognition) {
       recognitionRef.current = new window.webkitSpeechRecognition();
-      recognitionRef.current.interimResults = true;
+      recognitionRef.current.continuous = true; // Keep recognition running continuously
+      recognitionRef.current.interimResults = true; // Allow intermediate results
       recognitionRef.current.onresult = (event) => {
         const { transcript } = event.results[event.results.length - 1][0];
-        setTranscript(transcript);
+        setTranscript(transcript); // Update the transcript as the speech is recognized
+      };
+      recognitionRef.current.onerror = (event) => {
+        console.error("Speech recognition error: ", event.error); // Log any errors for debugging
       };
 
       recognitionRef.current.start();
+      initAudio();
     } else {
       console.log("Speech recognition not supported in this browser.");
     }
   };
 
-  //
+  // Stop recording and stop audio visualization
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setRecordingComplete(true);
+    }
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+    }
+  };
+
+  // Handle audio visualization
+  const initAudio = () => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        audioContextRef.current = new (window.AudioContext ||
+          window.webkitAudioContext)();
+        analyserRef.current = audioContextRef.current.createAnalyser();
+        const source = audioContextRef.current.createMediaStreamSource(stream);
+        source.connect(analyserRef.current);
+        analyserRef.current.fftSize = 256;
+        bufferLengthRef.current = analyserRef.current.frequencyBinCount;
+        dataArrayRef.current = new Uint8Array(bufferLengthRef.current);
+
+        draw();
+      })
+      .catch((err) => {
+        console.log("Error accessing microphone", err);
+      });
+  };
+
+  // Draw audio visualization (single line)
+  const draw = () => {
+    if (analyserRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+
+      analyserRef.current.getByteFrequencyData(dataArrayRef.current);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const width = canvas.width;
+      const barWidth = width / bufferLengthRef.current;
+      let x = 0;
+
+      // Find the highest peak in the frequency data
+      let maxVal = 0;
+      for (let i = 0; i < bufferLengthRef.current; i++) {
+        maxVal = Math.max(maxVal, dataArrayRef.current[i]);
+      }
+
+      // Set the middle of the canvas as the highest point
+      const centerY = canvas.height;
+
+      // Draw the line with the center as the highest point
+      ctx.strokeStyle = "rgba(128, 0, 128, 0.8)";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(0, centerY); // Start at the bottom (invert the value)
+
+      // Create a dynamic line based on frequency values, scaling it from the center
+      for (let i = 1; i < bufferLengthRef.current; i++) {
+        const value = dataArrayRef.current[i];
+        const y = centerY - value; // Invert the value to make the center the highest point
+        ctx.lineTo(x + barWidth, y);
+        x += barWidth;
+      }
+
+      ctx.stroke();
+
+      requestAnimationFrame(draw);
+    }
+  };
+
+  // Clean up on unmount
   useEffect(() => {
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
     };
   }, []);
 
-  // Stop recordingComplete
-  const stopRecoridng = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setRecordingComplete(true);
-    }
-  };
-
+  // Toggle recording on button click
   const handleToggleRecording = () => {
     setIsRecording(!isRecording);
     if (!isRecording) {
       startRecording();
     } else {
-      stopRecoridng;
+      stopRecording();
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-full bg-gray-100">
-      {/* Transcript Selection */}
-      <div className="w-full">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 to-gray-200 p-4">
+      <div className="max-w-lg w-full">
         {[isRecording || transcript] && (
-          <div className="w-1/4 m-auto rounded-md border p-4 bg-white">
-            <div className="flex-1 flex w-full justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
+          <div className="rounded-lg shadow-lg p-6 bg-white mb-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <p className="text-xl font-semibold">
                   {recordingComplete ? "Recorded" : "Recording"}
                 </p>
-                <p className="text-sm">
+                <p className="text-sm text-gray-600">
                   {recordingComplete
                     ? "Thanks for talking..."
-                    : "Start Speaking..."}
+                    : "Start speaking..."}
                 </p>
               </div>
+              {isRecording && (
+                <div className="rounded-full w-4 h-4 bg-red-400 animate-pulse" />
+              )}
             </div>
-            {isRecording && (
-              <div className="rounded-full w-4 h-4 bg-red-400 animate-pulse" />
-            )}
           </div>
         )}
         {transcript && (
-          <div className="border rounded-md p-2 mt-4">
-            <p className="mb-0">{transcript}</p>
+          <div className="border rounded-lg shadow p-4 bg-gray-50 mb-6">
+            <p className="text-gray-800">{transcript}</p>
           </div>
         )}
 
+        {/* Audio Visualizer Canvas (Single Line at the Bottom Half) */}
+        <canvas
+          ref={canvasRef}
+          width={window.innerWidth}
+          height={window.innerHeight / 2}
+          className="mx-auto mt-6 rounded-lg shadow-lg bg-gray-200"
+        />
+
         {/* Button Section */}
-        <div className="flex items-center w-full">
+        <div className="flex items-center justify-center mt-8">
           {isRecording ? (
             <button
               onClick={handleToggleRecording}
-              className="rounded-full w-20 h-20 mt-10 m-auto flex items-center justify-center bg-red-400 hover:bg-red-500"
+              className="rounded-full w-20 h-20 flex items-center justify-center bg-red-400 hover:bg-red-500 transition-colors duration-200 ease-in-out shadow-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -104,16 +189,16 @@ const RecordingView = () => {
           ) : (
             <button
               onClick={handleToggleRecording}
-              className="rounded-full w-20 h-20 mt-10 m-auto flex items-center justify-center bg-blue-400 hover:bg-blue-500"
+              className="rounded-full w-20 h-20 flex items-center justify-center bg-blue-400 hover:bg-blue-500 transition-colors duration-200 ease-in-out shadow-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-12 h-12 "
+                className="w-12 h-12"
                 viewBox="0 0 1024 1024"
               >
                 <path
                   fill="currentColor"
-                  d="M510.88 704h7.6C607.44 704 672 638.4 672 548.032V166.624C672 73.184 604.56 0 518.466 0h-7.584C423.264 0 352 74.752 352 166.624v381.408C352 636.944 420.304 704 510.88 704zM416 166.624C416 110.032 458.56 64 510.88 64h7.6C569.504 64 608 108.128 608 166.624v381.408C608 603.024 572.032 640 518.464 640h-7.584c-55.872 0-94.88-37.808-94.88-91.968zM800 352c-17.68 0-32 14.336-32 32v133.072c0 190.4-67.968 282.929-207.744 282.929H465.12c-182.8 0-209.12-153.84-209.12-282.928V384.001c0-17.664-14.336-32-32-32s-32 14.336-32 32v133.072c0 220.496 91.888 346.928 273.12 346.928H480v96H320c-17.664 0-32 14.336-32 32s14.336 32 32 32h384c17.664 0 32-14.336 32-32s-14.336-32-32-32H544v-96h16.256C684.224 864.001 832 803.809 832 517.072V384c0-17.664-14.32-32-32-32z"
+                  d="M510.88 704h7.6C607.44 704 672 638.4 672 548.032V166.624C672 73.184 604.56 0 518.466 0h-7.584C423.264 0 352 74.752 352 166.624v381.408C352 636.944 420.304 704 510.88 704zM416 166.624C416 110.032 458.56 64 510.88 64h7.6C569.504 64 608 108.128 608 166.624v381.408C608 603.024 572.032 640 518.464 640h-7.584c-55.872 0-94.88-37.808-94.88-91.968zM800 352c-17.68 0-32 14.336-32 32v133.072c0 190.4-67.968 282.929-207.744 282.929H465.12c-182.8 0-209.12-153.84-209.12-282.928V384.001c0-17.664-14.336-32-32-32s-32 14.336-32 32v133.072c0 220.496 91.888 346.928 273.12 346.928H480v96H320c-17.664 0-32 14.336-32 32s14.336 32 32 32h384c17.664 0 32-14.336 32-32s-14.336-32-32-32H544v-96h16.256C684.224 864.001 832 803.809 832 517.072V384c0-17.664-14.336-32-32-32z"
                 />
               </svg>
             </button>
