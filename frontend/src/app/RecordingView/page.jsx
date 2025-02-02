@@ -1,4 +1,5 @@
 "use client";
+import Menu from "@/components/Menu";
 import { useEffect, useRef, useState } from "react";
 
 const RecordingView = () => {
