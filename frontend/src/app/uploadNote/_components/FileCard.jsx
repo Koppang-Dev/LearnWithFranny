@@ -15,6 +15,8 @@ const FileCard = ({ file, folderId }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [newFileName, setNewFileName] = useState(file.fileName);
 
   const router = useRouter();
@@ -59,6 +61,10 @@ const FileCard = ({ file, folderId }) => {
 
   // Handle file click to open PDF viewer
   const handleFileClick = async () => {
+    // Do not activate when in the drop down
+    if (isRenaming || isSharing || isDeleting) {
+      return;
+    }
     try {
       const preSignedUrl = await fetchPresignedUrl(file.fileId);
       console.log("Pre-signed URL:", preSignedUrl);
@@ -104,7 +110,6 @@ const FileCard = ({ file, folderId }) => {
       ${isDragging ? "opacity-50" : ""}`}
     >
       <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
-
       {/* More button - Triggers dropdown */}
       <div
         className="absolute top-2 right-2"
@@ -115,7 +120,6 @@ const FileCard = ({ file, folderId }) => {
       >
         <FaEllipsisV className="cursor-pointer" />
       </div>
-
       {/* Drop down menu */}
       {showDropdown && (
         <DropdownMenu
@@ -128,14 +132,34 @@ const FileCard = ({ file, folderId }) => {
                 setIsRenaming(true);
               },
             },
-            { label: "Delete", onClick: () => setShowConfirmDialog(true) },
-            { label: "Share", onClick: () => console.log("Share clicked") },
+            {
+              label: "Delete",
+              onClick: (e) => {
+                e.stopPropagation();
+                setShowConfirmDialog(true);
+                setIsDeleting(true);
+              },
+            },
+            {
+              label: "Share",
+              onClick: (e) => {
+                e.stopPropagation();
+                console.log("Share clicked");
+              },
+            },
             { label: "Download", onClick: () => handleDownload() },
           ]}
         />
       )}
-      <h2 className="mt-3 font-medium text-xl">{file.fileName}</h2>
+
       {/* Rename File */}
+
+      <h2
+        className="mt-3 font-medium text-xl"
+        onClick={(e) => e.stopPropagation()} // Prevents file click event when clicking on the title
+      >
+        {file.fileName}
+      </h2>
       {isRenaming && (
         <div className="mt-4 flex gap-2">
           <input
@@ -158,7 +182,6 @@ const FileCard = ({ file, folderId }) => {
           </button>
         </div>
       )}
-
       {/* Confirmation Dialog */}
       {showConfirmDialog && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

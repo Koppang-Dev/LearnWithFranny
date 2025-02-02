@@ -8,6 +8,8 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [newFolderName, setNewFolderName] = useState(folder.folderName);
 
   // Handling the deletion of the document
@@ -23,14 +25,23 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
     console.log(`Renaming folder to: ${newFolderName}`);
     setShowDropdown(false);
     await renameFolder(10, folder.folderId, newFolderName);
-    setIsRenaming(false);
     window.location.reload();
+    setIsRenaming(false);
   };
 
   // Showing the dropdown
   const toggleDropdown = (event) => {
     event.stopPropagation();
     setShowDropdown((prev) => !prev);
+  };
+
+  // Handle file click to open PDF viewer
+  const handleFolderClick = async (e) => {
+    // Do not activate when in the drop down
+    if (isRenaming || isSharing || isDeleting) {
+      return;
+    }
+    onClick(e);
   };
 
   // Drag and drop logic for the folder
@@ -54,7 +65,7 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
       className={`relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all
       ${isOver ? "bg-green-100 border-green-500" : "bg-white"}`}
       onMouseLeave={() => setShowDropdown(false)}
-      onClick={onClick}
+      onClick={handleFolderClick}
     >
       {/* More button - Triggers dropdown */}
       <div
@@ -71,12 +82,20 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
           actions={[
             {
               label: "Rename",
-              onClick: () => {
-                setShowDropdown(false);
+              onClick: (e) => {
+                e.stopPropagation();
                 setIsRenaming(true);
+                setShowDropdown(false);
               },
             },
-            { label: "Delete", onClick: () => setShowConfirmDialog(true) },
+            {
+              label: "Delete",
+              onClick: (e) => {
+                e.stopPropagation();
+                setIsDeleting(true);
+                setShowConfirmDialog(true);
+              },
+            },
             { label: "Share", onClick: () => console.log("Share clicked") },
           ]}
         />
