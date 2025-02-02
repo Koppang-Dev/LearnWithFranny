@@ -235,3 +235,50 @@ export const fetchPresignedUrl = async (fileId) => {
 
   return await response.text();
 };
+/**
+ * Sends a request to the backend to create a new folder for a user.
+ *
+ * @param {string} folderName - The name of the folder to be created.
+ * @param {number} userId - The ID of the user creating the folder.
+ * @param {number|null} parentFolderId - (Optional) The ID of the parent folder, if applicable.
+ * @returns {Promise<string>} A success message or an error message.
+ */
+export const createFolder = async (
+  folderName,
+  userId,
+  parentFolderId = null
+) => {
+  // Prepare the payload to send in the request body
+  const payload = {
+    folderName,
+    userId,
+    parentFolderId, // Can be null if no parent folder is specified
+  };
+
+  try {
+    // Send a POST request to the backend to create a new folder
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/file/create-folder`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Authorization header can be added if authentication is required
+          // "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload), // Convert payload to JSON string
+      }
+    );
+
+    // Check if the response is successful (status code 2xx)
+    if (!response.ok) {
+      throw new Error(`Failed to create folder: ${response.statusText}`);
+    }
+
+    // Return the response body as a text or JSON message
+    return await response.text(); // Use `await response.json();` if the backend returns JSON
+  } catch (error) {
+    console.error("Error creating folder:", error);
+    return `Error: ${error.message}`;
+  }
+};

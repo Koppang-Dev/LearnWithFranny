@@ -17,6 +17,7 @@ import uuid4 from "uuid4";
 import { useUser } from "@/app/context/UserContext";
 import { useRef } from "react";
 import { useFolder } from "@/app/context/FolderProvider";
+import { createFolder } from "@/app/utils/FileApi";
 
 const CreateFolderScreen = ({ children }) => {
   const { currentFolder } = useFolder();
@@ -34,43 +35,16 @@ const CreateFolderScreen = ({ children }) => {
       return;
     }
 
-    // Starting loading indicator
-    // FormData Object to hold the file
-    const payload = {
-      folderName: folderName,
-      userId: userId,
-      parentFolderId: currentFolder.id,
-    };
-
     setLoading(true);
+    createFolder(folderName, userId, currentFolder.id);
 
-    // Tell the backend a folder was created
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/file/create-folder`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (response.ok) {
-        if (dialogCloseRef.current) {
-          dialogCloseRef.current.click(); // Triggering the DialogClose button programmatically
-        }
-        window.location.reload();
-      } else {
-        console.error("Folder creation failed", await response.text());
-      }
-    } catch (error) {
-      console.error("Error creating folder", error);
-    } finally {
-      setLoading(false); // Stop loading
+    if (dialogCloseRef.current) {
+      dialogCloseRef.current.click();
+      window.location.reload();
+    } else {
+      console.error("Folder creation failed");
     }
+    setLoading(false);
   };
 
   return (
