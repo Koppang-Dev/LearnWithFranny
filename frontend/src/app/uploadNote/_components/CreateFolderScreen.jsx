@@ -36,11 +36,11 @@ const CreateFolderScreen = ({ children }) => {
     }
 
     setLoading(true);
-    createFolder(folderName, userId, currentFolder.id);
+    console.log("currentFolder", currentFolder);
+    createFolder(folderName, userId, currentFolder.folderId);
 
     if (dialogCloseRef.current) {
       dialogCloseRef.current.click();
-      window.location.reload();
     } else {
       console.error("Folder creation failed");
     }

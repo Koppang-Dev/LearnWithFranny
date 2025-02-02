@@ -243,16 +243,12 @@ export const fetchPresignedUrl = async (fileId) => {
  * @param {number|null} parentFolderId - (Optional) The ID of the parent folder, if applicable.
  * @returns {Promise<string>} A success message or an error message.
  */
-export const createFolder = async (
-  folderName,
-  userId,
-  parentFolderId = null
-) => {
+export const createFolder = async (folderName, userId, parentFolderId) => {
   // Prepare the payload to send in the request body
   const payload = {
     folderName,
     userId,
-    parentFolderId, // Can be null if no parent folder is specified
+    parentFolderId,
   };
 
   try {

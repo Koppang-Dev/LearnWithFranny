@@ -4,13 +4,15 @@ import java.util.List;
 
 public class FolderWithFilesResponse {
     private Long folderId;
+    private Long parentFolderId;
     private String folderName;
     private List<FileResponse> files; // List of files in the folder
 
-    public FolderWithFilesResponse(Long folderId, String folderName, List<FileResponse> files) {
+    public FolderWithFilesResponse(Long folderId, Long parentFolderId, String folderName, List<FileResponse> files) {
         this.folderId = folderId;
         this.folderName = folderName;
         this.files = files;
+        this.parentFolderId = parentFolderId;
     }
 
     // Getters and setters
@@ -20,6 +22,14 @@ public class FolderWithFilesResponse {
 
     public void setFolderId(Long folderId) {
         this.folderId = folderId;
+    }
+
+    public Long getParentFolderId() {
+        return parentFolderId;
+    }
+
+    public void setParentFolderId(Long parentFolderId) {
+        this.parentFolderId = parentFolderId;
     }
 
     public String getFolderName() {

@@ -199,7 +199,7 @@ public class UserFileService {
                     }).collect(Collectors.toList());
 
                     // Create a response object for the folder with the associated files
-                    return new FolderWithFilesResponse(folder.getId(), folder.getName(), fileResponses);
+                    return new FolderWithFilesResponse(folder.getId(), folder.getParentFolderId(), folder.getName(), fileResponses);
                 })
                 .collect(Collectors.toList()); // Collect results into a List
 

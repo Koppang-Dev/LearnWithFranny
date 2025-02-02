@@ -77,6 +77,17 @@ const NoteDashboard = () => {
     setSelectedFolder(null); // Go back to the main folder view
   };
 
+  const rootFolders = filteredFolders.filter(
+    (folder) => !folder.parentFolderId
+  );
+
+  // Find the subfolders for a given parent folder
+  const findSubfolders = (parentFolderId) => {
+    return filteredFolders.filter(
+      (folder) => folder.parentFolderId === parentFolderId
+    );
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
@@ -99,10 +110,13 @@ const NoteDashboard = () => {
               folderId={filteredDefaultFiles[0]?.folderId}
             />
             {/* Render subfolders inside the selected folder */}
-            <FolderList
-              folders={selectedFolder.subfolders || []}
-              onFileDrop={handleDrop}
-            />
+            {findSubfolders(selectedFolder.folderId).length > 0 && (
+              <FolderList
+                folders={findSubfolders(selectedFolder.folderId)}
+                onFileDrop={handleDrop}
+                onFolderClick={handleFolderClick} // Handle subfolder click
+              />
+            )}
           </div>
         ) : (
           <div>
@@ -113,10 +127,10 @@ const NoteDashboard = () => {
                 folderId={filteredDefaultFiles[0]?.folderId}
               />
             )}
-            {/* Render all folders if no folder is selected */}
-            {filteredFolders.length > 0 && (
+            {/* Render root folders if no folder is selected */}
+            {rootFolders.length > 0 && (
               <FolderList
-                folders={filteredFolders}
+                folders={rootFolders}
                 onFileDrop={handleDrop}
                 onFolderClick={handleFolderClick} // Pass the click handler to each folder
               />

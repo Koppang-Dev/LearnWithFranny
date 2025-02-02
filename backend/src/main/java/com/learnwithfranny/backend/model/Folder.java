@@ -58,6 +58,11 @@ public class Folder {
         this.id = id;
     }
 
+    // Getters and Setters
+    public Long getParentFolderId() {
+        return (parentFolder != null) ? parentFolder.getId() : null;
+    }
+
     public String getName() {
         return name;
     }
