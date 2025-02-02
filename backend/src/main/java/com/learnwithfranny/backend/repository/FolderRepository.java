@@ -18,7 +18,6 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     Optional<Folder> findByUser_IdAndId(Long userId, Long folderId);
 
-
     // Find all folders for a specific user
     List<Folder> findByUser_Id(Long userId);
 

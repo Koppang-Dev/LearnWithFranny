@@ -4,16 +4,15 @@ import Image from "next/image";
 
 const menuItems = [
   {
-    title: "MENU",
     items: [
       {
         icon: "/images/home.png",
-        label: "Home",
-        href: "/",
+        label: "Dashboard",
+        href: "/dashboard",
       },
       {
         icon: "/images/notes.png",
-        label: "Notes",
+        label: "Events",
         href: "/",
       },
       {
@@ -27,14 +26,13 @@ const menuItems = [
         href: "/",
       },
       {
-        icon: "/images/upload.png",
-        label: "Upload Notes",
+        icon: "/images/notes.png",
+        label: "My Notes",
         href: "/uploadNote",
       },
     ],
   },
   {
-    title: "OTHER",
     items: [
       {
         icon: "/images/home.png",
@@ -57,19 +55,25 @@ const menuItems = [
 
 const Menu = () => {
   return (
-    <div className="mt-4 text-sm">
+    <div className="mt-4 text-lg bg-black">
       {menuItems.map((i) => (
-        <div className="flex flex-col gap-2" key={i.title}>
-          <span className="hidden lg:block text-gray-400 font-liight my-4">
+        <div className="flex flex-col gap-6" key={i.title}>
+          <span className="hidden lg:block text-gray-400 font-light my-4 cursor-pointer ">
             {i.title}
           </span>
           {i.items.map((item) => (
             <Link
               href={item.href}
               key={item.label}
-              className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2"
+              className="flex items-center justify-center lg:justify-start gap-4 text-white py-2 border border-black rounded-lg"
             >
-              <Image src={item.icon} alt=" " width={20} height={20} />
+              <Image
+                src={item.icon}
+                alt=" "
+                width={35}
+                height={35}
+                className="bg-none filter invert brightness-100 grayscale"
+              />
               <span className="hidden lg:block">{item.label}</span>
             </Link>
           ))}
