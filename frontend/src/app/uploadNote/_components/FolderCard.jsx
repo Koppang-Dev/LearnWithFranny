@@ -27,7 +27,9 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
     window.location.reload();
   };
 
-  const toggleDropdown = () => {
+  // Showing the dropdown
+  const toggleDropdown = (event) => {
+    event.stopPropagation();
     setShowDropdown((prev) => !prev);
   };
 
@@ -54,8 +56,15 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
       onMouseLeave={() => setShowDropdown(false)}
       onClick={onClick}
     >
-      <div className="absolute top-2 right-2">
-        <FaEllipsisV className="cursor-pointer" onClick={toggleDropdown} />
+      {/* More button - Triggers dropdown */}
+      <div
+        className="absolute top-2 right-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleDropdown(e);
+        }}
+      >
+        <FaEllipsisV className="cursor-pointer" />
       </div>
       {showDropdown && (
         <DropdownMenu

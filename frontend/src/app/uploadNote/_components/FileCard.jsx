@@ -50,9 +50,10 @@ const FileCard = ({ file, folderId }) => {
     setIsRenaming(false);
     window.location.reload();
   };
-  // Again
-  //   Toggle is dropped down
-  const toggleDropdown = () => {
+
+  // Showing the dropdown
+  const toggleDropdown = (event) => {
+    event.stopPropagation();
     setShowDropdown((prev) => !prev);
   };
 
@@ -103,15 +104,26 @@ const FileCard = ({ file, folderId }) => {
       ${isDragging ? "opacity-50" : ""}`}
     >
       <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
-      <div className="absolute top-2 right-2">
-        <FaEllipsisV className="cursor-pointer" onClick={toggleDropdown} />
+
+      {/* More button - Triggers dropdown */}
+      <div
+        className="absolute top-2 right-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleDropdown(e);
+        }}
+      >
+        <FaEllipsisV className="cursor-pointer" />
       </div>
+
+      {/* Drop down menu */}
       {showDropdown && (
         <DropdownMenu
           actions={[
             {
               label: "Rename",
-              onClick: () => {
+              onClick: (e) => {
+                e.stopPropagation();
                 setShowDropdown(false);
                 setIsRenaming(true);
               },
