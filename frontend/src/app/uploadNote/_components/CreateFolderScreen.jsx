@@ -16,8 +16,10 @@ import { useState } from "react";
 import uuid4 from "uuid4";
 import { useUser } from "@/app/context/UserContext";
 import { useRef } from "react";
+import { useFolder } from "@/app/context/FolderProvider";
 
 const CreateFolderScreen = ({ children }) => {
+  const { currentFolder } = useFolder();
   const [loading, setLoading] = useState(false);
   const [folderName, setFolderName] = useState("");
   const { user } = useUser();
@@ -34,21 +36,25 @@ const CreateFolderScreen = ({ children }) => {
 
     // Starting loading indicator
     // FormData Object to hold the file
-    const formData = new FormData();
-    formData.append("folderName", folderName);
+    const payload = {
+      folderName: folderName,
+      userId: userId,
+      parentFolderId: currentFolder.id,
+    };
 
     setLoading(true);
 
     // Tell the backend a folder was created
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/file/${userId}/create-folder`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/file/create-folder`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token for authentication
           },
-          body: formData,
+          body: JSON.stringify(payload),
         }
       );
 

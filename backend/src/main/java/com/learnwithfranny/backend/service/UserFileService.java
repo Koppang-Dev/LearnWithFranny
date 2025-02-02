@@ -79,7 +79,7 @@ public class UserFileService {
                  folder = optionalFolder.get();
              } else {
                  // No default folder, so create a new one
-                 folder = new Folder("Default Folder", user);
+                 folder = new Folder("Default Folder", user, null);
                  folderRepository.save(folder);
              }
 
@@ -113,23 +113,43 @@ public class UserFileService {
     /**
      * Creates a new folder for the specified user.
      * 
-     * @param folderName The name of the new folder to create.
-     * @param userId     The ID of the user who owns the folder.
-     * @return           A success message indicating the folder has been created.
+     * @param folderName    The name of the new folder to create.
+     * @param userId        The ID of the user who owns the folder.
+     * @param parentFolderId The ID of the parent folder, or null if the folder is a root-level folder.
+     * @return              A success message indicating the folder has been created.
      */
-    public String createFolder(String folderName, Long userId) {
+    public String createFolder(String folderName, Long userId, Long parentFolderId) {
         // Find the user based on the unique ID
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Check if a folder with the same name already exists for the user
-        boolean folderExists = folderRepository.existsByNameAndUser_Id(folderName, userId);
+        
+        // If the folder already exists
+        boolean folderExists;
+
+        // Check if a folder with the same parentFolderId already exists
+        if (parentFolderId != null) {
+            folderExists = folderRepository.existsByNameAndUser_IdAndParentFolder_Id(folderName, userId,
+                    parentFolderId);
+        } else {
+            // Check if a folder name exists at the root level
+            folderExists = folderRepository.existsByNameAndUser_IdAndParentFolderIsNull(folderName, userId);
+        }
+    
+        // Return Exception of there exists a folder with the same name
         if (folderExists) {
-            throw new RuntimeException("Folder with the same name already exists");
+            throw new RuntimeException("Folder with the same name already exists in the specified location");
         }
 
-        // Create and save the new folder
-        Folder folder = new Folder(folderName, user);
+        // Find the parent folder if provided
+        Folder parentFolder = null;
+        if (parentFolderId != null) {
+            parentFolder = folderRepository.findById(parentFolderId)
+                    .orElseThrow(() -> new RuntimeException("Parent folder now found"));
+        }
+
+        // Create and sace the folder
+        Folder folder = new Folder(folderName, user, parentFolder);
         folderRepository.save(folder);
 
         return "Folder '" + folderName + "' created successfully";

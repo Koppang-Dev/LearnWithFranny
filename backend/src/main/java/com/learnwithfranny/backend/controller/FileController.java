@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.amazonaws.Response;
+import com.learnwithfranny.backend.dto.CreateFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteRequest;
 import com.learnwithfranny.backend.dto.FileDownloadRequest;
@@ -86,12 +87,11 @@ public class FileController {
      * @param folderName The name of the new folder to be created.
      * @return ResponseEntity containing the result message and HTTP status code.
      */
-    @PostMapping("/{userId}/create-folder")
-    public ResponseEntity<String> createFolder(@PathVariable("userId") Long userId,
-            @RequestParam("folderName") String folderName) {
+    @PostMapping("/create-folder")
+    public ResponseEntity<String> createFolder(@RequestBody CreateFolderRequest folderRequest) {
         try {
             // Call the service method to create a new folder
-            String result = userFileService.createFolder(folderName, userId);
+            String result = userFileService.createFolder(folderRequest.getFolderName(), folderRequest.getUserId(), folderRequest.getParentFolderId());
             return new ResponseEntity<>(result, HttpStatus.CREATED); // Return success message with status 201
         } catch (Exception e) {
             return new ResponseEntity<>("Folder creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
