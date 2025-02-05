@@ -1,4 +1,3 @@
-// Contains the menu items
 import Link from "next/link";
 import Image from "next/image";
 
@@ -27,7 +26,7 @@ const menuItems = [
       },
       {
         icon: "/images/notes.png",
-        label: "My Notes",
+        label: "My Documents",
         href: "/uploadNote",
       },
     ],
@@ -53,26 +52,43 @@ const menuItems = [
   },
 ];
 
-const Menu = () => {
+const Menu = ({ width = "w-64" }) => {
   return (
-    <div className="mt-4 text-lg bg-black">
-      {menuItems.map((i) => (
-        <div className="flex flex-col gap-6" key={i.title}>
-          <span className="hidden lg:block text-gray-400 font-light my-4 cursor-pointer ">
+    <div className={`mt-4 text-lg bg-white ${width}`}>
+      {/* Logo and Name Section */}
+      <div className="p-4">
+        <Link href="/" className="flex items-center justify-start gap-2">
+          <Image
+            src="/images/logo.png"
+            alt="logo"
+            width={50}
+            height={50}
+            className=""
+          />
+          <span className="hidden lg:block text-3xl text-black font-bold">
+            LearnWithFranny
+          </span>
+        </Link>
+      </div>
+
+      {/* Menu Items */}
+      {menuItems.map((i, index) => (
+        <div className="flex flex-col gap-6" key={index}>
+          <span className="hidden lg:block text-gray-400 font-light my-4 cursor-pointer">
             {i.title}
           </span>
           {i.items.map((item) => (
             <Link
               href={item.href}
               key={item.label}
-              className="flex items-center justify-center lg:justify-start gap-4 text-white py-2 border border-black rounded-lg"
+              className="flex items-center justify-center lg:justify-start gap-4 text-black py-2 border border-gray rounded-lg"
             >
               <Image
                 src={item.icon}
-                alt=" "
+                alt="icon"
                 width={35}
                 height={35}
-                className="bg-none filter invert brightness-100 grayscale"
+                className="bg-none"
               />
               <span className="hidden lg:block">{item.label}</span>
             </Link>
