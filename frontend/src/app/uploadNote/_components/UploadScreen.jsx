@@ -47,11 +47,6 @@ const UploadScreen = ({ children }) => {
       return;
     }
 
-    if (!currentFolder?.folderId) {
-      alert("Folder ID is missing or invalid");
-      return;
-    }
-
     // Starting loading indicator
     setLoading(true);
 

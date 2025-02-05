@@ -179,16 +179,10 @@ public class AuthController {
 
         // Saving the new user to the repository
         userRepository.save(user);
+
+        // Create the default folder for the user
+
+        
         return ResponseEntity.ok("User Registered Success");
-    }
-    
-    
-    
-    
-
-
-
-
-
-    
+    }  
 }
