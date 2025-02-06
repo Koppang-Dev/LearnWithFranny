@@ -29,6 +29,10 @@ const items = [
         name: "Create Folder",
         icon: FileIcon,
       },
+      {
+        name: "Favourites",
+        icon: FileIcon,
+      },
     ],
   },
   {
@@ -50,7 +54,7 @@ const items = [
 
 const Sidebar = () => {
   return (
-    <div className="top-0 left-0 h-screen w-64 bg-white shadow-lg z-20 text-black p-4">
+    <div className="top-0 left-0 h-screen w-72 bg-white shadow-lg z-20 text-black p-4">
       {/* Logo and Title */}
       <div className="flex flex-col space-y-10 w-full">
         <div className="flex items-center space-x-2">
@@ -63,7 +67,7 @@ const Sidebar = () => {
           />
           <h1 className="font-semibold text-lg">LearnWithFranny</h1>
         </div>
-        <div className="flex flex-col space-y-10">
+        <div className="flex flex-col space-y-5">
           {items.map((item) => {
             return <SidebarItem key={item.path} item={item} />;
           })}
