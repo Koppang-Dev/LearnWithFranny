@@ -12,7 +12,7 @@ export default function Layout({ children }) {
       </div>
 
       {/* Main content */}
-      <main className="flex-1">{children}</main>
+      <div className="flex-1">{children}</div>
     </div>
   );
 }

@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@/app/context/UserContext";
 import SearchBar from "@/components/custom/SearchBar";
-import FileList from "./FileList";
-import FolderList from "./FolderList";
 import { fetchDocuments, moveFileToFolder } from "@/app/utils/FileApi";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useFolder } from "@/app/context/FolderProvider";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 
 const NoteDashboard = () => {
   const [documents, setDocuments] = useState([]);
-  const [selectedFolder, setSelectedFolder] = useState(null); // Track selected folder
   const [defaultFolderFiles, setDefaultFolderFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -19,21 +24,6 @@ const NoteDashboard = () => {
   const { currentFolder, setCurrentFolder } = useFolder();
 
   const userId = user?.id ?? 10;
-
-  // Handle drag-and-drop functionality
-  const handleDrop = async (item, targetFolderId) => {
-    console.log("Dropped File ID:", item.id);
-    console.log("Dropped file:", item.fileName);
-    console.log("Original folder:", item.folderId);
-    console.log("Target folder:", targetFolderId);
-
-    try {
-      await moveFileToFolder(userId, item.id, item.folderId, targetFolderId);
-      window.location.reload(); // Force refresh the screen
-    } catch (error) {
-      console.error("Error moving file:", error);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,80 +53,45 @@ const NoteDashboard = () => {
     file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredFolders = documents.filter((folder) =>
-    folder.folderName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleFolderClick = (folder) => {
-    console.log("Going to new folder");
-    setSelectedFolder(folder); // Set the selected folder
-    setCurrentFolder(folder);
-  };
-
-  const handleBackClick = () => {
-    setSelectedFolder(null); // Go back to the main folder view
-  };
-
-  const rootFolders = filteredFolders.filter(
-    (folder) => !folder.parentFolderId
-  );
-
-  // Find the subfolders for a given parent folder
-  const findSubfolders = (parentFolderId) => {
-    return filteredFolders.filter(
-      (folder) => folder.parentFolderId === parentFolderId
-    );
-  };
-
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
         <h2 className="font-bold text-3xl">Workspace</h2>
         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        {selectedFolder ? (
-          <div>
-            <button
-              onClick={handleBackClick}
-              className="text-blue-500 hover:underline mb-4"
-            >
-              Back to Folders
-            </button>
-            <h3 className="font-bold text-2xl">{selectedFolder.folderName}</h3>
-            {/* Render files inside the selected folder */}
-            <FileList
-              files={selectedFolder.files.filter((file) =>
-                file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
+
+        {/* Table */}
+        <div className="p-5">
+          <Table className="w-full border border-gray-300 shadow-md">
+            <TableHeader>
+              <TableRow className="bg-gray-100">
+                <TableHead className="w-1/3">File Name</TableHead>
+                <TableHead className="w-1/3">Last Modified</TableHead>
+                <TableHead className="w-1/3 text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredDefaultFiles.length > 0 ? (
+                filteredDefaultFiles.map((file) => (
+                  <TableRow key={file.fileId} className="hover:bg-gray-50">
+                    <TableCell>{file.fileName}</TableCell>
+                    <TableCell>{file.lastModified}</TableCell>
+                    <TableCell className="text-right">
+                      <button className="text-blue-500 hover:underline">
+                        Open
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan="3" className="text-center py-4">
+                    No files found.
+                  </TableCell>
+                </TableRow>
               )}
-              folderId={filteredDefaultFiles[0]?.folderId}
-            />
-            {/* Render subfolders inside the selected folder */}
-            {findSubfolders(selectedFolder.folderId).length > 0 && (
-              <FolderList
-                folders={findSubfolders(selectedFolder.folderId)}
-                onFileDrop={handleDrop}
-                onFolderClick={handleFolderClick} // Handle subfolder click
-              />
-            )}
-          </div>
-        ) : (
-          <div>
-            {/* Render default files if no folder is selected */}
-            {filteredDefaultFiles.length > 0 && (
-              <FileList
-                files={filteredDefaultFiles}
-                folderId={filteredDefaultFiles[0]?.folderId}
-              />
-            )}
-            {/* Render root folders if no folder is selected */}
-            {rootFolders.length > 0 && (
-              <FolderList
-                folders={rootFolders}
-                onFileDrop={handleDrop}
-                onFolderClick={handleFolderClick} // Pass the click handler to each folder
-              />
-            )}
-          </div>
-        )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </DndProvider>
   );

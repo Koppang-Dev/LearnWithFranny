@@ -1,0 +1,99 @@
+import React from "react";
+import Image from "next/image";
+import { FaEllipsisV } from "react-icons/fa";
+import DropdownMenu from "./DropdownMenu"; // Assuming you want to reuse the dropdown menu
+import { useState } from "react";
+
+const RecentFileCard = ({ file }) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newFileName, setNewFileName] = useState(file.fileName);
+
+  // Handle file click (e.g., open file in viewer or download)
+  const handleFileClick = async () => {
+    try {
+      // You can add logic to open or download the file
+      console.log(`Opening file: ${file.fileName}`);
+    } catch (error) {
+      console.error("Error handling file click:", error);
+    }
+  };
+
+  // Handle dropdown menu visibility
+  const toggleDropdown = (event) => {
+    event.stopPropagation();
+    setShowDropdown((prev) => !prev);
+  };
+
+  return (
+    <div
+      onClick={handleFileClick}
+      className="relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
+    >
+      <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
+      <div
+        className="absolute top-2 right-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleDropdown(e);
+        }}
+      >
+        <FaEllipsisV className="cursor-pointer" />
+      </div>
+
+      {showDropdown && (
+        <DropdownMenu
+          actions={[
+            {
+              label: "Rename",
+              onClick: (e) => {
+                e.stopPropagation();
+                setIsRenaming(true);
+              },
+            },
+            {
+              label: "Download",
+              onClick: () => console.log("Download clicked"),
+            },
+            // Add other actions if needed
+          ]}
+        />
+      )}
+
+      <h2
+        className="mt-3 font-medium text-xl"
+        onClick={(e) => e.stopPropagation()} // Prevents file click event when clicking on the title
+      >
+        {file.folderName}
+      </h2>
+
+      {/* Add more UI elements for the file like the "Last Modified" timestamp */}
+      <p className="text-sm text-gray-600">{file.lastModified}</p>
+
+      {isRenaming && (
+        <div className="mt-4 flex gap-2">
+          <input
+            type="text"
+            className="border rounded-md p-2"
+            value={newFileName}
+            onChange={(e) => setNewFileName(e.target.value)}
+          />
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+            onClick={() => console.log(`Renamed to: ${newFileName}`)}
+          >
+            Save
+          </button>
+          <button
+            className="px-4 py-2 bg-gray-200 rounded-md"
+            onClick={() => setIsRenaming(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RecentFileCard;
