@@ -69,6 +69,7 @@ public class FileController {
             @RequestParam("file") MultipartFile file, @RequestParam("fileName") String fileName,
             @RequestParam(value = "folderId", required = false) String folderIdString) {
 
+        // If the folderID is null that means the file has no folder
         Long folderId = null;
         if (folderIdString != null && !folderIdString.equals("null")) {
             folderId = Long.parseLong(folderIdString);
@@ -76,7 +77,7 @@ public class FileController {
             // Handle the case where folderId is null, maybe set to default or leave as null
             folderId = null; // or use some other default folder ID logic
         }
-        
+
         try {
             // Call the service method to upload the file and save the metadata
             String result = userFileService.saveFile(file, fileName, userId, folderId);

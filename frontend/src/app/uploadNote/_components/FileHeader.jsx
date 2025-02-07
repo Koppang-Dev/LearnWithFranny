@@ -27,7 +27,7 @@ const items = [
 ];
 const FileHeader = () => {
   return (
-    <div className="flex items-center justify-between w-full pt-20">
+    <div className="flex items-center justify-between w-full pt-20 pl-20 pr-20">
       {/* Going through the item list */}
       {items.map((item, index) => (
         <div

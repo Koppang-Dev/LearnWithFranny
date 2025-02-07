@@ -1,6 +1,8 @@
+"use client";
 import { useState } from "react";
+
 import { Document, Page } from "react-pdf";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const PdfViewer = ({ fileUrl }) => {
   const [numPages, setNumPages] = useState(null);

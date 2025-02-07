@@ -145,7 +145,7 @@ public class UserFileService {
         Folder parentFolder = null;
         if (parentFolderId != null) {
             parentFolder = folderRepository.findById(parentFolderId)
-                    .orElseThrow(() -> new RuntimeException("Parent folder now found"));
+                    .orElseThrow(() -> new RuntimeException("Parent folder not found"));
         }
 
         // Create and sace the folder

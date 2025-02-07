@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 const FolderContext = createContext();
 
 export const FolderProvider = ({ children }) => {
-  const [currentFolder, setCurrentFolder] = useState({ folderId: null });
+  const [currentFolder, setCurrentFolder] = useState({ folderId: 1 });
 
   return (
     <FolderContext.Provider value={{ currentFolder, setCurrentFolder }}>

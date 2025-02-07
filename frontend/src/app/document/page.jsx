@@ -1,10 +1,17 @@
-import { useRouter } from "next/router";
-import PdfViewer from "../../components/PdfViewer";
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import PdfViewer from "../PdfViewer/page";
 
 const DocumentPage = () => {
   const router = useRouter();
-  const { id } = router.query;
-  const fileUrl = router.query.fileUrl; // URL passed as query param
+  const [fileUrl, setFileUrl] = useState(null);
+
+  useEffect(() => {
+    if (router.query.fileUrl) {
+      setFileUrl(router.query.fileUrl);
+    }
+  }, [router.query]);
 
   return (
     <div>

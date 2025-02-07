@@ -1,12 +1,18 @@
 // app/uploadNote/layout.js
+"use client";
 import DashboardLayout from "../dashboard/DashBoardLayout"; // Import your global dashboard layout
 
-const UploadNoteLayout = ({ children }) => {
+import Sidebar from "../dashboard/__components/Sidebar";
+export default function Layout({ children }) {
   return (
-    <DashboardLayout>
-      <div className="flex justify-center w-full pt-20 ml-72">{children}</div>
-    </DashboardLayout>
-  );
-};
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <div className="bg-gray-800 text-white">
+        <Sidebar />
+      </div>
 
-export default UploadNoteLayout;
+      {/* Main content */}
+      <main className="flex-1">{children}</main>
+    </div>
+  );
+}

@@ -9,10 +9,12 @@ import Sidebar from "./_components/sidebar";
 
 const UploadNote = () => {
   return (
-    <div>
-      <FileHeader />
-    </div>
-    // <FolderProvider>
+    <FolderProvider>
+      <div className="">
+        <FileHeader />
+      </div>
+    </FolderProvider>
+    //
     //   <div>
     //     <div className="md:w-64 h-screen fixed"></div>
     //     <div className="md:ml-64">
