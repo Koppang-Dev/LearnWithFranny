@@ -252,6 +252,7 @@ export const createFolder = async (folderName, userId, parentFolderId) => {
   };
 
   try {
+    console.log("Creating Folders", payload);
     // Send a POST request to the backend to create a new folder
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/file/create-folder`,

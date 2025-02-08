@@ -9,6 +9,9 @@ public class CreateFolderRequest {
     private Long userId;
     private Long parentFolderId;
 
+    // Default constructor
+    public CreateFolderRequest(){}
+
     // Constructor
     public CreateFolderRequest(String folderName, Long userId, Long parentFolderId) {
         this.folderName = folderName;
