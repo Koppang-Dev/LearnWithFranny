@@ -1,5 +1,7 @@
 package com.learnwithfranny.backend.dto;
 
+import java.util.Date;
+
 public class FileResponse {
     private Long fileId;
     private String fileName;
@@ -8,9 +10,12 @@ public class FileResponse {
     private Long fileSize;
     private String folderName;
     private Long folderId;
+    private Date createdDate;
+
+
 
     // Updated constructor
-    public FileResponse(Long id, String fileName, String fileUrl, String fileType, Long fileSize, String folderName, Long folderId) {
+    public FileResponse(Long id, String fileName, String fileUrl, String fileType, Long fileSize, String folderName, Long folderId, Date createdDate) {
         this.fileId = id;
         this.fileName = fileName;
         this.fileUrl = fileUrl;
@@ -18,6 +23,7 @@ public class FileResponse {
         this.fileSize = fileSize;
         this.folderName = folderName;
         this.folderId = folderId;
+        this.createdDate = createdDate;
 
     }
 
@@ -77,5 +83,13 @@ public class FileResponse {
 
     public void setFolderId(Long id) {
         this.folderId = id;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

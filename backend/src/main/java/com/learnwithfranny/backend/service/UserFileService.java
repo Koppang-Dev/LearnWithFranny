@@ -175,7 +175,7 @@ public class UserFileService {
             String folderName = file.getFolder() != null ? file.getFolder().getName() : "";
 
             return new FileResponse(file.getFileId(), file.getFileName(), fileUrl, file.getFileType(),
-                    file.getFileSize(), folderName, file.getFolder().getId());
+                    file.getFileSize(), folderName, file.getFolder().getId(), file.getUploadDate());
         }).collect(Collectors.toList());
     }
 
@@ -195,7 +195,7 @@ public class UserFileService {
                     List<FileResponse> fileResponses = folderFiles.stream().map(file -> {
                         String fileUrl = storageService.getFileUrl(file.getS3Key());
                         return new FileResponse(file.getFileId(), file.getFileName(), fileUrl, file.getFileType(),
-                                file.getFileSize(), folder.getName(), folder.getId());
+                                file.getFileSize(), folder.getName(), folder.getId(), file.getUploadDate());
                     }).collect(Collectors.toList());
 
                     // Create a response object for the folder with the associated files
@@ -359,7 +359,8 @@ public class UserFileService {
                      userFile.getFileType(),
                      userFile.getFileSize(),
                      folderName,
-                     userFile.getFolder() != null ? userFile.getFolder().getId() : null);
+                     userFile.getFolder() != null ? userFile.getFolder().getId() : null,
+                     userFile.getUploadDate());
 
              return ResponseEntity.ok(fileResponse);
          } else {
