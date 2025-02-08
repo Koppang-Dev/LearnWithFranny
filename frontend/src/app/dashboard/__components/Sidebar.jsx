@@ -6,6 +6,12 @@ import {
   FileIcon,
   Settings2Icon,
   HelpCircleIcon,
+  TrashIcon,
+  IdCardIcon,
+  NotebookTabsIcon,
+  NotepadTextIcon,
+  BrainIcon,
+  CalendarIcon,
 } from "lucide-react";
 import SidebarItem from "./item";
 
@@ -17,6 +23,11 @@ const items = [
     icon: LayoutDashboardIcon,
   },
   {
+    name: "Calander",
+    path: "/calander",
+    icon: CalendarIcon,
+  },
+  {
     name: "Documents",
     path: "/uploadNote",
     icon: FileIcon,
@@ -24,6 +35,7 @@ const items = [
       {
         name: "Upload Document",
         icon: FileIcon,
+        action: "upload",
       },
       {
         name: "Create Folder",
@@ -33,12 +45,22 @@ const items = [
         name: "Favourites",
         icon: FileIcon,
       },
+      {
+        name: "Trash",
+        icon: TrashIcon,
+      },
     ],
   },
   {
-    name: "Quizzes",
-    path: "/quiz",
-    icon: NotebookIcon,
+    name: "Flash Cards",
+    path: "/flashcard",
+    icon: NotepadTextIcon,
+  },
+
+  {
+    name: "Study",
+    path: "/study",
+    icon: BrainIcon,
   },
   {
     name: "Settings",
