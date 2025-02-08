@@ -100,7 +100,7 @@ const NoteDashboard = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="mt-5">
+      <div className="mt-0">
         <h2 className="font-bold text-2xl">All Documents</h2>
 
         {/* Move SearchBar to the top */}
@@ -138,17 +138,19 @@ const NoteDashboard = () => {
         {/* Handling when it is a table view */}
         {isTableView ? (
           <div className="w-4/4 flex flex-col justify-center mr-20">
-            <DataTable columns={folderColumns} data={allFolders} />
+            <DataTable columns={fileColumns} data={allFiles} />
           </div>
         ) : selectedFolder ? (
           <div>
             <button
               onClick={handleBackClick}
-              className="text-blue-500 hover:underline mb-4"
+              className="text-purple-500 hover:underline mb-4"
             >
-              Back to Folders
+              Back to previous folder
             </button>
-            <h3 className="font-bold text-2xl">{selectedFolder.folderName}</h3>
+            <h3 className="font-bold text-3xl">
+              {selectedFolder.folderName}'s' Documents
+            </h3>
             {/* Render files inside the selected folder */}
             <FileList
               files={selectedFolder.files.filter((file) =>

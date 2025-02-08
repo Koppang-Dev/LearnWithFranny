@@ -3,8 +3,12 @@
 // File Columns
 export const fileColumns = [
   {
-    accessorKey: "folderName",
+    accessorKey: "fileName",
     header: "File Name",
+  },
+  {
+    accessorKey: "createdDate",
+    header: "Date Created",
   },
 ];
 

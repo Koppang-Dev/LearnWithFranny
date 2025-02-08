@@ -37,14 +37,22 @@ export const DocumentsProvider = ({ children }) => {
     documents.forEach((doc) => {
       if (doc.folderId) {
         folders.push(doc); // Save folder
+        console.log("Pushed Folder:", doc.folderName);
+
+        // Extract files from the folder's `files` array
+        if (doc.files && Array.isArray(doc.files)) {
+          files.push(...doc.files);
+          console.log(
+            `Pushed ${doc.files.length} Files from Folder:`,
+            doc.folderName
+          );
+        }
       } else if (doc.fileId) {
-        files.push(doc); // Save file
+        files.push(doc); // Save standalone file
+        console.log("Pushed File:", doc.fileName);
       }
 
-      // If the document has children (subfolders or files), recurse
-      if (doc.children && Array.isArray(doc.children)) {
-        extractFoldersAndFiles(doc.children, folders, files);
-      }
+      // No need for `doc.children` recursion—files are inside `doc.files`
     });
 
     return { folders, files };
