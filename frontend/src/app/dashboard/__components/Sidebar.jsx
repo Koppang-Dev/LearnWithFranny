@@ -55,6 +55,13 @@ const items = [
     name: "Flash Cards",
     path: "/flashcard",
     icon: NotepadTextIcon,
+    items: [
+      {
+        name: "Create Deck",
+        icon: FileIcon,
+        action: "createDeck",
+      },
+    ],
   },
 
   {
