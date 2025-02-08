@@ -13,27 +13,14 @@ const UploadNote = () => {
   return (
     <FolderProvider>
       <DocumentsProvider>
-        <div className="flex flex-col gap-20">
-          <h1 className="text-4xl font-semibold pt-10 pl-10">
-            Study Documents
-          </h1>
+        <div className="flex flex-col gap-10">
+          <h1 className="text-4xl font-semibold pt-5 pl-10">Study Documents</h1>
           <FileHeader />
           <RecentlyModifiedSection />
           <NoteDashboard />
         </div>
       </DocumentsProvider>
     </FolderProvider>
-    //
-    //   <div>
-    //     <div className="md:w-64 h-screen fixed"></div>
-    //     <div className="md:ml-64">
-    //       <Header className=" flex p-5 shadow-sm" />
-    //       <div className="m-20">
-    //         <NoteDashboard />
-    //       </div>
-    //     </div>
-    //   </div>
-    // </FolderProvider>
   );
 };
 export default UploadNote;

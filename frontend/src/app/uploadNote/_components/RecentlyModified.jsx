@@ -5,14 +5,16 @@ import { DocumentsContext } from "@/app/context/DocumentsContext";
 import RecentFileCard from "./RecentFileCard";
 
 const RecentlyModifiedSection = () => {
-  const { documents, loading, error } = useContext(DocumentsContext);
-  const recentDocuments = documents.slice(0, 3);
+  const { allFiles, allFolders } = useContext(DocumentsContext);
+  const recentDocuments = allFolders.slice(0, 3);
 
   // If no documents are found
   if (recentDocuments.length === 0) {
     return (
       <div>
-        <h2 className="font-semibold text-3xl pl-10">Recently Modified</h2>
+        <h2 className="font-semibold text-3xl pb-10 pl-10">
+          Recently Modified
+        </h2>
         <p>No recent documents found</p>
       </div>
     );

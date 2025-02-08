@@ -5,7 +5,9 @@ const DocumentsContext = createContext();
 
 // Holds all of the users documents
 export const DocumentsProvider = ({ children }) => {
-  const [documents, setDocuments] = useState([]);
+  const [allFiles, setAllFiles] = useState([]);
+  const [allFolders, setAllFolders] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -14,7 +16,13 @@ export const DocumentsProvider = ({ children }) => {
       try {
         // TEMPORARY USER ID
         const data = await fetchDocuments(10);
-        setDocuments(data);
+
+        // Extract the files
+        const { folders, files } = extractFoldersAndFiles(data);
+
+        // Save the folders and files
+        setAllFiles(files);
+        setAllFolders(folders);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -25,8 +33,25 @@ export const DocumentsProvider = ({ children }) => {
     fetchDocumentsData();
   }, []);
 
+  const extractFoldersAndFiles = (documents, folders = [], files = []) => {
+    documents.forEach((doc) => {
+      if (doc.folderId) {
+        folders.push(doc); // Save folder
+      } else if (doc.fileId) {
+        files.push(doc); // Save file
+      }
+
+      // If the document has children (subfolders or files), recurse
+      if (doc.children && Array.isArray(doc.children)) {
+        extractFoldersAndFiles(doc.children, folders, files);
+      }
+    });
+
+    return { folders, files };
+  };
+
   return (
-    <DocumentsContext.Provider value={{ documents, loading, error }}>
+    <DocumentsContext.Provider value={{ allFiles, allFolders }}>
       {children}
     </DocumentsContext.Provider>
   );

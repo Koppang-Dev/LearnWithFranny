@@ -1,13 +1,15 @@
 "use client";
 import { FileIcon, FolderIcon, MicIcon } from "lucide-react"; // Icons
 import React from "react";
+import UploadScreen from "./UploadScreen";
+import { useState } from "react";
 
 // List for the 4 options with their names logos and actions
 const items = [
   {
     name: "Upload Document",
     icon: FileIcon,
-    action: () => console.log("Upload Document Clicked"),
+    action: (setDialogOpen) => setDialogOpen(true),
   },
   {
     name: "Create Folder",
@@ -26,6 +28,7 @@ const items = [
   },
 ];
 const FileHeader = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
   return (
     <div className="flex items-center justify-between w-full pt-0 pl-20 pr-20">
       {/* Going through the item list */}
@@ -38,6 +41,11 @@ const FileHeader = () => {
           <p className="text-black font-semibold text-sm mt-2">{item.name}</p>
         </div>
       ))}
+
+      {/* Render the Upload Screen */}
+      {dialogOpen && (
+        <UploadScreen children={<Button>Open Upload Dialog</Button>} />
+      )}
     </div>
   );
 };
