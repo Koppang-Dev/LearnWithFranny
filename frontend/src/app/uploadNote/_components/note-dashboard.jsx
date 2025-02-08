@@ -13,6 +13,7 @@ import { DataTable } from "./DataTable/DataTable";
 import { columns, fileColumns, folderColumns } from "./DataTable/Columns";
 import { DocumentsContext } from "@/app/context/DocumentsContext";
 import { useContext } from "react";
+import { Table, LayoutGrid } from "lucide-react";
 
 const NoteDashboard = () => {
   const [documents, setDocuments] = useState([]);
@@ -99,21 +100,44 @@ const NoteDashboard = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="mt-20 ml-10">
-        <h2 className="font-bold text-3xl">Workspace</h2>
-        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <div className="mt-5">
+        <h2 className="font-bold text-2xl">All Documents</h2>
 
-        {/* Toggle between Table view and file/folder view  */}
-        <button
-          onClick={() => setIsTableView(!isTableView)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md my-4"
-        >
-          {isTableView ? "Switch to folder view" : "Switch to Table View"}
-        </button>
+        {/* Move SearchBar to the top */}
+        <div className="my-4">
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </div>
+
+        {/* Toggle between Table view and file/folder view */}
+        <div className="flex gap-2 my-4">
+          <button
+            onClick={() => setIsTableView(false)}
+            className={`px-4 py-2 rounded-md flex items-center gap-2 transition ${
+              isTableView
+                ? "bg-gray-200 text-black"
+                : "bg-purple-500 text-white"
+            }`}
+          >
+            <LayoutGrid size={20} />
+            <span>Folder View</span>
+          </button>
+
+          <button
+            onClick={() => setIsTableView(true)}
+            className={`px-4 py-2 rounded-md flex items-center gap-2 transition ${
+              isTableView
+                ? "bg-purple-500 text-white"
+                : "bg-gray-200 text-black"
+            }`}
+          >
+            <Table size={20} />
+            <span>Table View</span>
+          </button>
+        </div>
 
         {/* Handling when it is a table view */}
         {isTableView ? (
-          <div className="w-3/4 flex flex-col justify-center">
+          <div className="w-4/4 flex flex-col justify-center mr-20">
             <DataTable columns={folderColumns} data={allFolders} />
           </div>
         ) : selectedFolder ? (

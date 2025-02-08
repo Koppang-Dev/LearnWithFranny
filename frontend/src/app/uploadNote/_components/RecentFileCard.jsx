@@ -1,8 +1,7 @@
-import React from "react";
-import Image from "next/image";
+import React, { useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
+import { FileIcon } from "lucide-react";
 import DropdownMenu from "./DropdownMenu"; // Assuming you want to reuse the dropdown menu
-import { useState } from "react";
 
 const RecentFileCard = ({ file }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -30,7 +29,17 @@ const RecentFileCard = ({ file }) => {
       onClick={handleFileClick}
       className="relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all"
     >
-      <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
+      {/* File icon and title beside each other */}
+      <div className="flex items-center space-x-2">
+        <FileIcon size={40} />
+        <h2
+          className="mt-3 font-medium text-xl"
+          onClick={(e) => e.stopPropagation()} // Prevents file click event when clicking on the title
+        >
+          {file.folderName}
+        </h2>
+      </div>
+
       <div
         className="absolute top-2 right-2"
         onClick={(e) => {
@@ -59,13 +68,6 @@ const RecentFileCard = ({ file }) => {
           ]}
         />
       )}
-
-      <h2
-        className="mt-3 font-medium text-xl"
-        onClick={(e) => e.stopPropagation()} // Prevents file click event when clicking on the title
-      >
-        {file.folderName}
-      </h2>
 
       {/* Add more UI elements for the file like the "Last Modified" timestamp */}
       <p className="text-sm text-gray-600">{file.lastModified}</p>

@@ -1,5 +1,5 @@
 "use client";
-import { FileIcon, FolderIcon, MicIcon } from "lucide-react"; // Icons
+import { FileIcon, FolderIcon, MicIcon, PlusIcon } from "lucide-react"; // Icons
 import React from "react";
 import UploadScreen from "./UploadScreen";
 import { useState } from "react";
@@ -30,15 +30,23 @@ const items = [
 const FileHeader = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   return (
-    <div className="flex items-center justify-between w-full pt-0 pl-20 pr-20">
+    <div className="flex items-center justify-between w-full pt-0 pr-20">
       {/* Going through the item list */}
       {items.map((item, index) => (
         <div
           key={index}
-          className="flex flex-col items-center justify-center shadow-lg border border-gray-50 rounded-lg gap-6 hover:shadow-xl hover:bg-gray-50 cursor-pointer transition-all w-96 h-40"
+          className="relative flex flex-col items-center justify-center shadow-lg border border-gray-100 rounded-lg gap-1 hover:shadow-xl cursor-pointer hover:bg-gray-50 transition-all w-96 h-28"
         >
-          {React.createElement(item.icon, { size: 40 })}
-          <p className="text-black font-semibold text-sm mt-2">{item.name}</p>
+          {/* Plus Icon Top Right */}
+          <PlusIcon
+            size={20}
+            className="absolute top-2 right-2 text-black cursor-pointer z-10"
+          />
+          {React.createElement(item.icon, {
+            size: 40,
+            style: { color: "black" },
+          })}
+          <p className="text-black font-semibold text-lg mt-2">{item.name}</p>
         </div>
       ))}
 

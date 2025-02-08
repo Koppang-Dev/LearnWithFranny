@@ -14,10 +14,12 @@ const UploadNote = () => {
     <FolderProvider>
       <DocumentsProvider>
         <div className="flex flex-col gap-10">
-          <h1 className="text-4xl font-semibold pt-5 pl-10">Study Documents</h1>
-          <FileHeader />
-          <RecentlyModifiedSection />
-          <NoteDashboard />
+          <div className="flex flex-col pl-20 pt-8 gap-10">
+            <h1 className="text-4xl font-semibold">Study Files</h1>
+            <FileHeader />
+            <RecentlyModifiedSection />
+            <NoteDashboard />
+          </div>
         </div>
       </DocumentsProvider>
     </FolderProvider>

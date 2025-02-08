@@ -12,9 +12,7 @@ const RecentlyModifiedSection = () => {
   if (recentDocuments.length === 0) {
     return (
       <div>
-        <h2 className="font-semibold text-3xl pb-10 pl-10">
-          Recently Modified
-        </h2>
+        <h2 className="font-semibold text-3xl">Recently Modified</h2>
         <p>No recent documents found</p>
       </div>
     );
@@ -23,11 +21,11 @@ const RecentlyModifiedSection = () => {
     <div>
       <div>
         {/* Header */}
-        <h2 className="font-semibold text-2xl pl-10">Recently Modified</h2>
+        <h2 className="font-semibold text-2xl">Recently Modified</h2>
         {/* File List */}
-        <div className="flex gap-5 w-full justify-evenly pt-10 h-24">
+        <div className="flex items-center gap-5 justify-between h-24 mt-5 mr-20">
           {recentDocuments.map((doc, index) => (
-            <div key={index} className="w-1/4">
+            <div key={index} className="w-full">
               <RecentFileCard key={doc.fileId} file={doc} />
             </div>
           ))}
