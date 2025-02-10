@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -25,6 +27,12 @@ public class Deck {
     // Deck Description
     @Column(name = "description", nullable = false, length = 255)
     private String description;
+
+    // Many decks belonging to a user
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 
     // Mapping to decks
     @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -71,6 +79,14 @@ public class Deck {
 
     public void setCards(List<Card> cards) {
         this.cards = cards;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 

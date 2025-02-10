@@ -12,7 +12,10 @@ const Header = () => {
       {/* Title and button */}
       <div className="flex flex-row items-center justify-between w-full">
         <h2 className="text-4xl font-semibold">Create a new deck</h2>
-        <Button className="bg-purple-500">Create Deck</Button>
+        <div className="flex flex-row gap-5">
+          <Button className="bg-purple-500">Create Deck</Button>
+          <Button className="bg-red-500">Cancel</Button>
+        </div>
       </div>
       {/* Deck Title Name */}
       <div className="flex flex-col gap-5 w-full">

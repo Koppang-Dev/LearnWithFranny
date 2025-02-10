@@ -42,7 +42,7 @@ const CreateDeckFromScratch = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-full">
+    <div className="min-h-full">
       <div className="flex flex-col gap-10 m-20">
         <Header />
 

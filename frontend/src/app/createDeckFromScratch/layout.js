@@ -4,7 +4,7 @@
 import Sidebar from "../dashboard/__components/Sidebar";
 export default function Layout({ children }) {
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-gray-50">
       {/* Sidebar */}
       <div className="bg-gray-800 text-white">
         <Sidebar />
