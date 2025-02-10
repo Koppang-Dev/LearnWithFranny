@@ -7,10 +7,38 @@ import { useState } from "react";
 
 const CreateDeckFromScratch = () => {
   // State to keep track of the amount of cards
-  const [cards, setCards] = useState([1, 2, 3]);
+  const [cards, setCards] = useState([
+    { id: 1, textFront: "", textBack: "" },
+    { id: 2, textFront: "", textBack: "" },
+    { id: 3, textFront: "", textBack: "" },
+    { id: 4, textFront: "", textBack: "" },
+    { id: 5, textFront: "", textBack: "" },
+  ]);
   // Adding another card
   const addCard = () => {
-    setCards([...cards, cards.length + 1]);
+    const newCardId = cards.length + 1;
+    setCards([...cards, { id: newCardId, textFront: "", textBack: "" }]);
+  };
+
+  // Function to delete a card and renumber remaining cards
+  const deleteCard = (cardId) => {
+    const updatedCards = cards.filter((card) => card.id !== cardId);
+    // Re-index the remaining cards
+    const reIndexedCards = updatedCards.map((card, index) => ({
+      ...card,
+      id: index + 1,
+    }));
+    setCards(reIndexedCards);
+  };
+
+  // Update card text
+  const updateCardText = (id, frontText, backText) => {
+    const updatedCards = cards.map((card) =>
+      card.id === id
+        ? { ...card, textFront: frontText, textBack: backText }
+        : card
+    );
+    setCards(updatedCards); // Update the state with the new card text
   };
 
   return (
@@ -19,10 +47,15 @@ const CreateDeckFromScratch = () => {
         <Header />
 
         {/* Render all of the cards */}
-        {cards.map((cardNumber) => (
-          <AddCard key={cardNumber} cardNumber={cardNumber} />
+        {cards.map((card) => (
+          <AddCard
+            key={card.id}
+            card={card}
+            deleteCard={deleteCard}
+            updateCardText={updateCardText}
+          />
         ))}
-        <BottomSection />
+        <BottomSection addCard={addCard} />
       </div>
     </div>
   );
