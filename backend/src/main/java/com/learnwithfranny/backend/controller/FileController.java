@@ -97,8 +97,12 @@ public class FileController {
     @PostMapping("/create-folder")
     public ResponseEntity<String> createFolder(@RequestBody CreateFolderRequest folderRequest) {
         try {
+
             // Call the service method to create a new folder
-            String result = userFileService.createFolder(folderRequest.getFolderName(), folderRequest.getUserId(), folderRequest.getParentFolderId());
+            String result = userFileService.createFolder(folderRequest.getFolderName(), folderRequest.getUserId(),
+                    folderRequest.getParentFolderId());
+            
+            
             return new ResponseEntity<>(result, HttpStatus.CREATED); // Return success message with status 201
         } catch (Exception e) {
             return new ResponseEntity<>("Folder creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
