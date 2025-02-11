@@ -4,6 +4,8 @@ import BottomSection from "./__components/bottomSection";
 import Header from "./__components/header";
 
 import { useState } from "react";
+import { createUserDeck } from "../utils/DeckApi";
+import { useRouter } from "next/navigation";
 
 const CreateDeckFromScratch = () => {
   // State to keep track of the amount of cards
@@ -14,6 +16,59 @@ const CreateDeckFromScratch = () => {
     { id: 4, textFront: "", textBack: "" },
     { id: 5, textFront: "", textBack: "" },
   ]);
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [deckTitle, setDeckTitle] = useState("");
+  const [deckDescription, setDeckDescription] = useState("");
+  const userId = 10;
+  const router = useRouter();
+
+  const createDeck = () => {
+    console.log("Creating Deck");
+    // Check to make sure the title is not null
+    if (!deckTitle || deckTitle.trim() === "") {
+      setErrorMessage("Deck Title cannot be empty");
+      return;
+    }
+
+    // Making sure each front and back card has text
+    const incompleteCard = cards.find(
+      (card) => !card.textFront.trim() || !card.textBack.trim()
+    );
+
+    if (incompleteCard) {
+      setErrorMessage("Each card must have both a front and back text ");
+      return;
+    }
+
+    // Clearing error message
+    setErrorMessage("");
+
+    // Create the deck object
+    const deck = {
+      userId: userId,
+      name: deckTitle,
+      description: deckDescription,
+      cards: cards.map((card) => ({
+        frontText: card.textFront,
+        backText: card.textBack,
+      })),
+    };
+
+    console.log(deck);
+
+    // Call the API to create the deck
+    createUserDeck(deck)
+      .then((createdDeck) => {
+        console.log("Deck created successfully:", createdDeck);
+        router.push("/flashcard");
+      })
+      .catch((error) => {
+        console.error("Error creating deck:", error);
+        setErrorMessage("Failed to create deck. Please try again.");
+      });
+  };
+
   // Adding another card
   const addCard = () => {
     const newCardId = cards.length + 1;
@@ -44,7 +99,14 @@ const CreateDeckFromScratch = () => {
   return (
     <div className="min-h-full">
       <div className="flex flex-col gap-10 m-20">
-        <Header />
+        <Header
+          createDeck={createDeck}
+          deckTitle={deckTitle}
+          deckDescription={deckDescription}
+          setDeckDescription={setDeckDescription}
+          setDeckTitle={setDeckTitle}
+        />
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
         {/* Render all of the cards */}
         {cards.map((card) => (
@@ -55,7 +117,7 @@ const CreateDeckFromScratch = () => {
             updateCardText={updateCardText}
           />
         ))}
-        <BottomSection addCard={addCard} />
+        <BottomSection addCard={addCard} createDeck={createDeck} />
       </div>
     </div>
   );

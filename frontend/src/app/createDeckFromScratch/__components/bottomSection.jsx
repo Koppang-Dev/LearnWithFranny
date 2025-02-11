@@ -1,4 +1,4 @@
-const BottomSection = ({ addCard }) => {
+const BottomSection = ({ addCard, createDeck }) => {
   return (
     <div className="flex flex-col w-full">
       {/* Add Card Button */}
@@ -16,7 +16,10 @@ const BottomSection = ({ addCard }) => {
       <div className="flex flex-row w-full justify-center mt-5">
         {/* Add some margin for spacing */}
 
-        <button className="w-1/3 p-5 border rounded-xl border-none text-lg font-semibold bg-purple-400 text-white hover:scale-105">
+        <button
+          onClick={createDeck}
+          className="w-1/3 p-5 border rounded-xl border-none text-lg font-semibold bg-purple-400 text-white hover:scale-105"
+        >
           Create Deck
         </button>
       </div>
