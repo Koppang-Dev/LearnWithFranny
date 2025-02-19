@@ -4,7 +4,9 @@ import com.learnwithfranny.backend.dto.CreateDeckDTO;
 import com.learnwithfranny.backend.model.Card;
 import com.learnwithfranny.backend.model.Deck;
 import com.learnwithfranny.backend.model.User;
+import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.UserRepository;
+import com.learnwithfranny.backend.service.CardService;
 import com.learnwithfranny.backend.service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,9 +34,10 @@ public class DeckController {
 
     @Autowired
     private DeckService deckService;
-
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CardService cardService;
 
 
     // Create new Deck for a user
@@ -75,14 +78,16 @@ public class DeckController {
 
     // Deleting a deck
     @DeleteMapping("/{deckId}")
-    public ResponseEntity<Void> deleteDeck(@PathVariable Long userId, @PathVariable Long deckId) {
+    public ResponseEntity<Void> deleteDeck(@PathVariable(name = "userId") Long userId, @PathVariable(name = "deckId") Long deckId) {
         deckService.deleteDeck(deckId);
         return ResponseEntity.noContent().build();
     }
-
-   
     
-    
-    
+    // Retrieve all cards for a deck
+    @GetMapping("/cards/{deckId}")
+    public ResponseEntity<List<Card>> getCardsFromDeck(@PathVariable(name = "deckId") Long deckId) {
+        List<Card> cards = cardService.getCardsByDeck(deckId);
+        return ResponseEntity.ok(cards);
+    }
     
 }

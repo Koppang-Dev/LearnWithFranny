@@ -33,3 +33,19 @@ export const getUserDecks = async (userId) => {
   // Parse and return the response as JSON
   return await response.json();
 };
+
+// Getting all cards for a deck
+export const getDeckCards = async (deckId) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/deck/cards/${deckId}`
+    );
+    if (!response.ok) throw new Error("Failed to get cards");
+
+    const data = await response.json;
+    console.log("API Response", data);
+    return await response.json();
+  } catch (error) {
+    console.error("Error get deck", error);
+  }
+};

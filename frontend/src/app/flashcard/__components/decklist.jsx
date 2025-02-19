@@ -6,7 +6,7 @@ import { SketchPicker } from "react-color"; // Import SketchPicker from react-co
 import DropdownMenu from "@/app/uploadNote/_components/DropDownMenu";
 import { useRouter } from "next/navigation";
 
-const DeckList = ({ decks }) => {
+const DeckList = ({ decks, onAddNewCard }) => {
   const [showDropdown, setShowDropdown] = useState(null); // Track which deck's dropdown is shown
   const [isRenaming, setIsRenaming] = useState(false);
   const [newDeckName, setNewDeckName] = useState("");
@@ -30,10 +30,6 @@ const DeckList = ({ decks }) => {
   const handleDeleteDeck = async (deckId) => {
     console.log(`Deleting deck with ID: ${deckId}`);
     setIsDeleting(false);
-  };
-
-  const handleCreateDeckClick = () => {
-    router.push("/createDeck");
   };
 
   // Handle color change
@@ -77,7 +73,7 @@ const DeckList = ({ decks }) => {
             Start creating your first deck now!
           </p>
           <button
-            onClick={handleCreateDeckClick}
+            onClick={onAddNewCard}
             className="px-6 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transform hover:scale-110 transition-all duration-300"
           >
             Create Your First Deck

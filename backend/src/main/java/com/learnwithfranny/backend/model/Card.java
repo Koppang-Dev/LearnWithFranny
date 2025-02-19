@@ -1,5 +1,7 @@
 package com.learnwithfranny.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -73,6 +75,9 @@ public class Card {
         this.backText = backText;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "deck_id")
+    @JsonIgnore
     public Deck getDeck() {
         return deck;
     }
