@@ -20,18 +20,38 @@ import java.util.Set;
 @NoArgsConstructor
 public class User {
 
+    // Users primary key id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    // Users username
+    @Column(name = "username")
     private String username;
 
-    @Column
+    // Users email
+    @Column(name = "email")
     private String email;
 
-    @Column
+    // Users password
+    @Column(name = "password")
     private String password;
+
+    // Users profile picture
+    @Column(name = "profilePictureUrl", nullable = true)
+    private String profilePictureUrl;
+
+    // Users saved language
+    @Column(name = "language", nullable = true)
+    private String language;
+
+    // Users saved DateFormat
+    @Column(name = "dateFormat")
+    private String dateFormat;
+
+    // Users saved time zone
+    @Column(name = "timeZone")
+    private String timeZone;
 
     // User can have many decks
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -52,4 +72,35 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+
+    // Setters and Getters
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
 }
