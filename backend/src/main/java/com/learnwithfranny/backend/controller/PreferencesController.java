@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
-@RequestMapping("api/preferences")
+@RequestMapping("/api/preferences")
 
 public class PreferencesController {
 
@@ -56,8 +56,12 @@ public class PreferencesController {
         preferencesService.updateTimeZone(timeZone);
         return ResponseEntity.ok("Time zone updated successfully");
     }
-    
-    
-    
-    
+
+    // Updating the date format for user
+    @PostMapping("/update-date-format")
+    public ResponseEntity<String> updateDateFormat(@RequestBody Map<String, String> request) {
+        String dateFormat = request.get("dateFormat");
+        preferencesService.updateDateFormat(dateFormat);
+        return ResponseEntity.ok("Date format updated successfully");
+    }    
 }
