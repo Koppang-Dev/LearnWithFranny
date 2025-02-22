@@ -25,6 +25,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+     // Users Name
+     @Column(name = "name")
+     private String name;
+ 
+
     // Users username
     @Column(name = "username")
     private String username;
@@ -75,6 +80,22 @@ public class User {
 
 
     // Setters and Getters
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getProfilePictureUrl() {
         return profilePictureUrl;
     }

@@ -19,11 +19,6 @@ import SidebarItem from "./item";
 // Defining sidebar items
 const items = [
   {
-    name: "Profile",
-    path: "/profile",
-    icon: UserIcon,
-  },
-  {
     name: "Dashboard",
     path: "/dashboard",
     icon: LayoutDashboardIcon,
@@ -76,9 +71,9 @@ const items = [
     icon: BrainIcon,
   },
   {
-    name: "Settings",
-    path: "/settings",
-    icon: Settings2Icon,
+    name: "Profile",
+    path: "/profile",
+    icon: UserIcon,
   },
   {
     name: "Help",

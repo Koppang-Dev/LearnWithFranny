@@ -11,6 +11,9 @@ const GeneralContent = () => {
   // Date format
   const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
 
+  // Users profile picture
+  const [profilePictureUrl, setProfilePictureUrl] = useState("images/logo.png");
+
   // Toggle time zone on/off
   const toggleTimeZone = () => {
     setAutomaticTimeZone(!isAutomaticTimeZone);
