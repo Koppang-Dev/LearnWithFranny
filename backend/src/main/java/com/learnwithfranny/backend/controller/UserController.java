@@ -52,15 +52,21 @@ public class UserController {
         return ResponseEntity.ok("Name updated successfully");
     }
 
+    // Updating the users username
+    @PostMapping("/update-username")
+    public ResponseEntity<String> updateUserName(@RequestBody Map<String, String> request) {
+
+        // Setting new name
+        String username = request.get("username");
+        userService.updateUsername(username);
+        return ResponseEntity.ok("Username updated successfully");
+    }
+
     // Updating the user email
     @PostMapping("/update-Email")
     public ResponseEntity<String> updateEmail(@RequestBody Map<String, String> request) {
         // Setting new email
         String email = request.get("email");
         return ResponseEntity.ok("Email updated successfully");
-    }
-    
-
-    
-    
+    }    
 }
