@@ -12,11 +12,17 @@ import {
   NotepadTextIcon,
   BrainIcon,
   CalendarIcon,
+  UserIcon,
 } from "lucide-react";
 import SidebarItem from "./item";
 
 // Defining sidebar items
 const items = [
+  {
+    name: "Profile",
+    path: "/profile",
+    icon: UserIcon,
+  },
   {
     name: "Dashboard",
     path: "/dashboard",
