@@ -33,6 +33,17 @@ public class PaymentMethod {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+
+    // Constructor
+    public PaymentMethod(String cardType, String last4, String expiryDate, User user) {
+        this.cardType = cardType;
+        this.last4 = last4;
+        this.expiryDate = expiryDate;
+        this.user = user;
+
+
+    }
+
     // Getters and setters
     public Long getId() {
         return id;

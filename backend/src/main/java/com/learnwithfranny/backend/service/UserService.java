@@ -12,6 +12,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import java.util.Collection;
 import java.util.List;
@@ -43,21 +45,27 @@ public class UserService {
 
     // Updating the users name
     public void updateName(String name) {
-        User user = currentUser();
+        User user = getCurrentUser();
         user.setName(name);
         userRepository.save(user);
     }
 
-
-
     // Updating the users username
-    public void updateName(String username) {
-        User user = currentUser();
+    public void updateUsername(String username) {
+        User user = getCurrentUser();
         user.setUsername(username);
         userRepository.save(user);
     }
 
     // Updating users email
+    public void updateEmail(String email) {
+        User user = getCurrentUser();
+        user.setEmail(email);
+        userRepository.save(user);
+    }
 
-    
+    public User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }

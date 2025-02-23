@@ -58,6 +58,10 @@ public class User {
     @Column(name = "timeZone")
     private String timeZone;
 
+    // 2 Factor Authentication
+    @Column(name = "twoFactorAuthentication")
+    private boolean twoFactorAuthentication;
+
     // User can have many decks
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Deck> decks;
@@ -122,6 +126,14 @@ public class User {
 
     public String getDateFormat() {
         return dateFormat;
+    }
+
+    public Boolean getTwoFactorAuthentication() {
+        return this.twoFactorAuthentication;
+    }
+
+    public void setTwoFactorAuthentication(boolean enable) {
+        this.twoFactorAuthentication = enable;
     }
 
 }
