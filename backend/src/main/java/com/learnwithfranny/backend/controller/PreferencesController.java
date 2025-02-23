@@ -38,7 +38,7 @@ public class PreferencesController {
     @GetMapping
     public ResponseEntity<Map<String, String>> getPreferences() {
         Map<String, String> preferences = preferencesService.getPreferences();
-        return ResponseEntity.ok(preferences)
+        return ResponseEntity.ok(preferences);
     }
 
     // Updating the users language preference
