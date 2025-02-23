@@ -61,10 +61,4 @@ public class BillingController {
         List<Map<String, String>> billingHistory = billingService.getBillingHistory();
         return ResponseEntity.ok(billingHistory);
     }
-    
-    
-    
-
-
-    
 }

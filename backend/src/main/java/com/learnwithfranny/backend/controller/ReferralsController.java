@@ -48,7 +48,7 @@ public class ReferralsController {
     // Getting referral history
     @GetMapping("/referral-history")
     public ResponseEntity<List<Map<String, String>>> getReferralHistory() {
-        List<Map<String, String>> referralHistory = referralsService.getReferralHistory()
+        List<Map<String, String>> referralHistory = referralsService.getReferralHistory();
         return ResponseEntity.ok(referralHistory);
     }
 

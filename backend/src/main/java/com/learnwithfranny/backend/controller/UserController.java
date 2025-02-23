@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 // Controller deals Users information and profile settings 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired

@@ -32,7 +32,7 @@ public class ReferralHistory {
     // Joining with the user
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User referrer;
 
     // Getters and setters
     public Long getId() {
