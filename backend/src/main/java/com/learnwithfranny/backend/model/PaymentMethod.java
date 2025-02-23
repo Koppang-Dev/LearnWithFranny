@@ -1,10 +1,5 @@
 package com.learnwithfranny.backend.model;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 // This class saves all of the users saved payments methods
@@ -40,8 +35,6 @@ public class PaymentMethod {
         this.last4 = last4;
         this.expiryDate = expiryDate;
         this.user = user;
-
-
     }
 
     // Getters and setters

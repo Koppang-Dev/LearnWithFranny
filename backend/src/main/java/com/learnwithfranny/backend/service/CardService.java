@@ -7,7 +7,6 @@ import com.learnwithfranny.backend.model.Deck;
 import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;

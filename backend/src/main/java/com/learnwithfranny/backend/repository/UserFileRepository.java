@@ -1,5 +1,4 @@
 package com.learnwithfranny.backend.repository;
-import com.learnwithfranny.backend.model.Folder;
 import com.learnwithfranny.backend.model.UserFileMetaData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

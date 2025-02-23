@@ -1,21 +1,12 @@
 package com.learnwithfranny.backend.service;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.learnwithfranny.backend.model.PaymentMethod;
 import com.learnwithfranny.backend.model.User;
-import com.learnwithfranny.backend.repository.BillingRepository;
 import com.learnwithfranny.backend.repository.PaymentMethodRepository;
-import com.learnwithfranny.backend.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,10 +14,6 @@ import java.util.stream.Collectors;
 @Service
 public class BillingService {
 
-    @Autowired
-    private BillingRepository billingRepository;
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private UserService userService;
 

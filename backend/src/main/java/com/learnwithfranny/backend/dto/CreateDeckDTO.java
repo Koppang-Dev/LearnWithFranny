@@ -2,8 +2,6 @@ package com.learnwithfranny.backend.dto;
 
 
 import java.util.List;
-import com.learnwithfranny.backend.model.Card;
-import com.learnwithfranny.backend.model.Deck;
 
 public class CreateDeckDTO {
 

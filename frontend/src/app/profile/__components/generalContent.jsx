@@ -65,6 +65,17 @@ const GeneralContent = () => {
           </div>
         </div>
 
+        {/* Username Section */}
+        <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
+          <h2 className="text-lg font-semibold text-black">Username</h2>
+          <h2 className="text-lg f text-black">Koppang123</h2>
+          <div className="flex justify-end items-center">
+            <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
+              Edit
+            </button>
+          </div>
+        </div>
+
         {/* Email Address Section */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
           <h2 className="text-lg font-semibold text-black">Email</h2>

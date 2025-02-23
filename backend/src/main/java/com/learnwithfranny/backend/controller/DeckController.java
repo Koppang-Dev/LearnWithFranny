@@ -1,29 +1,24 @@
 package com.learnwithfranny.backend.controller;
-import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.CreateDeckDTO;
 import com.learnwithfranny.backend.model.Card;
 import com.learnwithfranny.backend.model.Deck;
 import com.learnwithfranny.backend.model.User;
-import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.UserRepository;
 import com.learnwithfranny.backend.service.CardService;
 import com.learnwithfranny.backend.service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 

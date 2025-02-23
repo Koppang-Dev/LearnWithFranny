@@ -10,18 +10,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.learnwithfranny.backend.service.StorageService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.CreateFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteFolderRequest;
 import com.learnwithfranny.backend.dto.DeleteRequest;
 import com.learnwithfranny.backend.dto.FileDownloadRequest;
 import com.learnwithfranny.backend.dto.FileDownloadResponse;
-import com.learnwithfranny.backend.dto.FileResponse;
 import com.learnwithfranny.backend.dto.FolderWithFilesResponse;
 import com.learnwithfranny.backend.dto.MoveFileRequest;
 import com.learnwithfranny.backend.dto.RenameFileRequest;
@@ -42,7 +39,6 @@ public class FileController {
 
     @Autowired
     private UserFileService userFileService;
-    private StorageService storageService;
 
     /**
      * Endpoint for uploading a file for a specific user.

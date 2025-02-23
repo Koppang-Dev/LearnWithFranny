@@ -1,12 +1,7 @@
 package com.learnwithfranny.backend.model;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 public class BillingHistory {
