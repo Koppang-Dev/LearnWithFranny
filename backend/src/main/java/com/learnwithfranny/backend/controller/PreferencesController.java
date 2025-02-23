@@ -61,7 +61,7 @@ public class PreferencesController {
     @PostMapping("/update-date-format")
     public ResponseEntity<String> updateDateFormat(@RequestBody Map<String, String> request) {
         String dateFormat = request.get("dateFormat");
-        preferencesService.updateDateFormat(dateFormat);
+        preferencesService.updateDateTime(dateFormat);
         return ResponseEntity.ok("Date format updated successfully");
     }    
 }

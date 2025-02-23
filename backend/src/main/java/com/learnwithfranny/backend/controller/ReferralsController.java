@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.learnwithfranny.backend.service.BillingService;
 import com.learnwithfranny.backend.service.NotificationService;
-import com.learnwithfranny.backend.service.ReferralsService;
+import com.learnwithfranny.backend.service.ReferralService;
 import com.learnwithfranny.backend.service.SecurityService;
 import com.learnwithfranny.backend.service.StorageService;
 import com.learnwithfranny.backend.service.UserService;
@@ -36,19 +36,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ReferralsController {
 
     @Autowired
-    private ReferralsService referralsService;
+    private ReferralService referralService;
 
     // Getting a referral link
     @GetMapping("/referral-link")
     public ResponseEntity<String> getReferralLink() {
-        String referralLink = referralsService.getReferralLink();
+        String referralLink = referralService.getReferralLink();
         return ResponseEntity.ok(referralLink);
     }
 
     // Getting referral history
     @GetMapping("/referral-history")
     public ResponseEntity<List<Map<String, String>>> getReferralHistory() {
-        List<Map<String, String>> referralHistory = referralsService.getReferralHistory();
+        List<Map<String, String>> referralHistory = referralService.getReferralHistory();
         return ResponseEntity.ok(referralHistory);
     }
 

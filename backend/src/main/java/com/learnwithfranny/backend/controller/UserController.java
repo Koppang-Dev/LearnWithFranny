@@ -47,7 +47,7 @@ public class UserController {
     public ResponseEntity<String> updateName(@RequestBody Map<String, String> request) {
 
         // Setting new name
-        String name = request.get("name")
+        String name = request.get("name");
         userService.updateName(name);
         return ResponseEntity.ok("Name updated successfully");
     }

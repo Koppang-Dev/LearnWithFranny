@@ -39,15 +39,15 @@ public class NotificationController {
 
     // Get all the notification preferences
     @GetMapping
-    public ResponseEntity<Map<String, Boolean>> getNotificationPreferences() {
-        Map<String, Boolean> preferences = notificationService.getNotificationPreferences();
+    public ResponseEntity<Map<String, Object>> getNotificationPreferences() {
+        Map<String, Object> preferences = notificationService.getNotificationPreferences();
         return ResponseEntity.ok(preferences);
     }
     
     // Updating notification preferences
     @PostMapping("/update-preferences")
-    public ResponseEntity<String> updateNotificationPreferences(@RequestBody Map<String, Boolean> request) {
-        notificationService.updateNotificationPreferences(request);
+    public ResponseEntity<String> updateNotificationPreferences(@RequestBody Map<String, Object> request) {
+        notificationService.updateAllNotificationPreferences(request);
         return ResponseEntity.ok("Notification preferences updated successfully");
     }
     

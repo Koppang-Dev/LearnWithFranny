@@ -62,6 +62,10 @@ public class User {
     @Column(name = "twoFactorAuthentication")
     private boolean twoFactorAuthentication;
 
+    // Users referral code
+    @Column(name = "referralCode", unique = true, nullable = true)
+    private String referralCode;
+
     // User can have many decks
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Deck> decks;
@@ -134,6 +138,14 @@ public class User {
 
     public void setTwoFactorAuthentication(boolean enable) {
         this.twoFactorAuthentication = enable;
+    }
+
+    public String getReferralCode() {
+        return referralCode;
+    }
+
+    public void setReferralCode(String referralCode) {
+        this.referralCode = referralCode;
     }
 
 }

@@ -44,11 +44,26 @@ public class BillingService {
     // Getting the billing history
     public List<Map<String, String>> getBillingHistory() {
         return List.of(
-            Map.of("date", "2023-10-01", "amount", "$49.99", "status", "Paid"),
-            Map.of("date", "2023-09-01", "amount", "$49.99", "status", "Paid")
-        );
-
+                Map.of("date", "2023-10-01", "amount", "$49.99", "status", "Paid"),
+                Map.of("date", "2023-09-01", "amount", "$49.99", "status", "Paid"));
     }
+
+    // Get payment methods
+    public List<Map<String, String>> getPaymentMethods() {
+        User user = userService.getCurrentUser();
+        List<PaymentMethod> paymentMethods = paymentMethodRepository.findByUser(user);
+
+        return paymentMethods.stream()
+                .map(paymentMethod -> Map.of(
+                        "id", paymentMethod.getId().toString(),
+                        "cardType", paymentMethod.getCardType(),
+                        "last4", paymentMethod.getLast4(),
+                        "expiryDate", paymentMethod.getExpiryDate()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    
 
 
     
