@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,16 +33,41 @@ public class UserService {
     public String updateProfilePicture(MultipartFile image) throws IOException {
         User user = getCurrentUser();
 
-        // Saving image and getting URL
-        String imageUrl = storageService.storeImage(image);
+        // Generating unique file name for image
+        String uniqueFileName = generateUniqueFileName(image.getOriginalFilename());
 
-        // Setting the users profile picture
+        // Uploading image to s3 storga 
+        String imageUrl = storageService.uploadFile(image, uniqueFileName);
+
+        // Delete old profile picture
+        if (user.getProfilePictureUrl() != null) {
+            deleteOldProfilePicture(user.getProfilePictureUrl());
+        }
+
+        // Setting the new image
         user.setProfilePictureUrl(imageUrl);
         userRepository.save(user);
 
-        // Returning the image URL
+        // Returning image url
         return imageUrl;
     }
+
+    // Deleting old profile picture
+    private void deleteOldProfilePicture(String oldImageUrl) {
+        String oldFileName = extractFileNameFromUrl(oldImageUrl);
+        storageService.deleteFile(oldFileName);
+    }
+
+    // Getting the file name
+    private String extractFileNameFromUrl(String fileUrl) {
+        return fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+    }
+
+    // Generating unique filename
+    private String generateUniqueFileName(String originalFileName) {
+        return UUID.randomUUID().toString() + "_" + originalFileName;
+    }
+
 
     // Updating the users name
     public void updateName(String name) {
