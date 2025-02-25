@@ -106,7 +106,7 @@ export const updateDateFormat = async (dateFormat) => {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to update language preference");
+    throw new Error("Failed to update date format preference");
   }
   return response.json();
 };
@@ -125,7 +125,7 @@ export const updateTimeZone = async (timeZone) => {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to update language preference");
+    throw new Error("Failed to update time zone preference");
   }
   return response.json();
 };

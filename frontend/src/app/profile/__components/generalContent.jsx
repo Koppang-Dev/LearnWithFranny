@@ -1,3 +1,4 @@
+import { updateProfileImage } from "@/app/utils/ProfileApi";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -14,6 +15,23 @@ const GeneralContent = () => {
   // Users profile picture
   const [profilePictureUrl, setProfilePictureUrl] = useState("images/logo.png");
 
+  // Changing the users profile picture
+  const handleProfileImageUpload = async (event) => {
+    // Getting the file
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    // Calling backend to change profile image
+    try {
+      const newProfilePictureUrl = await updateProfileImage(file);
+      setProfilePictureUrl(newProfilePictureUrl);
+      alert("Profile image updated successfully");
+    } catch (error) {
+      alert("Failed to upload profile picture");
+    }
+  };
   // Toggle time zone on/off
   const toggleTimeZone = () => {
     setAutomaticTimeZone(!isAutomaticTimeZone);
@@ -48,9 +66,15 @@ const GeneralContent = () => {
             />
           </div>
           <div className="flex justify-end items-center">
-            <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
+            <label className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
               Edit
-            </button>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfileImageUpload}
+                className="hidden"
+              />
+            </label>
           </div>
         </div>
 

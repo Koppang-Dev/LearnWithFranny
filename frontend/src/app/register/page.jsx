@@ -81,7 +81,7 @@ export default function Register() {
 
     // Stop form submission if errors occured during form input
     if (!validateForm()) {
-      return;
+      setRequestError("Form is wrong");
     }
 
     console.log("Clicked Sign up");

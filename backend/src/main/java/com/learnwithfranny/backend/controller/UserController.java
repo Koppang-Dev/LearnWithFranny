@@ -52,7 +52,7 @@ public class UserController {
     }
 
     // Updating the user email
-    @PostMapping("/update-Email")
+    @PostMapping("/update-email")
     public ResponseEntity<String> updateEmail(@RequestBody Map<String, String> request) {
         // Setting new email
         String email = request.get("email");

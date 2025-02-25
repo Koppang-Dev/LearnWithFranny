@@ -7,8 +7,7 @@ import {
 } from "react-icons/fa";
 import { IoPersonCircle } from "react-icons/io5";
 import Link from "next/link";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MdLockOutline, MdVisibilityOff, MdVisibility } from "react-icons/md";
 import { useUser } from "../context/UserContext";
@@ -78,13 +77,6 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    // Stop form submission if errors occured during form input
-    if (!validateForm()) {
-      return;
-    }
-
-    console.log("Clicked Login up");
-
     try {
       // Send a POST request to the server with the user's credentials
       const res = await fetch(
@@ -100,6 +92,7 @@ export default function Login() {
 
       if (res.ok) {
         const response = await res.json();
+        console.log("Backend response:", response); // Log the response
 
         // Set the user context with their data
         setUser({
@@ -111,17 +104,22 @@ export default function Login() {
         });
 
         // Storing token and userID in local storage for persistence
-        localStorage.setItem("token", `${response.type} ${response.token}`);
-        localStorage.setItem("uuid");
+        try {
+          localStorage.setItem("token", `${response.type} ${response.token}`);
+        } catch (error) {
+          console.error("Failed to save token to localStorage:", error);
+        }
 
-        router.push("/dashboard");
+        console.log("Something is broken");
       }
     } catch (err) {
+      console.error("Login error:", err);
       setRequestError(
         "Failed to connect to the server. Please try again later."
       );
     }
   }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
@@ -234,7 +232,7 @@ export default function Login() {
                 </div>
                 <button
                   onClick={handleSubmit}
-                  className=" text-[#222A68] border-2 border-[#222A68] rounded-full px-12 py-2 inline-block font-semibold hover:bg-[#222A68] hover:text-white"
+                  className="text-[#222A68] border-2 border-[#222A68] rounded-full px-12 py-2 inline-block font-semibold hover:bg-[#222A68] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Login
                 </button>
@@ -253,7 +251,7 @@ export default function Login() {
             </p>
             <button
               onClick={handleSignupClicked}
-              className=" text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-[#222A68]"
+              className="text-white border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-[#222A68]"
             >
               Sign Up Now
             </button>
