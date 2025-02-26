@@ -130,6 +130,11 @@ export default function Login() {
           token: response.token,
         });
 
+        // Setting the local storage
+        localStorage.setItem("token", response.token); // Store the token
+        localStorage.setItem("username", state.username); // Store the username
+        localStorage.setItem("email", state.email); // Store the email
+
         // Redirect to the dashboard or home page after successful login
         router.push("/dashboard");
       } else {

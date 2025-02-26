@@ -24,7 +24,7 @@ const GeneralContent = () => {
   const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
 
   // Users profile picture
-  const [profilePictureUrl, setProfilePictureUrl] = useState("images/logo.png");
+  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
 
   // Errors
   const [error, settError] = useState(null);
@@ -75,7 +75,7 @@ const GeneralContent = () => {
         setAutomaticTimeZone(data.isAutomaticTimeZone || true);
         setLanguage(data.language || "English (US)");
         setDateFormat(data.dateFormat || DD / MM / YYYY);
-        setProfilePictureUrl(data.profilePictureUrl || "images/logo.png");
+        setProfilePictureUrl(data.profilePictureUrl);
       } catch (error) {
         settError("Failed to fetch data");
       } finally {
@@ -86,7 +86,7 @@ const GeneralContent = () => {
   }, []);
 
   // Handling loading
-  if (laoding) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 
