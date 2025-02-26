@@ -1,9 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Outfit } from "next/font/google";
-import "./globals.css";
 import { UserProvider } from "./context/UserContext";
-import Head from "next/head";
+import "./globals.css";
 
+// Load fonts
 const font = Outfit({ subsets: ["latin"] });
 
 const geistSans = Geist({
@@ -16,33 +16,35 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Define metadata
 export const metadata = {
   title: "Your AI Study Buddy",
   description: "Simple AI Quiz and Note Application",
+  openGraph: {
+    title: "Learn With Franny",
+    description:
+      "Note AI assistance app to improve study habits and proven to increase grades.",
+    images: [
+      {
+        url: "/images/logo.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    url: "https://learn-with-franny.vercel.app/",
+    type: "website",
+  },
 };
 
+// RootLayout component
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <Head>
-        {/* Open Graph Metadata (for iMessage, Slack, WhatsApp, etc.) */}
-        <meta property="og:title" content="Learn With Franny" />
-        <meta
-          property="og:description"
-          content="Note AI assistance app to improve study habbits and proven to increase grades."
-        />
-        <meta property="og:image" content="/images/logo.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta
-          property="og:url"
-          content="https://learn-with-franny.vercel.app/"
-        />
-        <meta property="og:type" content="website" />
-      </Head>
-      <UserProvider>
-        <body className={font.className}>{children}</body>
-      </UserProvider>
+      <body
+        className={`${font.className} ${geistSans.variable} ${geistMono.variable}`}
+      >
+        <UserProvider> {children}</UserProvider>
+      </body>
     </html>
   );
 }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.Response;
+import com.learnwithfranny.backend.dto.BillingInfo;
 import com.learnwithfranny.backend.service.BillingService;
 
 
@@ -23,6 +25,13 @@ public class BillingController {
     private BillingService billingService;
 
     @Autowired
+
+    // Retrieiving all of the Billing Informaiton
+    @GetMapping
+    public ResponseEntity<BillingInfo> getBillingInfo() {
+        BillingInfo billingInfo = billingService.getBillingInfo();
+        return ResponseEntity.ok(billingInfo);
+    }
 
     // Retrieving all of the payment methods
     @GetMapping("/payment-methods")

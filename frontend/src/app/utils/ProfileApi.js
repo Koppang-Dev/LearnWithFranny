@@ -1,3 +1,83 @@
+// Retrieiving all the general data from user
+export const fetchGeneralData = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/preferences`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Example: Add auth token
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to get general data");
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+// Fetching Security data from the user
+export const fetchSecurityData = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/security`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to get security data");
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+// Getting all the billing information from a user
+export const fetchBillingData = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/biling`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to get billing data");
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+// Getting all the notifcations information from a user
+export const fetchNotifcationData = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/notification`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to get notication data");
+  }
+
+  const data = await response.json();
+  return data;
+};
+
 // Updating users profile picture
 export const updateProfileImage = async (file) => {
   const formData = new FormData();

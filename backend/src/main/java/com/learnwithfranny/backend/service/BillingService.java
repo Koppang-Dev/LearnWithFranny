@@ -1,5 +1,6 @@
 package com.learnwithfranny.backend.service;
 
+import com.learnwithfranny.backend.dto.BillingInfo;
 import com.learnwithfranny.backend.model.PaymentMethod;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.PaymentMethodRepository;
@@ -19,6 +20,17 @@ public class BillingService {
 
     @Autowired
     private PaymentMethodRepository paymentMethodRepository;
+
+
+    // Retrieving the combined payment methods and billing history
+    public BillingInfo getBillingInfo() {
+        List<Map<String, String>> paymentMethods = getPaymentMethods();
+        List<Map<String, String>> billingHistory = getBillingHistory();
+
+        // Combining
+        return new BillingInfo(paymentMethods, billingHistory);
+
+    }
 
 
     // Add a payment method

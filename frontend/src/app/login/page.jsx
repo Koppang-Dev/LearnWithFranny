@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MdLockOutline, MdVisibilityOff, MdVisibility } from "react-icons/md";
+import React from "react";
 import { useUser } from "../context/UserContext";
 
 export default function Login() {
@@ -27,8 +28,18 @@ export default function Login() {
 
   const [requestError, setRequestError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
   const router = useRouter();
   const { setUser } = useUser();
+
+  // AbortController for cleanup
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    return () => {
+      abortController.abort(); // Cancel the request if the component unmounts
+    };
+  }, []);
 
   function handleChange(e) {
     const copy = { ...state };
@@ -73,11 +84,21 @@ export default function Login() {
   function handleSignupClicked() {
     router.push("/register");
   }
-
   async function handleSubmit(e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
+
+    // Stop form submission if errors occurred during form input
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true); // Start loading
+    setRequestError(""); // Clear any previous errors
 
     try {
+      // Create a new AbortController for this request
+      const abortController = new AbortController();
+
       // Send a POST request to the server with the user's credentials
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signin`,
@@ -87,6 +108,7 @@ export default function Login() {
           headers: {
             "Content-Type": "application/json",
           },
+          signal: abortController.signal, // Pass the signal to the fetch request
         }
       );
 
@@ -94,32 +116,40 @@ export default function Login() {
         const response = await res.json();
         console.log("Backend response:", response); // Log the response
 
-        // Set the user context with their data
-        setUser({
-          id: response.id,
-          username: response.username,
-          roles: response.roles,
-          token: response.token,
-          type: response.type,
-        });
-
-        // Storing token and userID in local storage for persistence
-        try {
-          localStorage.setItem("token", `${response.type} ${response.token}`);
-        } catch (error) {
-          console.error("Failed to save token to localStorage:", error);
+        // Check if the response contains the expected fields
+        if (!response.token || !response.type) {
+          throw new Error("Invalid response from the server");
         }
 
-        console.log("Something is broken");
+        console.log("Login successful");
+
+        // Updating the user context
+        setUser({
+          username: state.username,
+          email: state.email,
+          token: response.token,
+        });
+
+        // Redirect to the dashboard or home page after successful login
+        router.push("/dashboard");
+      } else {
+        // Handle API errors (e.g., invalid credentials)
+        const errorData = await res.json();
+        setRequestError(errorData.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      console.error("Login error:", err);
-      setRequestError(
-        "Failed to connect to the server. Please try again later."
-      );
+      if (err.name === "AbortError") {
+        console.log("Request was aborted");
+      } else {
+        console.error("Login error:", err);
+        setRequestError(
+          "Failed to connect to the server. Please try again later."
+        );
+      }
+    } finally {
+      setLoading(false); // Stop loading
     }
   }
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
@@ -175,6 +205,7 @@ export default function Login() {
                     onChange={handleChange}
                     placeholder="Username"
                     className="bg-gray-100 outline-none flex-1"
+                    disabled={loading} // Disable input while loading
                   />
                 </div>
                 {errors.username && (
@@ -189,6 +220,7 @@ export default function Login() {
                     onChange={handleChange}
                     placeholder="Email"
                     className="bg-gray-100 outline-none flex-1"
+                    disabled={loading} // Disable input while loading
                   />
                 </div>
                 {errors.email && (
@@ -203,11 +235,13 @@ export default function Login() {
                     onChange={handleChange}
                     placeholder="Password"
                     className="bg-gray-100 outline-none flex-1"
+                    disabled={loading} // Disable input while loading
                   />
                   <button
                     type="button"
                     onClick={handleTogglePasswordVisibility}
                     className="ml-2 text-gray-400"
+                    disabled={loading} // Disable button while loading
                   >
                     {passwordVisible ? (
                       <MdVisibilityOff className="text-xl" />
@@ -223,7 +257,12 @@ export default function Login() {
                 {/* REMEMBER ME SECTION */}
                 <div className="flex justify-between w-64 mb-5">
                   <label>
-                    <input type="checkbox" name="remeber" className="mr-1" />
+                    <input
+                      type="checkbox"
+                      name="remeber"
+                      className="mr-1"
+                      disabled={loading} // Disable checkbox while loading
+                    />
                     Remember me
                   </label>
                   <a href="#" className="text-xs">
@@ -232,9 +271,10 @@ export default function Login() {
                 </div>
                 <button
                   onClick={handleSubmit}
+                  disabled={loading} // Disable button while loading
                   className="text-[#222A68] border-2 border-[#222A68] rounded-full px-12 py-2 inline-block font-semibold hover:bg-[#222A68] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Login
+                  {loading ? "Logging in..." : "Login"}
                 </button>
               </div>
             </div>

@@ -17,6 +17,13 @@ public class SecurityController {
     @Autowired
     private SecurityService securityService;
 
+    // Getting all of the security data
+    @GetMapping
+    public ResponseEntity<Map<String, String>> getSecuritySettings() {
+        Map<String, String> preferences = securityService.getSecuritySettings();
+        return ResponseEntity.ok(preferences);
+    }
+
     // Enable/Disable 2-factor authentication
     @PostMapping("/toggle-2fa")
     public ResponseEntity<String> toggle2fa(@RequestBody Map<String, Boolean> request) {
@@ -39,7 +46,4 @@ public class SecurityController {
         securityService.logoutSession(sessionId);
         return ResponseEntity.ok("Session logged out successfully");
     }
-    
-    
-    
 }

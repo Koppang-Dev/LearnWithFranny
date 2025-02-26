@@ -1,8 +1,19 @@
-import { updateProfileImage } from "@/app/utils/ProfileApi";
+import {
+  updateProfileImage,
+  updateDateFormat,
+  updateName,
+  updateUserLanguage,
+  updateUserUsername,
+  updateTimeZone,
+  fetchGeneralData,
+} from "@/app/utils/ProfileApi";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const GeneralContent = () => {
+  // All of the general content data
+  const [generalData, setGeneralData] = useState(null);
+
   // Time zone useState
   const [isAutomaticTimeZone, setAutomaticTimeZone] = useState(true);
 
@@ -14,6 +25,12 @@ const GeneralContent = () => {
 
   // Users profile picture
   const [profilePictureUrl, setProfilePictureUrl] = useState("images/logo.png");
+
+  // Errors
+  const [error, settError] = useState(null);
+
+  // Loading state
+  const [loading, setLoading] = useState(false);
 
   // Changing the users profile picture
   const handleProfileImageUpload = async (event) => {
@@ -47,6 +64,42 @@ const GeneralContent = () => {
     setDateFormat(event.target.value);
   };
 
+  // Fetching the General Content from backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchGeneralData();
+        setGeneralData(data);
+
+        // Populating states with the fetched data
+        setAutomaticTimeZone(data.isAutomaticTimeZone || true);
+        setLanguage(data.language || "English (US)");
+        setDateFormat(data.dateFormat || DD / MM / YYYY);
+        setProfilePictureUrl(data.profilePictureUrl || "images/logo.png");
+      } catch (error) {
+        settError("Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Handling loading
+  if (laoding) {
+    return <div>Loading...</div>;
+  }
+
+  // Handling Errors
+  if (error) {
+    return (
+      <div>
+        {error}
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-10">
       {/* Basics Section */}
@@ -58,7 +111,7 @@ const GeneralContent = () => {
           <h2 className="text-lg font-semibold text-black">Photo</h2>
           <div className="flex justify-start">
             <Image
-              src="/images/logo.png"
+              src={profilePictureUrl}
               alt="ProfileImage"
               width={75}
               height={75}
@@ -81,7 +134,7 @@ const GeneralContent = () => {
         {/* Name Section */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
           <h2 className="text-lg font-semibold text-black">Name</h2>
-          <h2 className="text-lg f text-black">Riley Koppang</h2>
+          <h2 className="text-lg f text-black">{generalData?.name || "N/A"}</h2>
           <div className="flex justify-end items-center">
             <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
               Edit
@@ -92,7 +145,9 @@ const GeneralContent = () => {
         {/* Username Section */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
           <h2 className="text-lg font-semibold text-black">Username</h2>
-          <h2 className="text-lg f text-black">Koppang123</h2>
+          <h2 className="text-lg f text-black">
+            {generalData?.username || "N/A"}
+          </h2>
           <div className="flex justify-end items-center">
             <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
               Edit
@@ -103,7 +158,7 @@ const GeneralContent = () => {
         {/* Email Address Section */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
           <h2 className="text-lg font-semibold text-black">Email</h2>
-          <h2 className="text-lg text-black">RileyKoppang@gmail.com</h2>
+          <h2 className="text-lg text-black">{generalData?.email || "N/A"}</h2>
           <div className="flex justify-end items-center">
             <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
               Edit
@@ -127,7 +182,7 @@ const GeneralContent = () => {
               type="checkbox"
               checked={isAutomaticTimeZone}
               onChange={toggleTimeZone}
-              className="sr-only" // Hide the default checkbox
+              className="sr-only"
             />
             <div
               className={`w-11 h-6 bg-gray-200 rounded-full transition-colors ${

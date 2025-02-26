@@ -6,6 +6,7 @@ import com.learnwithfranny.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,26 @@ public class SecurityService {
 
     @Autowired
     private UserService userService;
+
+    // Getting all of the security settings
+    public Map<String, String> getSecuritySettings() {
+        User user = userService.getCurrentUser();
+
+        // Get TFA Settings
+        boolean is2faEnabled = user.getTwoFactorAuthentication();
+
+        // Get Active Sessions
+        List<Map<String, String>> activeSessions = getActiveSessions();
+
+        // Constructing map for security settings
+        Map<String, String> securitySettings = new HashMap<>();
+        securitySettings.put("twoFactorEnabled", String.valueOf(is2faEnabled));
+        securitySettings.put("activteSessions", activeSessions.toString());
+
+        // Returning the settings
+        return securitySettings;
+
+    }
 
     // Toggle the 2FA on and off
     public void toggle2fa(boolean enable) {
