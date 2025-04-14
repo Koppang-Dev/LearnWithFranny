@@ -103,7 +103,7 @@ public class SecurityConfiguration {
         .sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/api/**", "/api/test/**", "/login/oauth2/**", "/oauth2/authorization/google", "/file/upload", "api/auth/signin").permitAll()
+            .requestMatchers("/api/**", "/api/test/**", "/login/oauth2/**", "/oauth2/authorization/google", "/file/upload", "/api/auth/signin").permitAll()
                         .anyRequest().authenticated())
                         .exceptionHandling(exceptionHandling -> exceptionHandling
             .authenticationEntryPoint(authEntryPointJwt)  

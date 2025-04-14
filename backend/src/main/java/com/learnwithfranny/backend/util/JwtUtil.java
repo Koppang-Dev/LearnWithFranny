@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.SignatureException; 
 import io.jsonwebtoken.Claims;
@@ -31,14 +32,26 @@ public class JwtUtil {
      * @param authentication The authentication object containing the user details.
      * @return The generated JWT token as a string.
      */
-    public String generateJwtToken(Authentication authentication) {
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+     public String generateJwtToken(Authentication authentication) {
+        
+        Object principal = authentication.getPrincipal();
+
+        String username;
+
+        // Determing the type - Regular or OAuth
+        if (principal instanceof UserDetailsImpl userPrincipal) {
+            username = userPrincipal.getUsername();
+        } else if (principal instanceof OAuth2User oauth2User) {
+            username = oauth2User.getAttribute("email");
+        } else {
+            throw new RuntimeException("Unknown Authentication Principal Types" + principal.getClass());
+        }
 
         // Use the Keys utility to generate a signing key from the secret
         Key signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
         return Jwts.builder()
-                .claim("sub", userPrincipal.getUsername()) // Set the subject using the "sub" claim
+                .claim("sub", username) // Set the subject using the "sub" claim
                 .claim("iat", new Date()) // Manually set the issued date using "iat" claim
                 .claim("exp", new Date(System.currentTimeMillis() + jwtExpirationMs)) // Manually set the expiration claim
                 .signWith(signingKey) // Sign with the generated key and algorithm

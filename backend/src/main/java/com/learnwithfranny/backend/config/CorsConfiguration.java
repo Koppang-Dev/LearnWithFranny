@@ -1,6 +1,8 @@
 package com.learnwithfranny.backend.config;
 
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +13,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 @Configuration
 public class CorsConfiguration {
 
-    @Value("${frontend.url")
-    private String frontendUrl;
+    @Value("${frontend.url}")
+    private String frontendUrls;
+    
 
 
     /**
@@ -29,9 +32,14 @@ public class CorsConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
+
+                // Both production and development
+                String[] allowedOrigins = frontendUrls.split(",");
+                System.out.println("Origins: " + Arrays.toString(allowedOrigins));
+
                 // Allow CORS for all routes and specify allowed methods and headers
-                registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "PUT", "POST", "DELETE")
-                        .allowedHeaders("*");
+                registry.addMapping("/**").allowedOrigins("http://localhost:3001").allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+                        .allowedHeaders("*").allowCredentials(true);
             }
         };
     }

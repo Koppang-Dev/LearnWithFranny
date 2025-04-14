@@ -2,11 +2,22 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { logoutUser } from "@/app/utils/ProfileApi";
 
 const Navbar = () => {
   // User avatar is clicked
   const [activeProfileDropdown, setProfileDropDown] = useState(false);
   const router = useRouter();
+
+  // Logging the user out
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("token");
+      router.push("/");
+    } catch (error) {
+      console.error("Error logging out", error);
+    }
+  };
 
   return (
     <div className="flex items-center justify-between p-4">
@@ -64,6 +75,7 @@ const Navbar = () => {
                 className="block w-full px-4 py-2 text-left text-md text-red-500 hover:bg-gray-100"
                 onClick={() => {
                   // Log user out
+                  handleLogout();
                 }}
               >
                 Logout

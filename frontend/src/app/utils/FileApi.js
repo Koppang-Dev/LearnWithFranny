@@ -10,6 +10,7 @@ export const fetchDocuments = async (userId) => {
     `${process.env.NEXT_PUBLIC_API_URL}/api/file/${userId}/files`,
     {
       method: "GET",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
     }
   );
@@ -35,6 +36,7 @@ export const deleteFile = async (userId, fileName, folderId) => {
   // Make an HTTP DELETE request to delete the specified file for the user
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/file`, {
     method: "DELETE",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(requestData),
   });
@@ -62,6 +64,7 @@ export const deleteFolder = async (userId, folderId) => {
     `${process.env.NEXT_PUBLIC_API_URL}/api/file/folder/delete`,
     {
       method: "DELETE",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestData),
     }
@@ -95,6 +98,7 @@ export const renameFolder = async (userId, folderId, newFolderName) => {
     `${process.env.NEXT_PUBLIC_API_URL}/api/file/folder/rename`,
     {
       method: "PUT",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestData),
     }
@@ -127,6 +131,7 @@ export const renameFile = async (userId, fileId, newFileName) => {
     `${process.env.NEXT_PUBLIC_API_URL}/api/file/rename`,
     {
       method: "PUT",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestData),
     }
@@ -165,6 +170,7 @@ export const moveFileToFolder = async (
     `${process.env.NEXT_PUBLIC_API_URL}/api/file/move`,
     {
       method: "PUT",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestData),
     }
@@ -189,6 +195,7 @@ export const downloadFile = async (fileId) => {
       `${process.env.NEXT_PUBLIC_API_URL}/api/file/download`,
       {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -220,11 +227,13 @@ export const fetchPresignedUrl = async (fileId) => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/file/get-presigned-url`,
     {
-      method: "POST", // Use GET since it's still a retrieval operation
+      method: "POST",
+      credentials: "include",
+
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestData), // Send the fileId in the request body
+      body: JSON.stringify(requestData),
     }
   );
 
@@ -258,6 +267,7 @@ export const createFolder = async (folderName, userId, parentFolderId) => {
       `${process.env.NEXT_PUBLIC_API_URL}/api/file/create-folder`,
       {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           // Authorization header can be added if authentication is required

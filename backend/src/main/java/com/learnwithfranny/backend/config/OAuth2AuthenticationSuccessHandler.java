@@ -4,6 +4,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import com.learnwithfranny.backend.repository.UserRepository;
+import com.learnwithfranny.backend.util.JwtUtil;
 import com.learnwithfranny.backend.repository.RoleRepository;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.model.Role;
@@ -19,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
 
 @Component
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -26,12 +28,14 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Lazy
-    public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -48,8 +52,38 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         // Create or update the user in the database
         createOrUpdateUser(email, name);
 
-        // Redirect to the frontend after successful login
-        response.sendRedirect("http://localhost:3001/dashboard");
+        // Generating the JWT Token
+        String jwt = jwtUtil.generateJwtToken(authentication);
+
+        // Determine environment
+        boolean isLocalHost = request.getServerName().equals("localhost");
+        System.out.println("Current dev" + isLocalHost);
+        // Normal Cookie for local development
+        if (isLocalHost) {
+            // Creating an HttpOnly Cookie 
+            Cookie jwtCookie = new Cookie("token", jwt);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(false);
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(24 * 60 * 60);
+
+            // Redirect to the frontend after successful login
+            response.addCookie(jwtCookie);
+        } else {
+            String cookie = String.format(
+                "token=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",
+                jwt, 24 * 60 * 60
+            );
+            response.setHeader("Set-Cookie", cookie);
+        }
+        
+        // Redirect url 
+        String redirectUrl = isLocalHost
+        ? "http://localhost:3001/dashboard"
+        : "https://learn-with-franny.vercel.app/dashboard";
+
+     
+        response.sendRedirect(redirectUrl);
     }
     
     private void createOrUpdateUser(String email, String name) {

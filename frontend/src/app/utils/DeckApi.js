@@ -9,6 +9,7 @@
 export const createUserDeck = async (deck) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/deck`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -25,7 +26,11 @@ export const createUserDeck = async (deck) => {
 // Retrieving all the decks from a user
 export const getUserDecks = async (userId) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/deck/${userId}`
+    `${process.env.NEXT_PUBLIC_API_URL}/api/deck/${userId}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
   );
 
   if (!response.ok) throw new Error("Failed to fetch decks");
@@ -38,7 +43,11 @@ export const getUserDecks = async (userId) => {
 export const getDeckCards = async (deckId) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/deck/cards/${deckId}`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/deck/cards/${deckId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
     );
     if (!response.ok) throw new Error("Failed to get cards");
 

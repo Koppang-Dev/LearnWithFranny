@@ -14,7 +14,9 @@ import com.learnwithfranny.backend.dto.JwtResponse;
 import com.learnwithfranny.backend.dto.SignUpRequest;
 import com.learnwithfranny.backend.service.UserDetailsImpl;
 
-
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -75,7 +77,8 @@ public class AuthController {
      * @return ResponseEntity containing the JWT token and user details
      */
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody SignInRequest signInRequest) {
+    public ResponseEntity<?> signin(HttpServletRequest request, HttpServletResponse response,
+    @RequestBody SignInRequest signInRequest) {
 
         // Email Form validation
         if (signInRequest.getUsername() == null || signInRequest.getUsername().isEmpty()) {
@@ -104,10 +107,22 @@ public class AuthController {
             // Get the list of roles the user has and convert them to a list of strings
             List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                     .collect(Collectors.toList());
+            
+            // Determine the environment
+            boolean isLocalHost = request.getServerName().equals("localhost");
+
+            // Using HttpOnly Cookie
+            Cookie jwtCookie = new Cookie("token", jwt);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(!isLocalHost); // secure = false for local dev
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(24 * 60 * 60); // 1 day
+            jwtCookie.setDomain(isLocalHost ? "localhost" : "your-production-domain.com");
+            response.addCookie(jwtCookie);
 
             // Construct the JWT response
             JwtResponse res = new JwtResponse();
-            res.setToken(jwt);
+            System.out.println("JWT RESPONSE SAVED" + res);
             res.setId(userDetails.getId());
             res.setUsername(userDetails.getUsername());
             res.setRoles(roles);
@@ -125,7 +140,6 @@ public class AuthController {
         }
     }
     
-
      /**
      * Handles sign-up (registration) requests. Validates the data, creates a new user,
      * and assigns default roles.

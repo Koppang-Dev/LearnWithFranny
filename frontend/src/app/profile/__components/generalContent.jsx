@@ -111,7 +111,7 @@ const GeneralContent = () => {
           <h2 className="text-lg font-semibold text-black">Photo</h2>
           <div className="flex justify-start">
             <Image
-              src={profilePictureUrl}
+              src={profilePictureUrl || "/images/avatar.png"}
               alt="ProfileImage"
               width={75}
               height={75}

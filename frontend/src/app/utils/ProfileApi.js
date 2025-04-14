@@ -1,3 +1,25 @@
+// Logging user out
+export const logoutUser = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, // fix endpoint
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Send HttpOnly cookie
+    }
+  );
+
+  // Checking response
+  if (!response.ok) {
+    throw new Error("Failed to logout");
+  }
+
+  // Logout worked
+  return true;
+};
+
 // Retrieiving all the general data from user
 export const fetchGeneralData = async () => {
   const response = await fetch(
@@ -5,8 +27,8 @@ export const fetchGeneralData = async () => {
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // Example: Add auth token
       },
+      credentials: "include",
     }
   );
 
@@ -25,8 +47,8 @@ export const fetchSecurityData = async () => {
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
+      credentials: "include",
     }
   );
 
@@ -45,8 +67,8 @@ export const fetchBillingData = async () => {
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
+      credentials: "include",
     }
   );
 
@@ -65,8 +87,8 @@ export const fetchNotifcationData = async () => {
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
+      credentials: "include",
     }
   );
 
@@ -86,6 +108,7 @@ export const updateProfileImage = async (file) => {
   const response = await fetch("/api/user/update-profile-picture", {
     method: "POST",
     body: formData,
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -106,6 +129,7 @@ export const updateName = async (name) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(name),
+      credentials: "include",
     }
   );
 
@@ -117,7 +141,7 @@ export const updateName = async (name) => {
 
 // Updating users username
 export const updateUserUsername = async (username) => {
-  const reponse = await fetch(
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/user/update-username`,
     {
       method: "POST",
@@ -125,6 +149,7 @@ export const updateUserUsername = async (username) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(username),
+      credentials: "include",
     }
   );
 
@@ -136,7 +161,7 @@ export const updateUserUsername = async (username) => {
 
 // Updating users email
 export const updateUserEmail = async (email) => {
-  const reponse = await fetch(
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/user/update-email`,
     {
       method: "POST",
@@ -144,6 +169,7 @@ export const updateUserEmail = async (email) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(email),
+      credentials: "include",
     }
   );
 
@@ -155,7 +181,7 @@ export const updateUserEmail = async (email) => {
 
 // Updating users language preference
 export const updateUserLanguage = async (language) => {
-  const reponse = await fetch(
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/preferences/update-language`,
     {
       method: "POST",
@@ -163,6 +189,7 @@ export const updateUserLanguage = async (language) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(language),
+      credentials: "include",
     }
   );
 
@@ -174,7 +201,7 @@ export const updateUserLanguage = async (language) => {
 
 // Updating users date format preference
 export const updateDateFormat = async (dateFormat) => {
-  const reponse = await fetch(
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/preferences/update-date-format`,
     {
       method: "POST",
@@ -182,6 +209,7 @@ export const updateDateFormat = async (dateFormat) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(dateFormat),
+      credentials: "include",
     }
   );
 
@@ -193,7 +221,7 @@ export const updateDateFormat = async (dateFormat) => {
 
 // Updating users time zone preference
 export const updateTimeZone = async (timeZone) => {
-  const reponse = await fetch(
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/preferences/update-time-zone`,
     {
       method: "POST",
@@ -201,6 +229,7 @@ export const updateTimeZone = async (timeZone) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(timeZone),
+      credentials: "include",
     }
   );
 
