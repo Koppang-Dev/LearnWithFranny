@@ -8,10 +8,9 @@ import {
   FaRegEnvelope,
 } from "react-icons/fa";
 import Link from "next/link";
-
 import { IoPersonCircle } from "react-icons/io5";
 import React from "react";
-
+import { useUser } from "../context/UserContext";
 import { MdLockOutline, MdVisibilityOff, MdVisibility } from "react-icons/md";
 
 // SignIn component handles user login
@@ -30,7 +29,7 @@ export default function Register() {
 
   const [requestError, setRequestError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-
+  const { setUser } = useUser();
   const router = useRouter();
 
   // Updates state with form input values
@@ -104,13 +103,27 @@ export default function Register() {
         // Store the token in localStorage on successful login
         const response = await res.text();
         console.log(response);
-        router.push("/login");
+
+        // Updating the user context
+        setUser({
+          username: state.username,
+          email: state.email,
+          token: response.token,
+        });
+
+        // Setting the local storage
+        localStorage.setItem("token", response.token); // Store the token
+        localStorage.setItem("username", state.username); // Store the username
+        localStorage.setItem("email", state.email); // Store the email
+        
+        router.push("/dashboard");
       } else {
         // Extract error
         const errorData = await res.json();
         setRequestError(errorData.message || "An unexpected error occured");
       }
     } catch (err) {
+      console.log("Signup Error", err)
       setRequestError(
         "Failed to connect to the server. Please try again later."
       );

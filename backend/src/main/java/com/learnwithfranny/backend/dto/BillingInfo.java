@@ -23,6 +23,4 @@ public class BillingInfo {
     public List<Map<String, String>> getBillingHistory() {
         return billingHistory;
     }
-
-    
 }

@@ -9,10 +9,7 @@ const SidebarItem = ({ item }) => {
 
   const router = useRouter();
   const pathname = usePathname();
-
-  // State to manage whether the nested items are expanded
-  //   const [(isExpanded, setIsExpanded)] = useState(false);
-
+  
   // When the div is clicked
   const onClick = () => {
     router.push(path);

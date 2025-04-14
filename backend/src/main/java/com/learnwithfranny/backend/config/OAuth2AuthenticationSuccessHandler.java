@@ -9,17 +9,13 @@ import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.model.Role;
 import com.learnwithfranny.backend.model.ERole;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-
 import java.io.IOException;
 import java.util.UUID;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
