@@ -59,8 +59,8 @@ public class User {
     private String timeZone;
 
     // 2 Factor Authentication
-    @Column(name = "twoFactorAuthentication")
-    private boolean twoFactorAuthentication;
+    @Column(name = "twoFactorAuthentication", nullable = true)
+    private Boolean twoFactorAuthentication = false;
 
     // Users referral code
     @Column(name = "referralCode", unique = true, nullable = true)

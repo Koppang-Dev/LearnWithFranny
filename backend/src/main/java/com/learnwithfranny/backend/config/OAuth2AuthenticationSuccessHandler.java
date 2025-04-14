@@ -82,7 +82,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         ? "http://localhost:3001/dashboard"
         : "https://learn-with-franny.vercel.app/dashboard";
 
-     
+        
         response.sendRedirect(redirectUrl);
     }
     
@@ -95,6 +95,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             User newUser = new User();
             newUser.setEmail(email);
             newUser.setUsername(name);
+            newUser.setTwoFactorAuthentication(false);
 
             // Generate a random password (for database consistency)
             String tempPassword = UUID.randomUUID().toString();
