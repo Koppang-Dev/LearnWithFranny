@@ -1,4 +1,5 @@
 package com.learnwithfranny.backend.service;
+import com.learnwithfranny.backend.dto.UserContextDto;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.UserRepository;
 
@@ -82,6 +83,24 @@ public class UserService {
         User user = getCurrentUser();
         user.setEmail(email);
         userRepository.save(user);
+    }
+
+    // Getting the users contexts
+    public UserContextDto getUserContext() {
+
+        // Current user
+        User user = getCurrentUser();
+
+        // User not found
+        if (user == null) {
+            throw new RuntimeException("No Authenticated User Found");
+        }
+
+        UserContextDto userContext = new UserContextDto();
+        userContext.setEmail(user.getEmail());
+        userContext.setUsername(user.getUsername());
+        userContext.setName(user.getName());
+        return userContext;
     }
 
     public User getCurrentUser() {

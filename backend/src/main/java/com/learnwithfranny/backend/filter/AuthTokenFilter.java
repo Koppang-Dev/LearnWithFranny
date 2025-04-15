@@ -62,8 +62,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                     // If a valid JWT token is present, authenticate the user
                     if (jwt != null && jwtUtil.validateJwtToken(jwt)) {
-                        String username = jwtUtil.getUserNameFromJwtToken(jwt);
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        String email = jwtUtil.getEmailFromJwtToken(jwt);
+                        UserDetails userDetails = userDetailsService.loadUserByEmail(email);
                         UsernamePasswordAuthenticationToken  authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -84,11 +84,23 @@ public class AuthTokenFilter extends OncePerRequestFilter {
      * @return the JWT token if present, or null if no valid token is found.
      */
     private String parseJwt(HttpServletRequest request) {
-        // Retrieve the Authorization header from the request
+        
+        // First check the authorization header
         String headerAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }
+
+        // Check the cookies for the token
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        // No JWT token found
         return null;
     }    
 }

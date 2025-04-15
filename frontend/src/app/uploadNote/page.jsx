@@ -1,7 +1,6 @@
 "use client";
 
 import { FolderProvider } from "../context/FolderProvider";
-import DashboardLayout from "../dashboard/DashBoardLayout";
 import FileHeader from "./_components/FileHeader";
 import Header from "./_components/header";
 import NoteDashboard from "./_components/note-dashboard";

@@ -9,8 +9,11 @@ import {
 } from "@/app/utils/ProfileApi";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useUser } from "@/app/context/UserContext";
 
 const GeneralContent = () => {
+  const { user } = useUser();
+
   // All of the general content data
   const [generalData, setGeneralData] = useState(null);
 
@@ -134,7 +137,7 @@ const GeneralContent = () => {
         {/* Name Section */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
           <h2 className="text-lg font-semibold text-black">Name</h2>
-          <h2 className="text-lg f text-black">{generalData?.name || "N/A"}</h2>
+          <h2 className="text-lg f text-black">{user?.name || "N/A"}</h2>
           <div className="flex justify-end items-center">
             <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
               Edit
@@ -146,7 +149,7 @@ const GeneralContent = () => {
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
           <h2 className="text-lg font-semibold text-black">Username</h2>
           <h2 className="text-lg f text-black">
-            {generalData?.username || "N/A"}
+            {user?.username || "NOT FOUND"}
           </h2>
           <div className="flex justify-end items-center">
             <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
@@ -158,7 +161,7 @@ const GeneralContent = () => {
         {/* Email Address Section */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
           <h2 className="text-lg font-semibold text-black">Email</h2>
-          <h2 className="text-lg text-black">{generalData?.email || "N/A"}</h2>
+          <h2 className="text-lg text-black">{user?.email || "N/A"}</h2>
           <div className="flex justify-end items-center">
             <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
               Edit

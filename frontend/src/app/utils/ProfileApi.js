@@ -1,3 +1,26 @@
+// Grabbing information to set user context (username, email)
+export const getUserContext = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/user/user-context`,
+    {
+      method: "Get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  // Checking response
+  if (!response.ok) {
+    throw new Error("Failed to logout");
+  }
+
+  // Returning user context
+  const data = await response.json();
+  return data;
+};
+
 // Logging user out
 export const logoutUser = async () => {
   const response = await fetch(
@@ -37,6 +60,8 @@ export const fetchGeneralData = async () => {
   }
 
   const data = await response.json();
+  console.log("General Data", data);
+
   return data;
 };
 

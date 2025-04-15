@@ -1,6 +1,5 @@
 // app/uploadNote/layout.js
 "use client";
-import DashboardLayout from "../dashboard/DashBoardLayout"; // Import your global dashboard layout
 
 import Sidebar from "../dashboard/__components/Sidebar";
 export default function Layout({ children }) {

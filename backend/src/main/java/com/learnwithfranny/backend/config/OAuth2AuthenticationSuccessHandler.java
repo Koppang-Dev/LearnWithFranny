@@ -57,7 +57,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         // Determine environment
         boolean isLocalHost = request.getServerName().equals("localhost");
-        System.out.println("Current dev" + isLocalHost);
         // Normal Cookie for local development
         if (isLocalHost) {
             // Creating an HttpOnly Cookie 
@@ -87,6 +86,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     }
     
     private void createOrUpdateUser(String email, String name) {
+
+
         // Check if the user already exists
         Boolean existingUser = userRepository.existsByEmail(email);
         
@@ -94,25 +95,18 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             // User doesn't exist, create a new one
             User newUser = new User();
             newUser.setEmail(email);
-            newUser.setUsername(name);
+
+            // Creating the unique username
+            String cleanName = name.trim().replaceAll("\\s+", "-"); 
+            String uniqueUsername = cleanName + "-" + UUID.randomUUID().toString().substring(0, 4);
+            newUser.setUsername(uniqueUsername);
+            newUser.setName(name);
             newUser.setTwoFactorAuthentication(false);
 
             // Generate a random password (for database consistency)
             String tempPassword = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(tempPassword);
             newUser.setPassword(encodedPassword);
-
-            // Assign default user role
-            Set<Role> roles = new HashSet<>();
-            Optional<Role> userRole = roleRepository.findByName(ERole.ROLE_USER);
-
-            if (userRole.isEmpty()) {
-                // If role is not found, you might want to handle this
-                System.out.println("Role not found: " + ERole.ROLE_USER);
-                return;
-            }
-            roles.add(userRole.get());
-            newUser.setRoles(roles);
 
             // Save the new user to the repository
             userRepository.save(newUser);

@@ -63,7 +63,7 @@ public class JwtUtil {
      * @param token The JWT token.
      * @return The username extracted from the token's "sub" claim.
      */
-    public String getUserNameFromJwtToken(String token) {
+    public String getEmailFromJwtToken(String token) {
         SecretKey signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         Claims claims = Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token).getPayload();
         return claims.getSubject();

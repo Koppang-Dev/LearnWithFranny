@@ -127,11 +127,9 @@ export default function Login() {
         setUser({
           username: state.username,
           email: state.email,
-          token: response.token,
         });
 
         // Setting the local storage
-        localStorage.setItem("token", response.token); // Store the token
         localStorage.setItem("username", state.username); // Store the username
         localStorage.setItem("email", state.email); // Store the email
 

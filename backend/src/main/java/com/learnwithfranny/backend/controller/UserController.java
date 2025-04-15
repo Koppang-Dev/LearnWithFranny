@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.learnwithfranny.backend.dto.UserContextDto;
 import com.learnwithfranny.backend.service.UserService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 // Controller deals Users information and profile settings 
@@ -21,6 +25,15 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+
+    // Retrieves the users username and password
+    @GetMapping("/user-context")
+    public ResponseEntity<UserContextDto> getUserContext() {
+        UserContextDto userContext = userService.getUserContext();
+        return ResponseEntity.ok(userContext);
+    }
+    
 
     // Updating the users profile picture
     @PostMapping("/update-profile-picture")

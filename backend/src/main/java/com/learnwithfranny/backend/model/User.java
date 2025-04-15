@@ -29,13 +29,12 @@ public class User {
      @Column(name = "name")
      private String name;
  
-
     // Users username
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     // Users email
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     // Users password

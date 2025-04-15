@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -54,15 +55,27 @@ public class PreferencesService {
 
     // Getting the current active user
     private User getCurrentUser() {
+
+        // Authentication Object
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authentication Object: " + authentication);
-        System.out.println("Principal: " + authentication.getPrincipal());
-        System.out.println("Name (Username/Email): " + authentication.getName());
-        System.out.println("Authorities: " + authentication.getAuthorities());
-    
-        String username = authentication.getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    
+
+        // Principal can be either OAuth or UserDetailsImpl
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UserDetailsImpl userDetails) {
+            // Finding by username
+            String email = userDetails.getEmail();
+            return userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        } else if (principal instanceof OAuth2User oauth2User) {
+            // Finding by email
+            String email = oauth2User.getAttribute("email");
+            return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        } else {
+            System.out.println("Principal class: " + principal.getClass().getName());
+            System.out.println("Principal: " + principal.toString());
+            throw new RuntimeException("Unknown Authentication Type" + principal.getClass());
+        }
     }
 }
