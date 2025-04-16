@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { FaEllipsisV } from "react-icons/fa";
-import DropdownMenu from "./DropdownMenu";
+import DropDownMenu from "./DropDownMenu";
 import {
   deleteFile,
   downloadFile,
@@ -122,7 +122,7 @@ const FileCard = ({ file, folderId }) => {
       </div>
       {/* Drop down menu */}
       {showDropdown && (
-        <DropdownMenu
+        <DropDownMenu
           actions={[
             {
               label: "Rename",

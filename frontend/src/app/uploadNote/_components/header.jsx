@@ -1,4 +1,3 @@
-import Logo from "@/components/navbar/_components/Logo";
 import Image from "next/image";
 const Header = () => {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 
-const DropdownMenu = ({ actions }) => (
+const DropDownMenu = ({ actions }) => (
   <div className="absolute top-8 right-0 bg-white border shadow-md rounded-md w-40">
     <ul className="list-none p-2">
       {actions.map((action, index) => (
@@ -16,4 +16,4 @@ const DropdownMenu = ({ actions }) => (
   </div>
 );
 
-export default DropdownMenu;
+export default DropDownMenu;

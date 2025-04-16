@@ -1,7 +1,7 @@
 import { deleteFolder, renameFolder } from "@/app/utils/FileApi";
 import React, { useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
-import DropdownMenu from "./DropdownMenu";
+import DropDownMenu from "./DropDownMenu";
 import { useDrop } from "react-dnd";
 
 const FolderCard = ({ folder, onFileDrop, onClick }) => {
@@ -78,7 +78,7 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
         <FaEllipsisV className="cursor-pointer" />
       </div>
       {showDropdown && (
-        <DropdownMenu
+        <DropDownMenu
           actions={[
             {
               label: "Rename",

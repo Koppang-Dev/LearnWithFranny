@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { FileIcon } from "lucide-react";
-import DropdownMenu from "./DropdownMenu"; // Assuming you want to reuse the dropdown menu
+import DropDownMenu from "./DropDownMenu";
 
 const RecentFileCard = ({ file }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -51,7 +51,7 @@ const RecentFileCard = ({ file }) => {
       </div>
 
       {showDropdown && (
-        <DropdownMenu
+        <DropDownMenu
           actions={[
             {
               label: "Rename",
