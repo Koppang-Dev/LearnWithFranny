@@ -18,6 +18,7 @@ export default function Login() {
     email: "",
     username: "",
     password: "",
+    rememberMe: false,
   });
 
   const [errors, setErrors] = useState({
@@ -42,10 +43,12 @@ export default function Login() {
   }, []);
 
   function handleChange(e) {
-    const copy = { ...state };
-    copy[e.target.name] = e.target.value;
-    setState(copy);
-    setErrors({ ...errors, [e.target.name]: "" });
+    const { name, type, value, checked } = e.target;
+    setState((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    setErrors({ ...errors, [name]: "" });
   }
 
   // Toggle password visibility
@@ -215,7 +218,7 @@ export default function Login() {
                   <p className="text-red-500 text-sm mb-2">{errors.username}</p>
                 )}
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
-                  <MdLockOutline className="text-gray-400 m-2" />
+                  <FaRegEnvelope className="text-gray-400 m-2" />
                   <input
                     type="email"
                     name="email"
@@ -262,19 +265,23 @@ export default function Login() {
                   <label>
                     <input
                       type="checkbox"
-                      name="remeber"
+                      name="rememberMe"
                       className="mr-1"
-                      disabled={loading} // Disable checkbox while loading
+                      onChange={handleChange}
+                      disabled={loading}
                     />
                     Remember me
                   </label>
-                  <a href="#" className="text-xs">
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-blue-500 hover:underline"
+                  >
                     Forgot Password?
-                  </a>
+                  </Link>
                 </div>
                 <button
                   onClick={handleSubmit}
-                  disabled={loading} // Disable button while loading
+                  disabled={loading}
                   className="text-[#222A68] border-2 border-[#222A68] rounded-full px-12 py-2 inline-block font-semibold hover:bg-[#222A68] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Logging in..." : "Login"}

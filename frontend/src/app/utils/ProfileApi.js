@@ -1,3 +1,29 @@
+// Request to reset the users password
+export const resetPassword = async (email) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/reset-password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error);
+    }
+
+    const message = await response.text();
+    return message;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 // Grabbing information to set user context (username, email)
 export const getUserContext = async () => {
   const response = await fetch(

@@ -28,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -99,14 +100,13 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // Generate JWT token after successful authentication
-            String jwt = jwtUtil.generateJwtToken(authentication);
+            boolean rememberMe = signInRequest.isRememberMe();
+            String jwt = jwtUtil.generateJwtToken(authentication, rememberMe);
 
             // Retrieve user details from the authentication object
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            // Get the list of roles the user has and convert them to a list of strings
-            List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-                    .collect(Collectors.toList());
+
             
             // Determine the environment
             boolean isLocalHost = request.getServerName().equals("localhost");
@@ -125,7 +125,6 @@ public class AuthController {
             System.out.println("JWT RESPONSE SAVED" + res);
             res.setId(userDetails.getId());
             res.setUsername(userDetails.getUsername());
-            res.setRoles(roles);
             res.setEmail(userDetails.getEmail());
 
             // Return the response with the generated JWT token and user details
@@ -150,14 +149,13 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody SignUpRequest signUpRequest) {
 
-
         // Email Form validation
         if (signUpRequest.getUsername() == null || signUpRequest.getUsername().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Email must not be empty"));
         }
 
         // Password form validation
-         if (signUpRequest.getPassword() == null || signUpRequest.getPassword().isEmpty()) {
+        if (signUpRequest.getPassword() == null || signUpRequest.getPassword().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Password must not be empty"));
         }
 
@@ -174,29 +172,40 @@ public class AuthController {
         // Hash password
         String hashedPassword = passwordEncoder.encode(signUpRequest.getPassword());
 
-        // Create a set of roles for the new user, assigning the default user role
-        Set<Role> roles = new HashSet<>();
-        Optional<Role> userRole = roleRepository.findByName(ERole.ROLE_USER);
-
-        // Role is not found
-        if (userRole.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("role not found");
-        }
-
         // Initialize the user entity and set its details
-        roles.add(userRole.get());
         User user = new User();
         user.setUsername(signUpRequest.getUsername());
         user.setPassword(hashedPassword);
         user.setEmail(signUpRequest.getEmail());
-        user.setRoles(roles);
 
         // Saving the new user to the repository
         userRepository.save(user);
 
         // Create the default folder for the user
 
-        
         return ResponseEntity.ok("User Registered Success");
-    }  
+    }
+    
+
+    // Resetting users password
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Email is required"));
+        }
+
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("No user found with that email"));
+        }
+
+        // Sending email for password reset
+        System.out.println("Sending password reset link to: " + email);
+
+        return ResponseEntity.ok("Password reset email sent successfully");
+    }
+
 }

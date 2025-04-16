@@ -32,31 +32,45 @@ public class JwtUtil {
      * @param authentication The authentication object containing the user details.
      * @return The generated JWT token as a string.
      */
-     public String generateJwtToken(Authentication authentication) {
-        
-        Object principal = authentication.getPrincipal();
+     public String generateJwtToken(Authentication authentication, boolean rememberMe) {
 
-        String username;
+         Object principal = authentication.getPrincipal();
 
-        // Determing the type - Regular or OAuth
-        if (principal instanceof UserDetailsImpl userPrincipal) {
-            username = userPrincipal.getUsername();
-        } else if (principal instanceof OAuth2User oauth2User) {
-            username = oauth2User.getAttribute("email");
-        } else {
-            throw new RuntimeException("Unknown Authentication Principal Types" + principal.getClass());
-        }
+         String username;
 
-        // Use the Keys utility to generate a signing key from the secret
-        Key signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+         // Determing the type - Regular or OAuth
+         if (principal instanceof UserDetailsImpl userPrincipal) {
+             username = userPrincipal.getUsername();
+         } else if (principal instanceof OAuth2User oauth2User) {
+             username = oauth2User.getAttribute("email");
+         } else {
+             throw new RuntimeException("Unknown Authentication Principal Types" + principal.getClass());
+         }
 
-        return Jwts.builder()
-                .claim("sub", username) // Set the subject using the "sub" claim
-                .claim("iat", new Date()) // Manually set the issued date using "iat" claim
-                .claim("exp", new Date(System.currentTimeMillis() + jwtExpirationMs)) // Manually set the expiration claim
-                .signWith(signingKey) // Sign with the generated key and algorithm
-                .compact(); // Return the JWT token as a string
+         // Use the Keys utility to generate a signing key from the secret
+         Key signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+
+         // JWT expiration time - longer if user clicked remember me
+         int expiration = rememberMe ? jwtExpirationMs * 50 : jwtExpirationMs;
+         System.out.println("Remember me is " + rememberMe);
+
+         return Jwts.builder()
+                 .claim("sub", username) // Set the subject using the "sub" claim
+                 .claim("iat", new Date()) // Manually set the issued date using "iat" claim
+                 .claim("exp", new Date(System.currentTimeMillis() + expiration)) // Manually set the expiration claim
+                 .signWith(signingKey) // Sign with the generated key and algorithm
+                 .compact(); // Return the JWT token as a string
+     }
+    
+      /**
+     * Generates the JWT token when remember me is not clicked
+     */
+      public String generateJwtToken(Authentication authentication) {
+          return generateJwtToken(authentication, false);
     }
+
+
+
     
      /**
      * Extracts the username from the JWT token.

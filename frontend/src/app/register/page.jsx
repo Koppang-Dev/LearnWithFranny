@@ -19,6 +19,7 @@ export default function Register() {
     username: "",
     email: "",
     password: "",
+    rememberMe: false,
   });
 
   const [errors, setErrors] = useState({
@@ -115,7 +116,7 @@ export default function Register() {
         localStorage.setItem("token", response.token); // Store the token
         localStorage.setItem("username", state.username); // Store the username
         localStorage.setItem("email", state.email); // Store the email
-        
+
         router.push("/dashboard");
       } else {
         // Extract error
@@ -123,7 +124,7 @@ export default function Register() {
         setRequestError(errorData.message || "An unexpected error occured");
       }
     } catch (err) {
-      console.log("Signup Error", err)
+      console.log("Signup Error", err);
       setRequestError(
         "Failed to connect to the server. Please try again later."
       );
@@ -232,12 +233,17 @@ export default function Register() {
                 {/* REMEMBER ME SECTION */}
                 <div className="flex justify-between w-64 mb-5">
                   <label>
-                    <input type="checkbox" name="remeber" className="mr-1" />
+                    <input
+                      type="checkbox"
+                      name="rememberMe"
+                      checked={state.rememberMe}
+                      onChange={(e) =>
+                        setState({ ...state, rememberMe: e.target.checked })
+                      }
+                      className="mr-1"
+                    />
                     Remember me
                   </label>
-                  <a href="#" className="text-xs">
-                    Forgot Password?
-                  </a>
                 </div>
                 <button
                   onClick={handleSubmit}
