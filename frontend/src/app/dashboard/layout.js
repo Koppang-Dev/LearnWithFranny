@@ -1,4 +1,3 @@
-import DashboardLayout from "./DashBoardLayout";
 import Sidebar from "./__components/Sidebar";
 
 export default function Layout({ children }) {
