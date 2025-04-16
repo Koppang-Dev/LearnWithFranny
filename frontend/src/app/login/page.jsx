@@ -12,18 +12,17 @@ import { useRouter } from "next/navigation";
 import { MdLockOutline, MdVisibilityOff, MdVisibility } from "react-icons/md";
 import React from "react";
 import { useUser } from "../context/UserContext";
+import { Result } from "postcss";
 
 export default function Login() {
   const [state, setState] = useState({
     email: "",
-    username: "",
     password: "",
     rememberMe: false,
   });
 
   const [errors, setErrors] = useState({
     email: "",
-    username: "",
     password: "",
   });
 
@@ -60,11 +59,6 @@ export default function Login() {
   function validateForm() {
     const newErrors = {};
 
-    // Username is empty
-    if (!state.username.trim()) {
-      newErrors.username = "Username is required.";
-    }
-
     // Email is empty or not a valid email
     if (!state.email.trim()) {
       newErrors.email = "Email is required.";
@@ -95,8 +89,8 @@ export default function Login() {
       return;
     }
 
-    setLoading(true); // Start loading
-    setRequestError(""); // Clear any previous errors
+    setLoading(true);
+    setRequestError("");
 
     try {
       // Create a new AbortController for this request
@@ -111,30 +105,22 @@ export default function Login() {
           headers: {
             "Content-Type": "application/json",
           },
-          signal: abortController.signal, // Pass the signal to the fetch request
+          signal: abortController.signal,
         }
       );
 
       if (res.ok) {
         const response = await res.json();
-        console.log("Backend response:", response); // Log the response
-
-        // Check if the response contains the expected fields
-        if (!response.token || !response.type) {
-          throw new Error("Invalid response from the server");
-        }
-
-        console.log("Login successful");
 
         // Updating the user context
         setUser({
-          username: state.username,
-          email: state.email,
+          email: response.email,
+          username: response.username,
+          name: response.name,
         });
 
         // Setting the local storage
-        localStorage.setItem("username", state.username); // Store the username
-        localStorage.setItem("email", state.email); // Store the email
+        localStorage.setItem("email", state.email);
 
         // Redirect to the dashboard or home page after successful login
         router.push("/dashboard");
@@ -202,21 +188,6 @@ export default function Login() {
               <p className="text-gray-400">or use your email to log in</p>
               {/* ENTER INFORMATION */}
               <div className="flex flex-col items-center">
-                <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
-                  <IoPersonCircle className="text-gray-400 m-2" />
-                  <input
-                    type="username"
-                    name="username"
-                    value={state.username}
-                    onChange={handleChange}
-                    placeholder="Username"
-                    className="bg-gray-100 outline-none flex-1"
-                    disabled={loading} // Disable input while loading
-                  />
-                </div>
-                {errors.username && (
-                  <p className="text-red-500 text-sm mb-2">{errors.username}</p>
-                )}
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
                   <FaRegEnvelope className="text-gray-400 m-2" />
                   <input

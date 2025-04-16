@@ -13,7 +13,7 @@ public class PasswordResetToken {
     @Column(nullable = false, unique = true)
     private String token;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -65,8 +65,6 @@ public class PasswordResetToken {
     public void setUsed(boolean used) {
         this.used = used;
     }
-
-    // Utility
     public boolean isExpired() {
         return expiryDate.isBefore(LocalDateTime.now());
     }

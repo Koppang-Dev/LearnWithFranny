@@ -15,13 +15,13 @@ public class PasswordResetService {
 
     private final PasswordResetTokenRepository tokenRepository;
 
-    // @Value("${LearnWithFranny.app.resetTokenExpirationMinutes:30}")
     private int expirationInMinutes = 1200;
 
     public PasswordResetService(PasswordResetTokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
     }
 
+    // Creates the password reset token
     public PasswordResetToken createPasswordResetToken(User user) {
         String token = UUID.randomUUID().toString();
         LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(expirationInMinutes);
@@ -30,12 +30,14 @@ public class PasswordResetService {
         return tokenRepository.save(passwordResetToken);
     }
 
+    // Checks if the current token is still valid
     public boolean isTokenValid(String token) {
         return tokenRepository.findByToken(token)
                 .filter(t -> !t.isExpired() && !t.isUsed())
                 .isPresent();
     }
 
+    // Retrieving user information based on the token
     public User getUserByToken(String token) {
         return tokenRepository.findByToken(token)
                 .filter(t -> !t.isExpired())
@@ -43,6 +45,7 @@ public class PasswordResetService {
                 .orElse(null);
     }
 
+    // Marking the token as used
     public void markTokenAsUsed(String token) {
         tokenRepository.findByToken(token).ifPresent(t -> {
             t.setUsed(true);

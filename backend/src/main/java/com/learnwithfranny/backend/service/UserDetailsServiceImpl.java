@@ -27,19 +27,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     /**
-     * Loads the user details by username.
-     * This method is called by Spring Security during authentication to retrieve user information based on the provided username.
-     * If the user is found, it returns  a UserDetails object representing the user.
-     * If the user is not found, it throws a UsernameNotFoundException.
-     *
-     * @param username the username of the user to load.
-     * @return UserDetails representing the user with the specified username.
-     * @throws UsernameNotFoundException if no user is found with the given username.
+     * Loads user by email for Spring Security authentication.
+     * Though the method name must be 'loadUserByUsername', the parameter is email.
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username" + username));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email" + email));
         return UserDetailsImpl.build(user);
     }
 

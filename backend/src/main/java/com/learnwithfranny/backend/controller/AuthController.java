@@ -4,19 +4,25 @@ import com.learnwithfranny.backend.repository.UserRepository;
 import com.learnwithfranny.backend.repository.RoleRepository;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.model.ERole;
+import com.learnwithfranny.backend.model.PasswordResetToken;
 import com.learnwithfranny.backend.model.Role;
 
 import com.learnwithfranny.backend.exceptions.ErrorResponse;
 import com.learnwithfranny.backend.util.JwtUtil;
 import com.learnwithfranny.backend.dto.SignInRequest;
+import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.JwtResponse;
 
 import com.learnwithfranny.backend.dto.SignUpRequest;
+import com.learnwithfranny.backend.service.EmailService;
+import com.learnwithfranny.backend.service.PasswordResetService;
 import com.learnwithfranny.backend.service.UserDetailsImpl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,13 +49,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    @Value("${frontend.url}")
+    private String frontendBaseUrl;
+    
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
     private JwtUtil jwtUtil;
+    private PasswordResetService passwordResetService;
+    private EmailService emailService;
 
-    
     /**
      * Constructor to initialize dependencies.
      *
@@ -60,15 +70,17 @@ public class AuthController {
      * @param jwtUtil             Utility for generating JWT tokens
      */
     public AuthController(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
-                          RoleRepository roleRepository,
-                          AuthenticationManager authenticationManager,
-            JwtUtil jwtUtil) {
+            PasswordEncoder passwordEncoder,
+            RoleRepository roleRepository,
+            AuthenticationManager authenticationManager,
+            JwtUtil jwtUtil, PasswordResetService passwordResetService, EmailService emailService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.passwordResetService = passwordResetService;
+        this.emailService = emailService;
     }
 
     /**
@@ -79,10 +91,10 @@ public class AuthController {
      */
     @PostMapping("/signin")
     public ResponseEntity<?> signin(HttpServletRequest request, HttpServletResponse response,
-    @RequestBody SignInRequest signInRequest) {
+            @RequestBody SignInRequest signInRequest) {
 
         // Email Form validation
-        if (signInRequest.getUsername() == null || signInRequest.getUsername().isEmpty()) {
+        if (signInRequest.getEmail() == null || signInRequest.getEmail().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Email must not be empty"));
         }
 
@@ -94,7 +106,7 @@ public class AuthController {
         // Authenticate the user based on provided username and password
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword()));
+                    new UsernamePasswordAuthenticationToken(signInRequest.getEmail(), signInRequest.getPassword()));
 
             // Set the authentication context for further requests
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -106,8 +118,6 @@ public class AuthController {
             // Retrieve user details from the authentication object
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-
-            
             // Determine the environment
             boolean isLocalHost = request.getServerName().equals("localhost");
 
@@ -132,20 +142,20 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             // Handle invalid credentials
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("Invalid username or password"));
+                    .body(new ErrorResponse("Invalid email or password"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("An error occured during login"));
         }
     }
-    
-     /**
-     * Handles sign-up (registration) requests. Validates the data, creates a new user,
-     * and assigns default roles.
-     * 
-     * @param signUpRequest The request body containing user details for registration
-     * @return ResponseEntity with appropriate status and message
-     */
+
+    /**
+    * Handles sign-up (registration) requests. Validates the data, creates a new user,
+    * and assigns default roles.
+    * 
+    * @param signUpRequest The request body containing user details for registration
+    * @return ResponseEntity with appropriate status and message
+    */
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody SignUpRequest signUpRequest) {
 
@@ -185,7 +195,6 @@ public class AuthController {
 
         return ResponseEntity.ok("User Registered Success");
     }
-    
 
     // Resetting users password
     @PostMapping("/reset-password")
@@ -202,10 +211,47 @@ public class AuthController {
                     .body(new ErrorResponse("No user found with that email"));
         }
 
-        // Sending email for password reset
-        System.out.println("Sending password reset link to: " + email);
+        // Getting the user
+        User user = userOptional.get();
 
+        // Creating the PasswordResetToken
+        PasswordResetToken token = passwordResetService.createPasswordResetToken(user);
+
+        // Creating the reset link for the user
+        String resetLink = "http://localhost:3001" + "/reset-password?token=" + token.getToken();
+
+        // Sending the email to the user
+        emailService.sendPasswordResetEmail(email, resetLink);
         return ResponseEntity.ok("Password reset email sent successfully");
+
     }
 
+    // Confirming the password reset
+    @PostMapping("/confirm-reset")
+    public ResponseEntity<?> confirmPasswordReset(@RequestBody Map<String, String> request) {
+        String newPassword = request.get("newPassword");
+        String token = request.get("token");
+
+        // Checking if the token is still valid
+        if (!passwordResetService.isTokenValid(token)) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Token is expired"));
+        }
+
+        // Retrieving the user via token
+        User user = passwordResetService.getUserByToken(token);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("User not found"));
+        }
+
+        // Set the new password for the user
+        String hashedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+
+        // Mark token as used
+        passwordResetService.markTokenAsUsed(token);
+
+        // Success
+        return ResponseEntity.ok().body(Map.of("message", "Password reset successfully"));
+    }
 }

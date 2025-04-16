@@ -1,3 +1,29 @@
+// Confirming the password reset
+export const confirmResetPassword = async (token, newPassword) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/confirm-reset`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token, newPassword }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error);
+    }
+
+    const message = await response.text();
+    return message;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 // Request to reset the users password
 export const resetPassword = async (email) => {
   try {
