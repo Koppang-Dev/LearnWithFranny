@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 @Configuration
 public class CorsConfiguration {
 
-    @Value("${FRONTEND_URL}")
+    @Value("${frontend.url}")
     private String frontendUrls;
     
 
@@ -35,6 +35,8 @@ public class CorsConfiguration {
 
                 // Both production and development
                 String[] allowedOrigins = frontendUrls.split(",");
+                System.out.println(">>> ALLOWED ORIGINS: " + Arrays.toString(allowedOrigins)); 
+
 
                 // Allow CORS for all routes and specify allowed methods and headers
                 registry.addMapping("/**").allowedOrigins(allowedOrigins).allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
