@@ -38,7 +38,7 @@ public class CorsConfiguration {
                 System.out.println("Origins: " + Arrays.toString(allowedOrigins));
 
                 // Allow CORS for all routes and specify allowed methods and headers
-                registry.addMapping("/**").allowedOrigins("http://localhost:3001").allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+                registry.addMapping("/**").allowedOrigins(allowedOrigins).allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
                         .allowedHeaders("*").allowCredentials(true);
             }
         };
