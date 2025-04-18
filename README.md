@@ -21,8 +21,7 @@
   - **Backend**: Render
 
 ## Deployment Link
-
-- **Frontend (Vercel)**: [LearnWithFranny Dashboard](https://learn-with-franny.vercel.app)
+https://learn-with-franny.vercel.app/ 
 
 ## Setup Instructions
 
