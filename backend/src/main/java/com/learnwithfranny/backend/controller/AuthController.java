@@ -103,49 +103,54 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Password must not be empty"));
         }
 
-        // Authenticate the user based on provided username and password
         try {
+            // Authenticate user
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(signInRequest.getEmail(), signInRequest.getPassword()));
 
-            // Set the authentication context for further requests
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Generate JWT token after successful authentication
+            // Generate JWT token
             boolean rememberMe = signInRequest.isRememberMe();
             String jwt = jwtUtil.generateJwtToken(authentication, rememberMe);
 
-            // Retrieve user details from the authentication object
+            // Retrieve user details
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            // Determine the environment
+            // Set cookie based on environment
             boolean isLocalHost = request.getServerName().equals("localhost");
 
-            // Using HttpOnly Cookie
-            Cookie jwtCookie = new Cookie("token", jwt);
-            jwtCookie.setHttpOnly(true);
-            jwtCookie.setSecure(!isLocalHost); // secure = false for local dev
-            jwtCookie.setPath("/");
-            jwtCookie.setMaxAge(24 * 60 * 60); // 1 day
-            jwtCookie.setDomain(isLocalHost ? "localhost" : "your-production-domain.com");
-            response.addCookie(jwtCookie);
+            if (isLocalHost) {
+                // Local development
+                Cookie jwtCookie = new Cookie("token", jwt);
+                jwtCookie.setHttpOnly(true);
+                jwtCookie.setSecure(false);
+                jwtCookie.setPath("/");
+                jwtCookie.setMaxAge(24 * 60 * 60);
+                response.addCookie(jwtCookie);
+            } else {
+                // Production: use manual header to set SameSite=None
+                String cookie = String.format(
+                    "token=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d; Domain=learn-with-franny.vercel.app",
+                    jwt, 24 * 60 * 60
+                );
+                response.setHeader("Set-Cookie", cookie);
+            }
 
-            // Construct the JWT response
+            // Build response
             JwtResponse res = new JwtResponse();
-            System.out.println("JWT RESPONSE SAVED" + res);
             res.setId(userDetails.getId());
             res.setUsername(userDetails.getUsername());
             res.setEmail(userDetails.getEmail());
 
-            // Return the response with the generated JWT token and user details
             return ResponseEntity.ok(res);
+
         } catch (BadCredentialsException e) {
-            // Handle invalid credentials
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse("Invalid email or password"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("An error occured during login"));
+                    .body(new ErrorResponse("An error occurred during login"));
         }
     }
 

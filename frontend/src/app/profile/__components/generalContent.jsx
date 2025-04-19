@@ -2,39 +2,56 @@ import {
   updateProfileImage,
   updateDateFormat,
   updateName,
-  updateUserLanguage,
+  updateUserEmail,
   updateUserUsername,
+  updateUserLanguage,
   updateTimeZone,
   fetchGeneralData,
+  getUserContext,
 } from "@/app/utils/ProfileApi";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useUser } from "@/app/context/UserContext";
+import EditableField from "./EditableField";
+import toast from "react-hot-toast";
 
 const GeneralContent = () => {
+  // User information
   const { user } = useUser();
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
 
   // All of the general content data
   const [generalData, setGeneralData] = useState(null);
-
-  // Time zone useState
   const [isAutomaticTimeZone, setAutomaticTimeZone] = useState(true);
-
-  // Language Preference
   const [language, setLanguage] = useState("English (US)");
-
-  // Date format
   const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
-
-  // Users profile picture
   const [profilePictureUrl, setProfilePictureUrl] = useState(null);
 
-  // Errors
+  // Conditionals
   const [error, settError] = useState(null);
-
-  // Loading state
   const [loading, setLoading] = useState(false);
 
+  // Saving all the users changes
+  const handleSavePreferences = async () => {
+    try {
+      if (generalData.language !== language) {
+        await updateUserLanguage({ language });
+      }
+      if (generalData.dateFormat !== dateFormat) {
+        await updateDateFormat({ dateFormat });
+      }
+      if (generalData.isAutomaticTimeZone !== isAutomaticTimeZone) {
+        await updateTimeZone({ timeZone: isAutomaticTimeZone });
+      }
+
+      toast.success("Preferences updated successfully");
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to update preferences");
+    }
+  };
   // Changing the users profile picture
   const handleProfileImageUpload = async (event) => {
     // Getting the file
@@ -71,16 +88,24 @@ const GeneralContent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetching user information and their general data
+        const userData = await getUserContext();
         const data = await fetchGeneralData();
-        setGeneralData(data);
 
-        // Populating states with the fetched data
+        console.log("User Data:", userData);
+
+        setGeneralData(data);
+        setName(userData.name || "");
+        setUsername(userData.username || "");
+        setEmail(userData.email || "");
+
+        // Setting Preferences
         setAutomaticTimeZone(data.isAutomaticTimeZone || true);
         setLanguage(data.language || "English (US)");
         setDateFormat(data.dateFormat || DD / MM / YYYY);
         setProfilePictureUrl(data.profilePictureUrl);
       } catch (error) {
-        settError("Failed to fetch data");
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -134,40 +159,35 @@ const GeneralContent = () => {
           </div>
         </div>
 
-        {/* Name Section */}
-        <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
-          <h2 className="text-lg font-semibold text-black">Name</h2>
-          <h2 className="text-lg f text-black">{user?.name || "N/A"}</h2>
-          <div className="flex justify-end items-center">
-            <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
-              Edit
-            </button>
-          </div>
-        </div>
+        {/* Name*/}
+        <EditableField
+          label="Name"
+          value={name}
+          onSave={async (newVal) => {
+            await updateName(newVal);
+            setName(newVal);
+          }}
+        />
 
-        {/* Username Section */}
-        <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
-          <h2 className="text-lg font-semibold text-black">Username</h2>
-          <h2 className="text-lg f text-black">
-            {user?.username || "NOT FOUND"}
-          </h2>
-          <div className="flex justify-end items-center">
-            <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
-              Edit
-            </button>
-          </div>
-        </div>
+        {/* Username */}
+        <EditableField
+          label="Username"
+          value={username}
+          onSave={async (newVal) => {
+            await updateUserUsername(newVal);
+            setUsername(newVal);
+          }}
+        />
 
-        {/* Email Address Section */}
-        <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200 ">
-          <h2 className="text-lg font-semibold text-black">Email</h2>
-          <h2 className="text-lg text-black">{user?.email || "N/A"}</h2>
-          <div className="flex justify-end items-center">
-            <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
-              Edit
-            </button>
-          </div>
-        </div>
+        {/* Email */}
+        <EditableField
+          label="Email"
+          value={email}
+          onSave={async (newVal) => {
+            await updateUserEmail(newVal);
+            setEmail(newVal);
+          }}
+        />
       </div>
 
       {/* Preferences Section */}
@@ -188,7 +208,7 @@ const GeneralContent = () => {
               className="sr-only"
             />
             <div
-              className={`w-11 h-6 bg-gray-200 rounded-full transition-colors ${
+              className={`w-11 h-6 rounded-full transition-colors ${
                 isAutomaticTimeZone ? "bg-blue-600" : "bg-gray-300"
               }`}
             >
@@ -235,6 +255,15 @@ const GeneralContent = () => {
             <option value="YYYY/DD/MM">YYYY/DD/MM</option>
           </select>
         </div>
+      </div>
+
+      <div className="flex justify-end mt-6">
+        <button
+          onClick={handleSavePreferences}
+          className="px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition"
+        >
+          Save Changes
+        </button>
       </div>
     </div>
   );

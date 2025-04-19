@@ -9,6 +9,7 @@ export const confirmResetPassword = async (token, newPassword) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ token, newPassword }),
+        credentials: "include",
       }
     );
 
@@ -35,6 +36,7 @@ export const resetPassword = async (email) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
+        credentials: "include",
       }
     );
 
@@ -205,7 +207,7 @@ export const updateName = async (name) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(name),
+      body: JSON.stringify({ name }),
       credentials: "include",
     }
   );
@@ -213,7 +215,7 @@ export const updateName = async (name) => {
   if (!response.ok) {
     throw new Error("Failed to update name");
   }
-  return response.json();
+  return response.text();
 };
 
 // Updating users username
@@ -225,7 +227,7 @@ export const updateUserUsername = async (username) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(username),
+      body: JSON.stringify({ username }),
       credentials: "include",
     }
   );
@@ -233,7 +235,7 @@ export const updateUserUsername = async (username) => {
   if (!response.ok) {
     throw new Error("Failed to update username");
   }
-  return response.json();
+  return response.text();
 };
 
 // Updating users email
@@ -245,7 +247,7 @@ export const updateUserEmail = async (email) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(email),
+      body: JSON.stringify({ email }),
       credentials: "include",
     }
   );
@@ -253,7 +255,7 @@ export const updateUserEmail = async (email) => {
   if (!response.ok) {
     throw new Error("Failed to update email");
   }
-  return response.json();
+  return response.text();
 };
 
 // Updating users language preference
@@ -273,7 +275,7 @@ export const updateUserLanguage = async (language) => {
   if (!response.ok) {
     throw new Error("Failed to update language preference");
   }
-  return response.json();
+  return response.text();
 };
 
 // Updating users date format preference
@@ -293,7 +295,7 @@ export const updateDateFormat = async (dateFormat) => {
   if (!response.ok) {
     throw new Error("Failed to update date format preference");
   }
-  return response.json();
+  return response.text();
 };
 
 // Updating users time zone preference
@@ -313,5 +315,5 @@ export const updateTimeZone = async (timeZone) => {
   if (!response.ok) {
     throw new Error("Failed to update time zone preference");
   }
-  return response.json();
+  return response.text();
 };

@@ -2,7 +2,9 @@ package com.learnwithfranny.backend.controller;
 
 import java.util.Map;
 
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,27 +50,53 @@ public class UserController {
     @PostMapping("/update-name")
     public ResponseEntity<String> updateName(@RequestBody Map<String, String> request) {
 
-        // Setting new name
-        String name = request.get("name");
-        userService.updateName(name);
-        return ResponseEntity.ok("Name updated successfully");
+          // Setting new name
+          try {
+            String name = request.get("name"); 
+            if (name == null || name.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Name can not be empty");
+            }
+            userService.updateName(name);
+            return ResponseEntity.ok("Name updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Failed to update name");
+        }
     }
+       
 
     // Updating the users username
     @PostMapping("/update-username")
     public ResponseEntity<String> updateUserName(@RequestBody Map<String, String> request) {
 
-        // Setting new name
-        String username = request.get("username");
-        userService.updateUsername(username);
-        return ResponseEntity.ok("Username updated successfully");
+        // Setting new username
+        try {
+            String username = request.get("username"); 
+            if (username == null || username.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Username can not be empty");
+            }
+            userService.updateUsername(username);
+            return ResponseEntity.ok("Username updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Failed to update username");
+        }
     }
 
     // Updating the user email
     @PostMapping("/update-email")
     public ResponseEntity<String> updateEmail(@RequestBody Map<String, String> request) {
-        // Setting new email
-        String email = request.get("email");
-        return ResponseEntity.ok(email);
-    }    
+
+
+         // Setting new username
+         try {
+            String email = request.get("email"); 
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email can not be empty");
+            }
+            userService.updateEmail(email);
+            return ResponseEntity.ok("Email updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Failed to update email");
+        }
+
+    } 
 }

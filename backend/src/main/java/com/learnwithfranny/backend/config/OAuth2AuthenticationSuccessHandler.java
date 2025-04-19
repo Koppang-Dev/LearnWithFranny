@@ -39,7 +39,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     }
 
     @Override
-public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
 
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
@@ -55,24 +55,25 @@ public void onAuthenticationSuccess(HttpServletRequest request, HttpServletRespo
         // Generating the JWT Token
         String jwt = jwtUtil.generateJwtToken(authentication);
 
-        // Create the cookie (works for both local and prod)
-        Cookie jwtCookie = new Cookie("token", jwt);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(!request.getServerName().equals("localhost")); // secure only on prod
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(24 * 60 * 60);
-        
-        // If deployed, you may set domain (optional if backend is same domain as frontend)
-        if (!request.getServerName().equals("localhost")) {
-            jwtCookie.setDomain("learn-with-franny.vercel.app");
+        // Determine if we are running locally
+        boolean isLocalHost = request.getServerName().equals("localhost");
+
+        if (isLocalHost) {
+            // Localhost: use Cookie API normally
+            Cookie jwtCookie = new Cookie("token", jwt);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(false); // Secure must be false for localhost
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(24 * 60 * 60); // 1 day
+            response.addCookie(jwtCookie);
+        } else {
+            // Production: manually construct the Set-Cookie header
+            String cookie = String.format(
+                "token=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d; Domain=learn-with-franny.vercel.app",
+                jwt, 24 * 60 * 60
+            );
+            response.setHeader("Set-Cookie", cookie);
         }
-
-        response.addCookie(jwtCookie);
-
-        // Manually add SameSite=None (not supported by Cookie API directly)
-        response.setHeader("Set-Cookie",
-            String.format("token=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",
-                jwt, 24 * 60 * 60));
 
         // Redirect to the frontend after successful login
         String redirectUrl = request.getServerName().equals("localhost")

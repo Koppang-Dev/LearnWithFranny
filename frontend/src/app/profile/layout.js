@@ -1,4 +1,5 @@
 import Sidebar from "../dashboard/__components/Sidebar";
+import { Toaster } from "react-hot-toast";
 export default function Layout({ children }) {
   return (
     <div className="flex h-screen">
@@ -8,7 +9,18 @@ export default function Layout({ children }) {
       </div>
 
       {/* Main content */}
-      <div className="flex-1">{children}</div>
+      <div className="flex-1">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: "#333",
+              color: "#fff",
+            },
+          }}
+        />
+        {children}
+      </div>
     </div>
   );
 }
