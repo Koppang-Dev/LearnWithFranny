@@ -100,6 +100,8 @@ public class UserService {
         userContext.setEmail(user.getEmail());
         userContext.setUsername(user.getUsername());
         userContext.setName(user.getName());
+        userContext.setProfilePictureUrl(user.getProfilePictureUrl());
+    
         return userContext;
     }
 

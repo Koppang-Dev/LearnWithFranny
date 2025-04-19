@@ -64,9 +64,10 @@ const GeneralContent = () => {
     try {
       const newProfilePictureUrl = await updateProfileImage(file);
       setProfilePictureUrl(newProfilePictureUrl);
-      alert("Profile image updated successfully");
+      toast.success("Profile image updated successfully");
     } catch (error) {
-      alert("Failed to upload profile picture");
+      console.log(error);
+      toast.error("Failed to upload profile picture");
     }
   };
   // Toggle time zone on/off
@@ -98,12 +99,14 @@ const GeneralContent = () => {
         setName(userData.name || "");
         setUsername(userData.username || "");
         setEmail(userData.email || "");
+        setProfilePictureUrl(
+          userData.profilePictureUrl || "/images/avatar.png"
+        );
 
         // Setting Preferences
         setAutomaticTimeZone(data.isAutomaticTimeZone || true);
         setLanguage(data.language || "English (US)");
         setDateFormat(data.dateFormat || DD / MM / YYYY);
-        setProfilePictureUrl(data.profilePictureUrl);
       } catch (error) {
         console.log(error);
       } finally {

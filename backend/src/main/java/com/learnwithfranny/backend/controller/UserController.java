@@ -39,11 +39,18 @@ public class UserController {
 
     // Updating the users profile picture
     @PostMapping("/update-profile-picture")
-    public ResponseEntity<String> updateProfilePicture(@RequestParam MultipartFile file) {
+    public ResponseEntity<String> updateProfilePicture(@RequestParam("file") MultipartFile file) {
 
         // Saving profile picture
-        String profilePictureUrl = userService.updateProfilePicture(file);
-        return ResponseEntity.ok(profilePictureUrl);
+        try {
+            String profilePictureUrl = userService.updateProfilePicture(file);
+            return ResponseEntity.ok(profilePictureUrl);
+        } catch (Exception e) {
+            e.printStackTrace(); // <--- or use a proper logger
+
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Failed to update profile picture");
+        }
+        
     }
     
     // Updating the users name

@@ -184,17 +184,22 @@ export const updateProfileImage = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch("/api/user/update-profile-picture", {
-    method: "POST",
-    body: formData,
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/user/update-profile-picture`,
+    {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    }
+  );
 
   if (!response.ok) {
-    throw new Error("Failed to update profile image");
+    const errorText = await response.text();
+    console.error("Upload failed:", errorText);
+    throw new Error(errorText || "Failed to update profile image");
   }
 
-  const data = await response.json();
+  const data = await response.text();
   return data.profilePictureUrl;
 };
 
