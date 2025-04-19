@@ -12,30 +12,33 @@ const DashboardPage = () => {
 
   // Fetching user info if they logged in through OAuth2
   useEffect(() => {
-    // const fetchUser = async () => {
-    //   try {
-    //     const res = await getUserContext();
-    //     // Set the user context
-    //     setUser({
-    //       email: res.email,
-    //       username: res.username,
-    //       name: res.name,
-    //     });
-    //     // Saving in local storage
-    //     localStorage.setItem("email", res.email);
-    //     localStorage.setItem("username", res.username);
-    //   } catch (error) {
-    //     console.error("user not logged in");
-    //     router.push("/login");
-    //   }
-    // };
-    // // Only call if the user is not set
-    // if (!user?.email) {
-    //   console.log("Fetching users context");
-    //   fetchUser();
-    // } else {
-    //   console.log("Did not fetch");
-    // }
+    const fetchUser = async () => {
+      try {
+        const res = await getUserContext();
+
+        // Set the user context
+        setUser({
+          email: res.email,
+          username: res.username,
+          name: res.name,
+        });
+
+        // Saving in local storage
+        localStorage.setItem("email", res.email);
+        localStorage.setItem("username", res.username);
+      } catch (error) {
+        console.error("user not logged in");
+        router.push("/login");
+      }
+    };
+
+    // Only call if the user is not set
+    if (!user?.email) {
+      console.log("Fetching users context");
+      fetchUser();
+    } else {
+      console.log("Did not fetch");
+    }
   }, []);
 
   return (
