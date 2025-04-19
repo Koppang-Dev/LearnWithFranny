@@ -39,8 +39,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws IOException, ServletException {
+public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+        Authentication authentication) throws IOException, ServletException {
 
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User oauthUser = oauthToken.getPrincipal();
@@ -55,35 +55,33 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         // Generating the JWT Token
         String jwt = jwtUtil.generateJwtToken(authentication);
 
-        // Determine environment
-        boolean isLocalHost = request.getServerName().equals("localhost");
-        // Normal Cookie for local development
-        if (isLocalHost) {
-            // Creating an HttpOnly Cookie 
-            Cookie jwtCookie = new Cookie("token", jwt);
-            jwtCookie.setHttpOnly(true);
-            jwtCookie.setSecure(false);
-            jwtCookie.setPath("/");
-            jwtCookie.setMaxAge(24 * 60 * 60);
-
-            // Redirect to the frontend after successful login
-            response.addCookie(jwtCookie);
-        } else {
-            String cookie = String.format(
-                "token=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d; Domain=learn-with-franny.vercel.app",
-                jwt, 24 * 60 * 60
-            );
-            response.setHeader("Set-Cookie", cookie);
+        // Create the cookie (works for both local and prod)
+        Cookie jwtCookie = new Cookie("token", jwt);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(!request.getServerName().equals("localhost")); // secure only on prod
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(24 * 60 * 60);
+        
+        // If deployed, you may set domain (optional if backend is same domain as frontend)
+        if (!request.getServerName().equals("localhost")) {
+            jwtCookie.setDomain("learn-with-franny.vercel.app");
         }
-        
-        // Redirect url 
-        String redirectUrl = isLocalHost
-        ? "http://localhost:3001/dashboard"
-        : "https://learn-with-franny.vercel.app/dashboard";
 
-        
+        response.addCookie(jwtCookie);
+
+        // Manually add SameSite=None (not supported by Cookie API directly)
+        response.setHeader("Set-Cookie",
+            String.format("token=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",
+                jwt, 24 * 60 * 60));
+
+        // Redirect to the frontend after successful login
+        String redirectUrl = request.getServerName().equals("localhost")
+            ? "http://localhost:3001/dashboard"
+            : "https://learn-with-franny.vercel.app/dashboard";
+
         response.sendRedirect(redirectUrl);
     }
+
     
     private void createOrUpdateUser(String email, String name) {
 

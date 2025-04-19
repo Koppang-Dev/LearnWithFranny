@@ -157,44 +157,49 @@ public class AuthController {
     * @return ResponseEntity with appropriate status and message
     */
     @PostMapping("/signup")
-    public ResponseEntity<Object> signup(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<Object> signup(HttpServletRequest request, HttpServletResponse response, @RequestBody SignUpRequest signUpRequest) {
 
-        // Email Form validation
+        // Validate input...
         if (signUpRequest.getUsername() == null || signUpRequest.getUsername().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Email must not be empty"));
         }
-
-        // Password form validation
         if (signUpRequest.getPassword() == null || signUpRequest.getPassword().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Password must not be empty"));
         }
-
-        // Check if the username already exists
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("username is already taken"));
         }
-
-        // Check if the email is already taken
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("email is already taken"));
         }
 
-        // Hash password
+        // Hash and create user
         String hashedPassword = passwordEncoder.encode(signUpRequest.getPassword());
-
-        // Initialize the user entity and set its details
         User user = new User();
         user.setUsername(signUpRequest.getUsername());
         user.setPassword(hashedPassword);
         user.setEmail(signUpRequest.getEmail());
-
-        // Saving the new user to the repository
         userRepository.save(user);
 
-        // Create the default folder for the user
+        // Generate authentication and JWT
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return ResponseEntity.ok("User Registered Success");
+        String jwt = jwtUtil.generateJwtToken(authentication);
+
+        boolean isLocalHost = request.getServerName().equals("localhost");
+        Cookie jwtCookie = new Cookie("token", jwt);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(!isLocalHost); // Secure=true on production
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(24 * 60 * 60);
+        response.addCookie(jwtCookie);
+
+        return ResponseEntity.ok("User Registered and Logged In");
     }
+
 
     // Resetting users password
     @PostMapping("/reset-password")
