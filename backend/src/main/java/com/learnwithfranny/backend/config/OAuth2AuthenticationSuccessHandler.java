@@ -70,7 +70,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             response.addCookie(jwtCookie);
         } else {
             String cookie = String.format(
-                "token=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d",
+                "token=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d; Domain=learn-with-franny.vercel.app",
                 jwt, 24 * 60 * 60
             );
             response.setHeader("Set-Cookie", cookie);
