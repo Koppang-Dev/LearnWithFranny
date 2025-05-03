@@ -1,4 +1,5 @@
 "use client";
+import { sendContactMessage } from "@/app/utils/ContactApi";
 import { useState } from "react";
 
 export default function ContactForm() {
@@ -7,9 +8,19 @@ export default function ContactForm() {
     email: "",
     message: "",
   });
+  const [status, setStatus] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      await sendContactMessage(formData);
+      setStatus("success");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (err) {
+      console.log(err);
+      setStatus("error");
+    }
   };
 
   const handleChange = (e) => {
@@ -28,6 +39,18 @@ export default function ContactForm() {
         <h2 className="text-2xl font-bold text-center text-gray-800">
           Contact Us
         </h2>
+
+        {status === "success" && (
+          <div className="text-green-600 text-center text-sm">
+            Your message has been sent!
+          </div>
+        )}
+
+        {status === "error" && (
+          <div className="text-red-600 text-center text-sm">
+            Something went wrong. Please try again!
+          </div>
+        )}
 
         <input
           type="text"
