@@ -6,6 +6,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.learnwithfranny.backend.dto.ReferralEntryDTO;
+import com.learnwithfranny.backend.dto.ReferralResponseDTO;
 import com.learnwithfranny.backend.service.ReferralService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,18 @@ public class ReferralsController {
 
     @Autowired
     private ReferralService referralService;
+    
+    // Retrieiving both referral link and referral history
+    @GetMapping
+    public ResponseEntity<ReferralResponseDTO> getReferralInformation() {
+        String referralLink = referralService.getReferralLink();
+        List<Map<String, String>> referralHistory = referralService.getReferralHistory();
+        ReferralResponseDTO responseDTO = new ReferralResponseDTO();
+        responseDTO.setReferralLink(referralLink);
+        responseDTO.setReferralHistory(referralHistory);
+
+        return ResponseEntity.ok(responseDTO);
+}
 
     // Getting a referral link
     @GetMapping("/referral-link")

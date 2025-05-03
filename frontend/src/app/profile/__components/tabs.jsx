@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import BillingContent from "./billingContent";
 import GeneralContent from "./generalContent";

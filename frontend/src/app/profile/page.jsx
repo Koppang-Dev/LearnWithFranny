@@ -1,7 +1,4 @@
-"use client";
-
 import Tabs from "./__components/tabs";
-import Tab from "./__components/tabs";
 
 const Profile = () => {
   return (

@@ -54,7 +54,6 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send reset email", e);
         }
-
     }
 
     private String buildResetEmailHtml(String resetLink) {

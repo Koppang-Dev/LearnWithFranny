@@ -65,7 +65,7 @@ const SecurityContent = () => {
               type="checkbox"
               checked={isTwoFactorEnabled}
               onChange={toggleTwoFactor}
-              className="sr-only" // Hide the default checkbox
+              className="sr-only"
             />
             <div
               className={`w-11 h-6 bg-gray-200 rounded-full transition-colors ${

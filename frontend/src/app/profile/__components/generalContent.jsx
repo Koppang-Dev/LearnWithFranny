@@ -63,6 +63,7 @@ const GeneralContent = () => {
     // Calling backend to change profile image
     try {
       const newProfilePictureUrl = await updateProfileImage(file);
+
       setProfilePictureUrl(newProfilePictureUrl);
       toast.success("Profile image updated successfully");
     } catch (error) {
