@@ -46,8 +46,7 @@ public class UserController {
             String profilePictureUrl = userService.updateProfilePicture(file);
             return ResponseEntity.ok(profilePictureUrl);
         } catch (Exception e) {
-            e.printStackTrace(); // <--- or use a proper logger
-
+            e.printStackTrace(); 
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Failed to update profile picture");
         }
         

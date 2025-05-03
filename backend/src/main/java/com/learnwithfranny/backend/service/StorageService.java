@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
@@ -33,11 +32,7 @@ public class StorageService {
 
 
         // Uploads a new object to the specified amazon bucket
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uniqueFileName, fileObj)
-        .withCannedAcl(CannedAccessControlList.PublicRead);
-        s3Client.putObject(putObjectRequest);
-        
-        // s3Client.putObject(new PutObjectRequest(bucketName, uniqueFileName, fileObj));
+        s3Client.putObject(new PutObjectRequest(bucketName, uniqueFileName, fileObj));
 
         // Deleting file after uploaded to S3 bucket
         fileObj.delete();

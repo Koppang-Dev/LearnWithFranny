@@ -33,6 +33,7 @@ public class UserContextDto {
     public String getProfilePictureUrl() {
         return profilePictureUrl;
     }
+    
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
