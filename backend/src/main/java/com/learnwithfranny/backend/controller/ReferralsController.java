@@ -23,14 +23,18 @@ public class ReferralsController {
     
     // Retrieiving both referral link and referral history
     @GetMapping
-    public ResponseEntity<ReferralResponseDTO> getReferralInformation() {
+    public ResponseEntity<?> getReferralInformation() {
+
+        try {
         String referralLink = referralService.getReferralLink();
         List<Map<String, String>> referralHistory = referralService.getReferralHistory();
         ReferralResponseDTO responseDTO = new ReferralResponseDTO();
         responseDTO.setReferralLink(referralLink);
         responseDTO.setReferralHistory(referralHistory);
-
         return ResponseEntity.ok(responseDTO);
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body(Map.of("error", "Issue getting referral information"));
+    }
 }
 
     // Getting a referral link
