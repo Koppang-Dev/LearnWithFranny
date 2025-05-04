@@ -27,7 +27,7 @@ const Profile = async ({ searchParams }) => {
   };
 
   return (
-    <div className="m-10 w-full h-full bg-white">
+    <div className="m-10 w-full h-full bg-white p-20">
       {/* Displaying the users name and title */}
       <div className="flex flex-col gap-10">
         {/* users name */}
@@ -41,7 +41,7 @@ const Profile = async ({ searchParams }) => {
         </div>
         {/* Displaying tabs */}
         <Tabs activeTab={tab} />
-        <div className="mt-4 w-2/3">{renderContent()}</div>
+        <div className="mt-4 w-2/3 pb-20">{renderContent()}</div>
       </div>
     </div>
   );

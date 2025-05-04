@@ -1,13 +1,17 @@
+import { cookies } from "next/headers";
+
 export const getReferralInformation = async () => {
+  const token = cookies().get("token")?.value;
+
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/referrals`,
       {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        credentials: "include",
+        cache: "no-store",
       }
     );
 

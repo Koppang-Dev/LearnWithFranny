@@ -11,6 +11,7 @@ import com.learnwithfranny.backend.model.Role;
 import com.learnwithfranny.backend.model.ERole;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.HashSet;
 import java.util.Optional;
@@ -101,6 +102,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             newUser.setUsername(uniqueUsername);
             newUser.setName(name);
             newUser.setTwoFactorAuthentication(false);
+            newUser.setPasswordChangedAt(LocalDateTime.now());
 
             // Generate a random password (for database consistency)
             String tempPassword = UUID.randomUUID().toString();

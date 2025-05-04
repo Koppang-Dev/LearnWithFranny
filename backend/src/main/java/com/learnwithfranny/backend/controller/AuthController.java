@@ -32,6 +32,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -184,6 +186,7 @@ public class AuthController {
         user.setUsername(signUpRequest.getUsername());
         user.setPassword(hashedPassword);
         user.setEmail(signUpRequest.getEmail());
+        user.setPasswordChangedAt(LocalDateTime.now());
         userRepository.save(user);
 
         // Generate authentication and JWT
@@ -256,6 +259,7 @@ public class AuthController {
         // Set the new password for the user
         String hashedPassword = passwordEncoder.encode(newPassword);
         user.setPassword(hashedPassword);
+        user.setPasswordChangedAt(LocalDateTime.now());
         userRepository.save(user);
 
         // Mark token as used

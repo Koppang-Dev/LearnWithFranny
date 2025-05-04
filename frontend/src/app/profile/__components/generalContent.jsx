@@ -146,8 +146,8 @@ const GeneralContent = () => {
             <Image
               src={profilePictureUrl || "/images/avatar.png"}
               alt="ProfileImage"
-              width={75}
-              height={75}
+              width={200}
+              height={200}
               className="border rounded-full p-2"
             />
           </div>

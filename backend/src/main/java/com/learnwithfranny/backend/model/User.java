@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,6 +71,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Deck> decks;
 
+     // Last password change
+     @Column(name = "password_changed_at")
+     private LocalDateTime passwordChangedAt;
+ 
     /**
      * The roles associated with the user.
      * This is a many-to-many relationship with the Role entity.
@@ -145,6 +151,14 @@ public class User {
 
     public void setReferralCode(String referralCode) {
         this.referralCode = referralCode;
+    }
+
+    public void setPasswordChangedAt(LocalDateTime newDate) {
+        this.passwordChangedAt = newDate;
+    }
+
+    public LocalDateTime getPasswordChangedAt() {
+        return this.passwordChangedAt;
     }
 
 }

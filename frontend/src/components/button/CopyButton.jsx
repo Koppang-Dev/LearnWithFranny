@@ -1,10 +1,9 @@
 "use client";
 
-export const CopyButton = () => {
+export const CopyButton = ({ copyText }) => {
   // Copying Link to dashboard
   const handleCopyReferralLink = () => {
-    navigator.clipboard.writeText(referralLink);
-    alert("Referral link copied to clipboard!");
+    navigator.clipboard.writeText(copyText);
   };
   return (
     <button
