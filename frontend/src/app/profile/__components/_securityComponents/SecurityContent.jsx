@@ -1,71 +1,79 @@
+"use client";
+import { useUser } from "@/app/context/UserContext";
+import { resetPassword } from "@/app/utils/ProfileApi";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
-const SecurityContent = () => {
-  // State for Two-Factor Authentication
-  const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState(false);
+const SecurityContent = ({ data }) => {
+  // User information
+  const { user } = useUser();
 
-  // State for Active Sessions
-  const [activeSessions, setActiveSessions] = useState([
+  const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState(
+    data.twoFactorEnabled
+  );
+  const [activeSessions, setActiveSessions] = useState(data.activeSessions);
+  const passwordChangedAt = new Date(data.passwordChangedAt).toLocaleString(
+    "en-US",
     {
-      id: 1,
-      device: "Chrome on Windows",
-      location: "New York, USA",
-      lastActive: "2 hours ago",
-    },
-    {
-      id: 2,
-      device: "Safari on iPhone",
-      location: "San Francisco, USA",
-      lastActive: "5 hours ago",
-    },
-  ]);
+      dateStyle: "medium",
+      timeStyle: "short",
+    }
+  );
 
-  // Toggle Two-Factor Authentication
   const toggleTwoFactor = () => {
     setIsTwoFactorEnabled(!isTwoFactorEnabled);
   };
 
-  // Handle Logout from All Devices
   const handleLogoutAll = () => {
     setActiveSessions([]);
   };
 
+  // Sending password reset link
+  const handlePasswordReset = async () => {
+    try {
+      const res = await resetPassword(user.email);
+      toast.success("Password Reset Sent To Email");
+    } catch (err) {
+      toast.failure("Something went wrong");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-10">
-      {/* Password Section */}
+      {/* Password */}
       <div className="flex flex-col gap-8">
         <h1 className="text-xl font-bold text-black">Password</h1>
-
-        {/* Change Password Section */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200">
           <h2 className="text-lg font-semibold text-black">Change Password</h2>
-          <p className="text-lg text-gray-600">Last changed 3 months ago</p>
+          <p className="text-lg text-gray-600">
+            Last changed {passwordChangedAt}
+          </p>
           <div className="flex justify-end items-center">
-            <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
-              Edit
+            <button
+              className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20"
+              onClick={handlePasswordReset}
+            >
+              Reset
             </button>
           </div>
         </div>
       </div>
 
-      {/* Two-Factor Authentication Section */}
+      {/* 2FA Toggle */}
       <div className="flex flex-col gap-8 pt-3 border-t border-gray-200">
         <h1 className="text-xl font-bold text-black">
           Two-Factor Authentication
         </h1>
-
-        {/* Enable 2FA Section */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200">
           <h2 className="text-lg font-semibold text-black">
             Enable Two-Factor Authentication
           </h2>
-          {/* Switch */}
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
               checked={isTwoFactorEnabled}
               onChange={toggleTwoFactor}
-              className="sr-only" // Hide the default checkbox
+              className="sr-only"
             />
             <div
               className={`w-11 h-6 bg-gray-200 rounded-full transition-colors ${
@@ -82,15 +90,13 @@ const SecurityContent = () => {
         </div>
       </div>
 
-      {/* Active Sessions Section */}
+      {/* Sessions */}
       <div className="flex flex-col gap-8 pt-3 border-t border-gray-200">
         <h1 className="text-xl font-bold text-black">Active Sessions</h1>
-
-        {/* Active Sessions List */}
         <div className="flex flex-col gap-4">
-          {activeSessions.map((session) => (
+          {activeSessions.map((session, index) => (
             <div
-              key={session.id}
+              key={index}
               className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200"
             >
               <div>
@@ -108,8 +114,6 @@ const SecurityContent = () => {
             </div>
           ))}
         </div>
-
-        {/* Logout All Sessions Button */}
         <div className="flex justify-end">
           <button
             onClick={handleLogoutAll}

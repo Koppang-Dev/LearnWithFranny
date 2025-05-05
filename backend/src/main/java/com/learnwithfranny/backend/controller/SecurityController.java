@@ -19,8 +19,8 @@ public class SecurityController {
 
     // Getting all of the security data
     @GetMapping
-    public ResponseEntity<Map<String, String>> getSecuritySettings() {
-        Map<String, String> preferences = securityService.getSecuritySettings();
+    public ResponseEntity<Map<String, Object>> getSecuritySettings() {
+        Map<String, Object> preferences = securityService.getSecuritySettings();
         return ResponseEntity.ok(preferences);
     }
 

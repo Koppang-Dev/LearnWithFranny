@@ -6,6 +6,7 @@ import com.learnwithfranny.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,19 +21,21 @@ public class SecurityService {
     private UserService userService;
 
     // Getting all of the security settings
-    public Map<String, String> getSecuritySettings() {
+    public Map<String, Object> getSecuritySettings() {
         User user = userService.getCurrentUser();
 
         // Get TFA Settings
         boolean is2faEnabled = user.getTwoFactorAuthentication();
+        LocalDateTime lastPasswordChanged = user.getPasswordChangedAt();
 
         // Get Active Sessions
         List<Map<String, String>> activeSessions = getActiveSessions();
 
         // Constructing map for security settings
-        Map<String, String> securitySettings = new HashMap<>();
-        securitySettings.put("twoFactorEnabled", String.valueOf(is2faEnabled));
-        securitySettings.put("activteSessions", activeSessions.toString());
+        Map<String, Object> securitySettings = new HashMap<>();
+        securitySettings.put("passwordChangedAt", lastPasswordChanged);
+        securitySettings.put("twoFactorEnabled", is2faEnabled);
+        securitySettings.put("activeSessions", activeSessions);
 
         // Returning the settings
         return securitySettings;
@@ -50,12 +53,11 @@ public class SecurityService {
      public List<Map<String, String>> getActiveSessions() {
          // Fetch active sessions from the database or session store
          return List.of(
-                 Map.of("device", "Chrome on Windows", "location", "New York, USA", "lastActive", "2 hours ago"),
+                 Map.of("device", "Chrome balh on Windows", "location", "New York, USA", "lastActive", "2 hours ago"),
                  Map.of("device", "Safari on iPhone", "location", "San Francisco, USA", "lastActive", "5 hours ago"));
      }
     
      //  Logout a users sessions
      public void logoutSession(String sessionId) {
-         // TODO: Implement this logic
      }
 }
