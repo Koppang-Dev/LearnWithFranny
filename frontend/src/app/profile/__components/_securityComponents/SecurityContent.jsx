@@ -3,6 +3,7 @@ import { useUser } from "@/app/context/UserContext";
 import { resetPassword } from "@/app/utils/ProfileApi";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { toggle2FA } from "@/app/utils/UserSettings";
 
 const SecurityContent = ({ data }) => {
   // User information
@@ -12,6 +13,7 @@ const SecurityContent = ({ data }) => {
     data.twoFactorEnabled
   );
   const [activeSessions, setActiveSessions] = useState(data.activeSessions);
+
   const passwordChangedAt = new Date(data.passwordChangedAt).toLocaleString(
     "en-US",
     {
@@ -20,8 +22,14 @@ const SecurityContent = ({ data }) => {
     }
   );
 
-  const toggleTwoFactor = () => {
-    setIsTwoFactorEnabled(!isTwoFactorEnabled);
+  const toggleTwoFactor = async () => {
+    try {
+      setIsTwoFactorEnabled(!isTwoFactorEnabled);
+      const response = await toggle2FA();
+      toast.success("2FA Updated");
+    } catch (err) {
+      toast.failure("Something went wrong");
+    }
   };
 
   const handleLogoutAll = () => {
@@ -76,7 +84,7 @@ const SecurityContent = ({ data }) => {
               className="sr-only"
             />
             <div
-              className={`w-11 h-6 bg-gray-200 rounded-full transition-colors ${
+              className={`w-11 h-6 rounded-full transition-colors ${
                 isTwoFactorEnabled ? "bg-blue-600" : "bg-gray-300"
               }`}
             >

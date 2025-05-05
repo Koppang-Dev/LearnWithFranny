@@ -26,10 +26,13 @@ public class SecurityController {
 
     // Enable/Disable 2-factor authentication
     @PostMapping("/toggle-2fa")
-    public ResponseEntity<String> toggle2fa(@RequestBody Map<String, Boolean> request) {
-        boolean enable = request.get("enable");
-        securityService.toggle2fa(enable);
+    public ResponseEntity<String> toggle2fa() {
+        try {
+        securityService.toggle2fa();
         return ResponseEntity.ok("Two Factor Authentication Updated");
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Error Updating Two Factor Authentication");
+        }
     }
 
     // Get active sessions

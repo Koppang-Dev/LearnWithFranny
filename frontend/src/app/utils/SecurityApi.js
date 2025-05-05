@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 
+// Information for the security page
 export const getSecurityInformation = async () => {
   const token = cookies().get("token")?.value;
 
@@ -29,3 +30,5 @@ export const getSecurityInformation = async () => {
     throw new Error(`Failed getting security information: ${err}`);
   }
 };
+
+//

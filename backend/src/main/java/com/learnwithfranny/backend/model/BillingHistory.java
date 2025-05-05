@@ -25,7 +25,6 @@ public class BillingHistory {
     @Column(name = "status")
     private String status;
 
-   
     // Joining table with user
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

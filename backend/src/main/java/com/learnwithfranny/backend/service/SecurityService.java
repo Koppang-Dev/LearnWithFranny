@@ -43,9 +43,9 @@ public class SecurityService {
     }
 
     // Toggle the 2FA on and off
-    public void toggle2fa(boolean enable) {
+    public void toggle2fa() {
         User user = userService.getCurrentUser();
-        user.setTwoFactorAuthentication(enable);
+        user.setTwoFactorAuthentication(!user.getTwoFactorAuthentication());
         userRepository.save(user);
     }
 
