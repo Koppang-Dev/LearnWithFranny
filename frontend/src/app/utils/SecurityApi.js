@@ -30,5 +30,3 @@ export const getSecurityInformation = async () => {
     throw new Error(`Failed getting security information: ${err}`);
   }
 };
-
-//

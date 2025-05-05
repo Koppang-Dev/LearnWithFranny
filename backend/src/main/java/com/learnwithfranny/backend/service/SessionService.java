@@ -34,7 +34,6 @@ public class SessionService {
         Session session = new Session(user, deviceName, ipAddress);
         session.setLocation(location);
         return sessionRepository.save(session);
-        
     }
 
     // Create a new session
