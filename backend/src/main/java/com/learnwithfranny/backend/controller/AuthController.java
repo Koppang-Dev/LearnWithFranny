@@ -16,6 +16,7 @@ import com.learnwithfranny.backend.dto.JwtResponse;
 import com.learnwithfranny.backend.dto.SignUpRequest;
 import com.learnwithfranny.backend.service.EmailService;
 import com.learnwithfranny.backend.service.PasswordResetService;
+import com.learnwithfranny.backend.service.SessionService;
 import com.learnwithfranny.backend.service.UserDetailsImpl;
 
 import jakarta.servlet.http.Cookie;
@@ -61,6 +62,7 @@ public class AuthController {
     private JwtUtil jwtUtil;
     private PasswordResetService passwordResetService;
     private EmailService emailService;
+    private SessionService sessionService;
 
     /**
      * Constructor to initialize dependencies.
@@ -75,7 +77,7 @@ public class AuthController {
             PasswordEncoder passwordEncoder,
             RoleRepository roleRepository,
             AuthenticationManager authenticationManager,
-            JwtUtil jwtUtil, PasswordResetService passwordResetService, EmailService emailService) {
+            JwtUtil jwtUtil, PasswordResetService passwordResetService, EmailService emailService, SessionService sessionService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -83,6 +85,7 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
         this.passwordResetService = passwordResetService;
         this.emailService = emailService;
+        this.sessionService = sessionService;
     }
 
     /**
@@ -111,13 +114,15 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(signInRequest.getEmail(), signInRequest.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            
             // Generate JWT token
             boolean rememberMe = signInRequest.isRememberMe();
             String jwt = jwtUtil.generateJwtToken(authentication, rememberMe);
 
             // Retrieve user details
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            User user = userRepository.findById(userDetails.getId()).orElseThrow();
+            sessionService.createSessionFromRequest(user, request);
 
             // Set cookie based on environment
             boolean isLocalHost = request.getServerName().equals("localhost");

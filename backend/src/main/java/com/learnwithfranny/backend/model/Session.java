@@ -17,10 +17,13 @@ public class Session {
     private User user;
 
     @Column(nullable = false)
-    private String userAgent;
+    private String deviceName;
 
     @Column(nullable = false)
     private String ipAddress;
+
+    @Column
+    private String location;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -31,12 +34,11 @@ public class Session {
     @Column
     private boolean isRevoked = false;
 
-    public Session() {
-    }
+    public Session() {}
 
-    public Session(User user, String userAgent, String ipAddress) {
+    public Session(User user, String deviceName, String ipAddress) {
         this.user = user;
-        this.userAgent = userAgent;
+        this.deviceName = deviceName;
         this.ipAddress = ipAddress;
         this.createdAt = LocalDateTime.now();
         this.lastActiveAt = LocalDateTime.now();
@@ -59,12 +61,12 @@ public class Session {
         this.user = user;
     }
 
-    public String getUserAgent() {
-        return userAgent;
+    public String getDeviceName() {
+        return deviceName;
     }
 
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
     public String getIpAddress() {
@@ -97,5 +99,13 @@ public class Session {
 
     public void setRevoked(boolean revoked) {
         isRevoked = revoked;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return this.location;
     }
 }

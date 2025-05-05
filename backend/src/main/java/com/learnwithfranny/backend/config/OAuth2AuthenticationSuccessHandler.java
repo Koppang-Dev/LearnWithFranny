@@ -4,10 +4,12 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import com.learnwithfranny.backend.repository.UserRepository;
+import com.learnwithfranny.backend.service.SessionService;
 import com.learnwithfranny.backend.util.JwtUtil;
 import com.learnwithfranny.backend.repository.RoleRepository;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.model.Role;
+import com.learnwithfranny.backend.model.Session;
 import com.learnwithfranny.backend.model.ERole;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.io.IOException;
@@ -30,13 +32,15 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final SessionService sessionService;
 
     @Lazy
-    public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SessionService sessionService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -51,7 +55,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String name = oauthUser.getAttribute("name");
 
         // Create or update the user in the database
-        createOrUpdateUser(email, name);
+        User user = createOrUpdateUser(email, name);
+        sessionService.createSessionFromRequest(user, request);
 
         // Generating the JWT Token
         String jwt = jwtUtil.generateJwtToken(authentication);
@@ -85,7 +90,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     }
 
     
-    private void createOrUpdateUser(String email, String name) {
+    private User createOrUpdateUser(String email, String name) {
 
 
         // Check if the user already exists
@@ -97,7 +102,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             newUser.setEmail(email);
 
             // Creating the unique username
-            String cleanName = name.trim().replaceAll("\\s+", "-"); 
+            String cleanName = name.trim().replaceAll("\\s+", "-");
             String uniqueUsername = cleanName + "-" + UUID.randomUUID().toString().substring(0, 4);
             newUser.setUsername(uniqueUsername);
             newUser.setName(name);
@@ -112,5 +117,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             // Save the new user to the repository
             userRepository.save(newUser);
         }
+
+        return userRepository.findByEmail(email).orElseThrow();
     }
 }

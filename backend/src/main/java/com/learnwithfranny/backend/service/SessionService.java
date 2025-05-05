@@ -3,6 +3,9 @@ package com.learnwithfranny.backend.service;
 import com.learnwithfranny.backend.model.Session;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.SessionRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,14 +16,30 @@ import java.util.UUID;
 public class SessionService {
 
     private final SessionRepository sessionRepository;
+    private final DeviceParserService deviceParserService;
+    private final GeoLocationService geoLocationService;
 
-    public SessionService(SessionRepository sessionRepository) {
+    public SessionService(SessionRepository sessionRepository, DeviceParserService deviceParserService, GeoLocationService geoLocationService) {
         this.sessionRepository = sessionRepository;
+        this.deviceParserService = deviceParserService;
+        this.geoLocationService = geoLocationService;
+    }
+
+    // Creating a new sesssion from a requestion - OAuth or Manual
+    public Session createSessionFromRequest(User user, HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        String ipAddress = request.getRemoteAddr();
+        String deviceName = deviceParserService.getDeviceName(userAgent);
+        String location = geoLocationService.resolveLocation(ipAddress);
+        Session session = new Session(user, deviceName, ipAddress);
+        session.setLocation(location);
+        return sessionRepository.save(session);
+        
     }
 
     // Create a new session
-    public Session createSession(User user, String userAgent, String ipAddress) {
-        Session session = new Session(user, userAgent, ipAddress);
+    public Session createSession(User user, String deviceName, String ipAddress) {
+        Session session = new Session(user, deviceName, ipAddress);
         return sessionRepository.save(session);
     }
 
