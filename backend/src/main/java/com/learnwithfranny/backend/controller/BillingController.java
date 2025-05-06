@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController
-@RequestMapping("/apu/billing")
+@RequestMapping("/api/billing")
 public class BillingController {
 
     @Autowired
@@ -56,5 +56,16 @@ public class BillingController {
     public ResponseEntity<List<Map<String, String>>> getBillingHistory() {
         List<Map<String, String>> billingHistory = billingService.getBillingHistory();
         return ResponseEntity.ok(billingHistory);
+    }
+
+    // Users current subscription plan
+    @GetMapping("/subscription-plan")
+    public ResponseEntity<Map<String, String>> getSubscriptionPlan() {
+        Map<String, String> plan = Map.of(
+            "name", "Pro Plan",
+            "price", "$49.99",
+            "renewalDate", "2025-05-15"
+        );
+        return ResponseEntity.ok(plan);
     }
 }

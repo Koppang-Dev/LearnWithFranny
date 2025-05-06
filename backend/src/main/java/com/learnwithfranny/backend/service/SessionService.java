@@ -6,6 +6,7 @@ import com.learnwithfranny.backend.repository.SessionRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.aspectj.apache.bcel.classfile.Module.Uses;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,11 +19,13 @@ public class SessionService {
     private final SessionRepository sessionRepository;
     private final DeviceParserService deviceParserService;
     private final GeoLocationService geoLocationService;
+    private final UserService userService;
 
-    public SessionService(SessionRepository sessionRepository, DeviceParserService deviceParserService, GeoLocationService geoLocationService) {
+    public SessionService(SessionRepository sessionRepository, DeviceParserService deviceParserService, GeoLocationService geoLocationService, UserService userService) {
         this.sessionRepository = sessionRepository;
         this.deviceParserService = deviceParserService;
         this.geoLocationService = geoLocationService;
+        this.userService = userService;
     }
 
     // Creating a new sesssion from a requestion - OAuth or Manual
@@ -59,7 +62,10 @@ public class SessionService {
     }
 
     // Revoke all sessions for a user
-    public void revokeAllSessions(User user) {
+    public void revokeAllSessions() {
+
+        User user = userService.getCurrentUser();
+
         List<Session> sessions = sessionRepository.findByUser(user);
         for (Session session : sessions) {
             session.setRevoked(true);

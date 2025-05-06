@@ -3,7 +3,7 @@ import { useUser } from "@/app/context/UserContext";
 import { resetPassword } from "@/app/utils/ProfileApi";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { toggle2FA } from "@/app/utils/UserSettings";
+import { revokeSessions, toggle2FA } from "@/app/utils/UserSettings";
 
 const SecurityContent = ({ data }) => {
   // User information
@@ -28,12 +28,20 @@ const SecurityContent = ({ data }) => {
       const response = await toggle2FA();
       toast.success("2FA Updated");
     } catch (err) {
-      toast.failure("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
-  const handleLogoutAll = () => {
-    setActiveSessions([]);
+  // Handle Logout from All Devices
+  const handleLogoutAll = async () => {
+    try {
+      await revokeSessions();
+      setActiveSessions([]);
+      toast.success("Successfully removed devices");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed revoking sessions");
+    }
   };
 
   // Sending password reset link
@@ -42,7 +50,7 @@ const SecurityContent = ({ data }) => {
       const res = await resetPassword(user.email);
       toast.success("Password Reset Sent To Email");
     } catch (err) {
-      toast.failure("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 

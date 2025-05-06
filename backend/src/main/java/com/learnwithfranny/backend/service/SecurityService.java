@@ -1,6 +1,7 @@
 package com.learnwithfranny.backend.service;
 
 import com.learnwithfranny.backend.model.User;
+import com.learnwithfranny.backend.repository.SessionRepository;
 import com.learnwithfranny.backend.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class SecurityService {
     private UserRepository userRepository;
 
     @Autowired
+    private SessionRepository sessionRepository;
+
+    @Autowired
     private UserService userService;
 
     // Getting all of the security settings
@@ -29,7 +33,7 @@ public class SecurityService {
         LocalDateTime lastPasswordChanged = user.getPasswordChangedAt();
 
         // Get Active Sessions
-        List<Map<String, String>> activeSessions = getActiveSessions();
+        List<Map<String, String>> activeSessions = getActiveSessions(user);
 
         // Constructing map for security settings
         Map<String, Object> securitySettings = new HashMap<>();
@@ -49,13 +53,17 @@ public class SecurityService {
         userRepository.save(user);
     }
 
-     // Get active sessions (mock implementation)
-     public List<Map<String, String>> getActiveSessions() {
-         // Fetch active sessions from the database or session store
-         return List.of(
-                 Map.of("device", "Chrome balh on Windows", "location", "New York, USA", "lastActive", "2 hours ago"),
-                 Map.of("device", "Safari on iPhone", "location", "San Francisco, USA", "lastActive", "5 hours ago"));
+     // Get active sessions
+     public List<Map<String, String>> getActiveSessions(User user) {
+         // Fetching all session information
+         return sessionRepository.findByUser(user).stream().filter(session -> !session.isRevoked())
+                 .map(session -> Map.of(
+                         "device", session.getDeviceName(),
+                         "location", session.getLocation(),
+                         "lastActive", session.getLastActiveAt().toString()))
+                 .toList();
      }
+   
     
      //  Logout a users sessions
      public void logoutSession(String sessionId) {

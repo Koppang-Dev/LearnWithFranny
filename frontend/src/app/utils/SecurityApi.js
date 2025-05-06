@@ -17,7 +17,8 @@ export const getSecurityInformation = async () => {
     );
 
     if (!response.ok) {
-      console.log("Error retriving information");
+      const data = await response.text();
+      console.log("Error retriving information", data);
       throw new Error("Failed getting security information");
     }
 

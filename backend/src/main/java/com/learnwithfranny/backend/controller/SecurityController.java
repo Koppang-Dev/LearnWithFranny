@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.learnwithfranny.backend.service.SecurityService;
+import com.learnwithfranny.backend.service.SessionService;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -16,6 +18,9 @@ public class SecurityController {
 
     @Autowired
     private SecurityService securityService;
+
+    @Autowired
+    private SessionService sessionService;
 
     // Getting all of the security data
     @GetMapping
@@ -35,13 +40,6 @@ public class SecurityController {
         }
     }
 
-    // Get active sessions
-    @GetMapping("/active-sessions")
-    public ResponseEntity<List<Map<String, String>>> getActiveSessions() {
-        List<Map<String, String>> sessions = securityService.getActiveSessions();
-        return ResponseEntity.ok(sessions);
-    }
-
     // Log out from a session
     @PostMapping("/logout-session")
     public ResponseEntity<String> logoutSession(@RequestBody Map<String, String> request) {
@@ -49,4 +47,12 @@ public class SecurityController {
         securityService.logoutSession(sessionId);
         return ResponseEntity.ok("Session logged out successfully");
     }
+
+   // Log out of all sessions
+   @PostMapping("/logout-all-sessions")
+   public ResponseEntity<String> logoutAllSessions() {
+       sessionService.revokeAllSessions();
+       return ResponseEntity.ok("Session logged out successfully");
+   }
+    
 }

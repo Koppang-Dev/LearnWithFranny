@@ -1,3 +1,4 @@
+import { revokeSessions } from "@/app/utils/UserSettings";
 import { useState } from "react";
 
 const SecurityContent = () => {
@@ -5,20 +6,7 @@ const SecurityContent = () => {
   const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState(false);
 
   // State for Active Sessions
-  const [activeSessions, setActiveSessions] = useState([
-    {
-      id: 1,
-      device: "Chrome on Windows",
-      location: "New York, USA",
-      lastActive: "2 hours ago",
-    },
-    {
-      id: 2,
-      device: "Safari on iPhone",
-      location: "San Francisco, USA",
-      lastActive: "5 hours ago",
-    },
-  ]);
+  const [activeSessions, setActiveSessions] = useState([]);
 
   // Toggle Two-Factor Authentication
   const toggleTwoFactor = () => {
@@ -26,8 +14,11 @@ const SecurityContent = () => {
   };
 
   // Handle Logout from All Devices
-  const handleLogoutAll = () => {
-    setActiveSessions([]);
+  const handleLogoutAll = async () => {
+    try {
+      await revokeSessions();
+      setActiveSessions([]);
+    } catch (err) {}
   };
 
   return (
