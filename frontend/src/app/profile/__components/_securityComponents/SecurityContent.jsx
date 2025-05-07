@@ -121,7 +121,12 @@ const SecurityContent = ({ data }) => {
                 </h2>
                 <p className="text-sm text-gray-500">{session.location}</p>
               </div>
-              <p className="text-lg text-gray-600">{session.lastActive}</p>
+              <p className="text-lg text-gray-600">
+                {new Date(session.lastActive).toLocaleString("en-US", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
+              </p>
               <div className="flex justify-end items-center">
                 <button className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20">
                   Logout

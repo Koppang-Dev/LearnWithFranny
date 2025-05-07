@@ -26,8 +26,6 @@ const ReferFriendContent = async () => {
 
       {/* Referral History Section */}
       <div className="flex flex-col gap-8">
-        <h1 className="text-xl font-bold text-black">Referral History</h1>
-
         {/* Referral History List */}
         <ReferralHistorySection referralHistory={referralHistory} />
       </div>

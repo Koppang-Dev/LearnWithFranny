@@ -125,7 +125,7 @@ export default function BillingContent({
         {/* Current Plan */}
         <div className="grid grid-cols-3 items-center gap-4 pt-3 border-t border-gray-200">
           <h2 className="text-lg font-semibold text-black">Current Plan</h2>
-          <p className="text-lg text-gray-600">{subscriptionPlan.name}</p>
+          <p className="text-lg text-gray-600">Free</p>
           <div className="flex justify-end items-center">
             <button
               onClick={handleChangeSubscriptionPlan}

@@ -1,5 +1,6 @@
 package com.learnwithfranny.backend.service;
 
+import com.learnwithfranny.backend.dto.DeckResponseDTO;
 import com.learnwithfranny.backend.exceptions.UserNotFoundException;
 import com.learnwithfranny.backend.model.Card;
 import com.learnwithfranny.backend.model.Deck;
@@ -8,6 +9,7 @@ import com.learnwithfranny.backend.repository.DeckRepository;
 import com.learnwithfranny.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.learnwithfranny.backend.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,9 @@ public class DeckService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     // Creating a new deck for a user
     public Deck createDeck(Long userId, Deck deck) {
@@ -38,16 +43,26 @@ public class DeckService {
     }
 
     // Getting all of a user's decks
-    public List<Deck> getDecksByUser(Long userId) {
-        return deckRepository.findAllByUserId(userId);
+    public List<DeckResponseDTO> getDecksByUser() {
+        User user = userService.getCurrentUser();
+        List<Deck> decks = deckRepository.findAllByUserId(user.getId());
+        return decks.stream().map(this::toDeckDTO).toList();
     }
 
+    // Converting list of decks to deck response dto
+    private DeckResponseDTO toDeckDTO(Deck deck) {
+        return new DeckResponseDTO(
+            deck.getId(),
+            deck.getName(),
+            deck.getDescription(),
+            deck.getCards() != null ? deck.getCards().size() : 0
+            );
+    }
 
     // Retrieving specific deck
     public Optional<Deck> getDeckById(Long deckId) {
         return deckRepository.findById(deckId);
     }
-
 
     // Deleting a deck
     public void deleteDeck(Long deckId) {

@@ -29,19 +29,18 @@ const Header = ({
       <div className="flex flex-col gap-5 w-full">
         <input
           type="text"
-          placeholder="EnteI wr the title for the deck"
+          placeholder="Enter the title for the deck"
           value={deckTitle}
           onChange={(e) => setDeckTitle(e.target.value)}
           className="w-full p-4 border border-gray-100 rounded-md focus:border-b-2 focus:border-b-black focus:outline-none"
         />
 
         {/* Deck Description */}
-        <input
-          type="text"
+        <textarea
           placeholder="Enter the description for the deck"
           value={deckDescription}
           onChange={(e) => setDeckDescription(e.target.value)}
-          className="w-full p-5 border border-gray-100 rounded-md focus:border-b-2 focus:border-b-black focus:outline-none"
+          className="w-full h-32 p-4 border border-gray-100 rounded-md focus:border-b-2 focus:border-b-black focus:outline-none resize-none"
         />
       </div>
     </div>

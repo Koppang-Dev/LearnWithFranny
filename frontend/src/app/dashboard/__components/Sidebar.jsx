@@ -24,8 +24,8 @@ const items = [
     icon: LayoutDashboardIcon,
   },
   {
-    name: "Calander",
-    path: "/calander",
+    name: "Calendar",
+    path: "/calendar",
     icon: CalendarIcon,
   },
   {
@@ -56,13 +56,6 @@ const items = [
     name: "Flash Cards",
     path: "/flashcard",
     icon: NotepadTextIcon,
-    items: [
-      {
-        name: "Create Deck",
-        icon: FileIcon,
-        action: "createDeck",
-      },
-    ],
   },
 
   {
