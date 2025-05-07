@@ -38,7 +38,11 @@ public class NotificationService {
         
         // Returning the notification preferences
         return notificationPreferencesRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Notification preferences not found for the user"));
+                .orElseGet(() -> {
+                    NotificationPreferences defaults = new NotificationPreferences();
+                    defaults.setUser(user);
+                    return notificationPreferencesRepository.save(defaults);
+                });
         
     }
 

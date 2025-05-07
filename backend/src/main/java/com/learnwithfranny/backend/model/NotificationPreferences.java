@@ -12,25 +12,25 @@ public class NotificationPreferences {
     // Determines which notifications they have subscribed to
 
     @Column(name = "emailNews")
-    private boolean emailNews;
+    private boolean emailNews = true;
 
     @Column(name = "emailUpdates")
-    private boolean emailUpdates;
+    private boolean emailUpdates = true;
 
     @Column(name = "emailReminders")
-    private boolean emailReminders;
+    private boolean emailReminders = true;
 
     @Column(name = "pushNews")
-    private boolean pushNews;
+    private boolean pushNews = true;
 
     @Column(name = "pushUpdates")
-    private boolean pushUpdates;
+    private boolean pushUpdates = true;
 
     @Column(name = "pushReminders")
-    private boolean pushReminders;
+    private boolean pushReminders = true;
 
     @Column(name = "notificationFrequency")
-    private String notificationFrequency;
+    private String notificationFrequency = "daily";
 
     // Joining table with user
     @OneToOne

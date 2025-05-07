@@ -2,8 +2,8 @@ import Tabs from "./__components/tabs";
 import GeneralContent from "./__components/generalContent";
 import SecurityPage from "./__components/securityPage";
 import BillingContent from "./__components/billingContent";
-import NotificationContent from "./__components/notificationContent";
 import ReferFriendContent from "./__components/ReferFriendContent";
+import NotificationPage from "./__components/NotificationPage";
 
 const Profile = async ({ searchParams }) => {
   const tab = searchParams.tab || "General";
@@ -18,7 +18,7 @@ const Profile = async ({ searchParams }) => {
       case "Billing":
         return <BillingContent />;
       case "Notifications":
-        return <NotificationContent />;
+        return <NotificationPage />;
       case "Refer":
         return <ReferFriendContent />;
       default:
@@ -27,7 +27,7 @@ const Profile = async ({ searchParams }) => {
   };
 
   return (
-    <div className="m-10 w-full h-full bg-white p-20">
+    <div className="m-0 w-full h-full bg-white p-20">
       {/* Displaying the users name and title */}
       <div className="flex flex-col gap-10">
         {/* users name */}

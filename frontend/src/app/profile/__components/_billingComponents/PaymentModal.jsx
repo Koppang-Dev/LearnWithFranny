@@ -3,13 +3,13 @@ import { addPaymentMethod } from "@/app/utils/BillingApi";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const AddPaymentMethod = () => {
+const PaymentModal = () => {
   const [form, setForm] = useState({ type: "", last4: "", expiry: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = target.e;
+    const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -75,4 +75,4 @@ const AddPaymentMethod = () => {
   );
 };
 
-export default AddPaymentMethod;
+export default PaymentModal;
