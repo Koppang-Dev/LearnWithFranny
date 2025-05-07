@@ -3,12 +3,14 @@ import { removePaymentMethod } from "@/app/utils/BillingApi";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import PaymentModal from "./PaymentModal";
+import { useRouter } from "next/navigation";
 
 export default function BillingContent({
   paymentMethods,
   billingHistory,
   subscriptionPlan,
 }) {
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [editingMethod, setEditingMethod] = useState(null);
   const [methods, setMethods] = useState(paymentMethods);
@@ -22,7 +24,9 @@ export default function BillingContent({
     setMethods((prev) => [...prev, newMethod]);
   };
 
-  const handleChangeSubscriptionPlan = () => {};
+  const handleChangeSubscriptionPlan = () => {
+    router.push("/subscription");
+  };
 
   const deletePaymentMethod = async (id) => {
     try {
@@ -127,7 +131,7 @@ export default function BillingContent({
               onClick={handleChangeSubscriptionPlan}
               className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-purple-400 hover:text-black transition-colors w-20"
             >
-              Change
+              View Plans
             </button>
           </div>
         </div>
