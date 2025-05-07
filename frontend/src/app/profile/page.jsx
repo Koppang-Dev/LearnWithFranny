@@ -4,6 +4,7 @@ import SecurityPage from "./__components/securityPage";
 import BillingContent from "./__components/billingContent";
 import ReferFriendContent from "./__components/ReferFriendContent";
 import NotificationPage from "./__components/NotificationPage";
+import BillingPage from "./__components/BillingPage";
 
 const Profile = async ({ searchParams }) => {
   const tab = searchParams.tab || "General";
@@ -16,7 +17,7 @@ const Profile = async ({ searchParams }) => {
       case "Security":
         return <SecurityPage />;
       case "Billing":
-        return <BillingContent />;
+        return <BillingPage />;
       case "Notifications":
         return <NotificationPage />;
       case "Refer":

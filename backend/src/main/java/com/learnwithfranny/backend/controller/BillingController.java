@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.BillingInfo;
+import com.learnwithfranny.backend.model.PaymentMethod;
 import com.learnwithfranny.backend.service.BillingService;
 
 
@@ -42,13 +43,20 @@ public class BillingController {
 
     // Adding a payment method
     @PostMapping("/add-payment-method")
-    public ResponseEntity<String> addPaymentMethod(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Long> addPaymentMethod(@RequestBody Map<String, String> request) {
         String cardType = request.get("cardType");
         String last4 = request.get("last4");
         String expiryDate = request.get("expiryDate");
 
-        billingService.addPaymentMethod(cardType, last4, expiryDate);
-        return ResponseEntity.ok("Payment added successfully");
+        PaymentMethod method = billingService.addPaymentMethod(cardType, last4, expiryDate);
+        return ResponseEntity.ok(method.getId());
+    }
+
+    // Removing Payment Method
+    @PostMapping("/remove-payment-method")
+    public ResponseEntity<String> removePaymentMethod(@RequestBody Long paymentMethodId) {
+        billingService.deletePaymentMethod(paymentMethodId);
+        return ResponseEntity.ok("Successfully deleted payment method");
     }
 
     // Users billing history

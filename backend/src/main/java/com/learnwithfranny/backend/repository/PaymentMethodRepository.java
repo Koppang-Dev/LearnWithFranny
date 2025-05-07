@@ -9,4 +9,5 @@ import com.learnwithfranny.backend.model.User;
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {
 
     List<PaymentMethod> findByUser(User user);
+    void deleteByIdAndUser(Long id, User user);
 }

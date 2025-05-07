@@ -1,3 +1,4 @@
+"use server";
 import { getCookies } from "./headerUtil";
 
 // Fetching all payment methods
@@ -49,7 +50,7 @@ export const fetchBillingHistory = async () => {
 
     //   Validation
     if (!response.ok) {
-      const error = await response.text();
+      const error = await response.json();
       console.error(error);
       throw new Error(error);
     }

@@ -5,11 +5,14 @@ import com.learnwithfranny.backend.model.PaymentMethod;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.PaymentMethodRepository;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,12 +37,19 @@ public class BillingService {
 
 
     // Add a payment method
-    public void addPaymentMethod(String cardType, String last4, String expiryDate) {
+    public PaymentMethod addPaymentMethod(String cardType, String last4, String expiryDate) {
         User user = userService.getCurrentUser();
         PaymentMethod paymentMethod = new PaymentMethod(cardType, last4, expiryDate, user);
-        paymentMethodRepository.save(paymentMethod);
+        return paymentMethodRepository.save(paymentMethod);
     }
 
+
+    // Deleting a payment method
+    @Transactional
+    public void deletePaymentMethod(Long paymentMethodId) {
+        User user = userService.getCurrentUser();
+        paymentMethodRepository.deleteByIdAndUser(paymentMethodId, user);
+    }
     // Getting the billing history
     public List<Map<String, String>> getBillingHistory() {
         return List.of(
@@ -54,16 +64,11 @@ public class BillingService {
 
         return paymentMethods.stream()
                 .map(paymentMethod -> Map.of(
-                        "id", paymentMethod.getId().toString(),
-                        "cardType", paymentMethod.getCardType(),
-                        "last4", paymentMethod.getLast4(),
-                        "expiryDate", paymentMethod.getExpiryDate()
+                        "id", Objects.toString(paymentMethod.getId(), ""),
+                        "cardType", Objects.toString(paymentMethod.getCardType(), ""),
+                        "last4", Objects.toString(paymentMethod.getLast4(), ""),
+                        "expiryDate", Objects.toString(paymentMethod.getExpiryDate(), "")
                 ))
                 .collect(Collectors.toList());
-    }
-
-    
-
-
-    
+    }    
 }
