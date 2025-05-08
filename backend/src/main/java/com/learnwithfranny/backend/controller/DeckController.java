@@ -1,5 +1,6 @@
 package com.learnwithfranny.backend.controller;
 import com.learnwithfranny.backend.dto.CreateDeckDTO;
+import com.learnwithfranny.backend.dto.DeckRequestDTO;
 import com.learnwithfranny.backend.dto.DeckResponseDTO;
 import com.learnwithfranny.backend.model.Card;
 import com.learnwithfranny.backend.model.Deck;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 
@@ -85,5 +89,37 @@ public class DeckController {
         List<Card> cards = cardService.getCardsByDeck(deckId);
         return ResponseEntity.ok(cards);
     }
-    
+
+    // Retrieving deck by ID
+    @GetMapping("/{deckId}")
+    public ResponseEntity<?> getDeckById(@PathVariable(name = "deckId") Long deckId) {
+        try {
+            Deck deck = deckService.getDeckById(deckId);
+            return ResponseEntity.ok(deck);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting deck: " + e.getMessage());
+        }
+    }
+
+    // Updating a deck
+    @PutMapping("/{deckId}")
+public ResponseEntity<DeckResponseDTO> updateDeck(
+    @PathVariable Long deckId,
+    @RequestBody CreateDeckDTO deckData
+) {
+    try {
+        Deck updatedDeck = deckService.updateDeck(deckId, deckData);
+        DeckResponseDTO response = new DeckResponseDTO(
+            updatedDeck.getId(),
+            updatedDeck.getName(),
+            updatedDeck.getDescription(),
+            updatedDeck.getCards().size()
+        );
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(null);
+    }
+}   
 }

@@ -62,3 +62,49 @@ export const deleteDeck = async (deckId) => {
     console.error("Failed to delete deck", error);
   }
 };
+
+// Getting Deck By Id
+export const getDeckById = async (deckId) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/deck/${deckId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (!response.ok) throw new Error("Failed to get deck");
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to get deck", error);
+    throw error;
+  }
+};
+
+// Updating a deck
+export const updateDeck = async ({ deckId, payload }) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/deck/${deckId}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+    if (!response.ok) {
+      console.error("Failed to update deck");
+      throw new Error("Failed to update deck");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to delete deck", error);
+  }
+};

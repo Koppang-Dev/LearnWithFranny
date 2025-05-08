@@ -18,6 +18,10 @@ export default function DeckCard({ deck, onDelete }) {
     setIsRenaming(false);
   };
 
+  const handleEdit = () => {
+    router.push(`/flashcard/edit/${deck.id}`);
+  };
+
   const handleDelete = async () => {
     if (onDelete) {
       console.log("Deleting:", deck.id);
@@ -59,7 +63,7 @@ export default function DeckCard({ deck, onDelete }) {
               label: "Edit",
               onClick: (e) => {
                 e.stopPropagation();
-                setIsRenaming(true);
+                handleEdit();
                 setShowDropdown(false);
               },
             },

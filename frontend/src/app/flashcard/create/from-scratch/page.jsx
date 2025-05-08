@@ -45,11 +45,21 @@ function cardReducer(state, action) {
   }
 }
 
-export default function CreateDeckFromScratch() {
+export default function CreateDeckFromScratch({ deckToEdit = null }) {
   const router = useRouter();
-  const [cards, dispatch] = useReducer(cardReducer, initalState);
-  const [deckTitle, setDeckTitle] = useState("");
-  const [deckDescription, setDeckDescription] = useState("");
+  const [cards, dispatch] = useReducer(
+    cardReducer,
+    deckToEdit?.cards?.map((card, i) => ({
+      id: i + 1,
+      textFront: card.frontText,
+      textBack: card.backText,
+    })) ?? initalState
+  );
+
+  const [deckTitle, setDeckTitle] = useState(deckToEdit?.name || "");
+  const [deckDescription, setDeckDescription] = useState(
+    deckToEdit.description || ""
+  );
   const [errorMessage, setErrorMessage] = useState("");
 
   const createDeck = async () => {
@@ -73,17 +83,27 @@ export default function CreateDeckFromScratch() {
     setErrorMessage("");
 
     // Create the deck
+    const deck = {
+      name: deckTitle,
+      description: deckDescription,
+      cards: cards.map(({ textFront, textBack }) => ({
+        frontText: textFront,
+        backText: textBack,
+      })),
+    };
+
     try {
-      const deck = {
-        name: deckTitle,
-        description: deckDescription,
-        cards: cards.map(({ textFront, textBack }) => ({
-          frontText: textFront,
-          backText: textBack,
-        })),
-      };
-      const createdDeck = await createUserDeck(deck);
-      toast.success("Created Deck");
+      // Editing a prexisting deck
+      if (deckToEdit) {
+        await updateDeck(deckToEdit.id, deck);
+        toast.success("Deck Updated");
+        // Creating a new deck
+      } else {
+        await createUserDeck(deck);
+        toast.success("Created Deck");
+      }
+
+      // Pushing back to flashcard hub
       router.push("/flashcard");
     } catch (err) {
       toast.error("Error creating deck");
