@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,31 +41,17 @@ public class DeckController {
 
     // Create new Deck for a user
     @PostMapping
-    public ResponseEntity<String> createDeck(@RequestBody CreateDeckDTO createDeckDTO) {
-        // Fetch user from the database using userId
-        Optional<User> userOpt = userRepository.findById(createDeckDTO.getUserId());
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(404).body(null); // User not found
+    public ResponseEntity<?> createDeck(@RequestBody CreateDeckDTO createDeckDTO) {
+
+        try {
+            Deck createdDeck = deckService.createDeckForUser(createDeckDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+            "message", "Deck created successfully",
+            "deckId", createdDeck.getId()
+        ));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create deck");
         }
-
-        User user = userOpt.get();
-
-        // Map DTO to Deck entity
-        Deck deck = new Deck(createDeckDTO.getName(), createDeckDTO.getDescription());
-        deck.setUser(user); // Set the fetched user on the deck
-
-        // Convert the list of CardDTO to Card entities and associate them with the deck
-        List<Card> cards = new ArrayList<>();
-        for (CreateDeckDTO.CardDTO cardDTO : createDeckDTO.getCards()) {
-            Card card = new Card(cardDTO.getCardNumber(), cardDTO.getFrontText(), cardDTO.getBackText(), deck);
-            cards.add(card);
-        }
-        deck.setCards(cards);
-
-        // Call the service to create the deck
-        deckService.createDeck(createDeckDTO.getUserId(), deck);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("Created Deck!");
     }
     
     // Get all decks for a user
@@ -82,9 +69,14 @@ public class DeckController {
 
     // Deleting a deck
     @DeleteMapping("/{deckId}")
-    public ResponseEntity<Void> deleteDeck(@PathVariable(name = "userId") Long userId, @PathVariable(name = "deckId") Long deckId) {
-        deckService.deleteDeck(deckId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteDeck(@PathVariable(name = "deckId") Long deckId) {
+
+        try {
+            deckService.deleteDeck(deckId);
+            return ResponseEntity.ok("Deck Deleted Successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("Error deleting deck: " + e.getMessage());        }
     }
     
     // Retrieve all cards for a deck

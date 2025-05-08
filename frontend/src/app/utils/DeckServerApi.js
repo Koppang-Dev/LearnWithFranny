@@ -12,9 +12,7 @@ export const getUserDecks = async () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        next: {
-          revalidate: 60,
-        },
+        cache: "no-store",
       }
     );
 

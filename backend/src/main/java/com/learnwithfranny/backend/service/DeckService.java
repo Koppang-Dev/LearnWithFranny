@@ -1,5 +1,6 @@
 package com.learnwithfranny.backend.service;
 
+import com.learnwithfranny.backend.dto.CreateDeckDTO;
 import com.learnwithfranny.backend.dto.DeckResponseDTO;
 import com.learnwithfranny.backend.exceptions.UserNotFoundException;
 import com.learnwithfranny.backend.model.Card;
@@ -11,8 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.learnwithfranny.backend.service.UserService;
 
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,20 +31,20 @@ public class DeckService {
     @Autowired
     private UserService userService;
 
-    // Creating a new deck for a user
-    public Deck createDeck(Long userId, Deck deck) {
 
-        // Find the user by their id
-        Optional<User> user = userRepository.findById(userId);
+    public Deck createDeckForUser(CreateDeckDTO dto) {
+        User user = userService.getCurrentUser();
+        Deck deck = new Deck(dto.getName(), dto.getDescription());
+        deck.setUser(user);
 
-        // If the user does not exist - throw error
-        if (user.isPresent()) {
-            deck.setUser(user.get());
+        // Creating card entity for each card
+        List<Card> cards = dto.getCards().stream().map(cardDTO ->
+            new Card(cardDTO.getCardNumber(), cardDTO.getFrontText(), cardDTO.getBackText(), deck)
+                ).collect(Collectors.toList());
+                deck.setCards(cards);
+            
             return deckRepository.save(deck);
-        } else {
-            throw new UserNotFoundException(userId);
         }
-    }
 
     // Getting all of a user's decks
     public List<DeckResponseDTO> getDecksByUser() {
@@ -65,8 +69,10 @@ public class DeckService {
     }
 
     // Deleting a deck
+    @Transactional
     public void deleteDeck(Long deckId) {
-        deckRepository.deleteById(deckId);
+        User user = userService.getCurrentUser();
+        deckRepository.deleteByIdAndUser(deckId, user);
     }
 
     // Adding a card to a deck

@@ -1,5 +1,4 @@
 "use client";
-
 import Sidebar from "../dashboard/__components/Sidebar";
 export default function Layout({ children }) {
   return (

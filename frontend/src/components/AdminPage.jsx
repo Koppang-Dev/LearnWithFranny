@@ -13,10 +13,10 @@ const AdminPage = () => {
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
         {/* USER CARDS */}
         <div className="flex gap-4 justify-between flex-wrap">
-          <UserCard type="Notes" />
-          <UserCard type="Quizzes Completed" />
+          <UserCard type="Flashcards Made" />
+          <UserCard type="Flashcards Studied" />
           <UserCard type="Tests Completed" />
-          <UserCard type="Hours Studying" />
+          <UserCard type="Hours Spent Studying" />
         </div>
         {/* MIDDLE CHARTS */}
         <div className="flex gap-4 flex-col lg:flex-row">

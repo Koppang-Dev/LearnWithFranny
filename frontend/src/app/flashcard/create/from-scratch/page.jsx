@@ -6,6 +6,7 @@ import { useReducer } from "react";
 import { useState } from "react";
 import { createUserDeck } from "@/app/utils/DeckApi";
 import { useRouter } from "next/navigation";
+import toast, { Toast } from "react-hot-toast";
 
 // Inital Card States
 const initalState = [
@@ -57,6 +58,10 @@ export default function CreateDeckFromScratch() {
       return setErrorMessage("Deck Title Cannot Be Empty");
     }
 
+    if (cards.length === 0) {
+      return setErrorMessage("Must have at least one card");
+    }
+
     const incomplete = cards.find(
       (card) => !card.textFront.trim() || !card.textBack.trim()
     );
@@ -71,15 +76,17 @@ export default function CreateDeckFromScratch() {
     try {
       const deck = {
         name: deckTitle,
-        deckDescription: deckDescription,
+        description: deckDescription,
         cards: cards.map(({ textFront, textBack }) => ({
           frontText: textFront,
           backText: textBack,
         })),
       };
       const createdDeck = await createUserDeck(deck);
+      toast.success("Created Deck");
       router.push("/flashcard");
     } catch (err) {
+      toast.error("Error creating deck");
       console.error("Faile creating deck:", err);
       setErrorMessage("Failed to create deck. Please Try Again");
     }

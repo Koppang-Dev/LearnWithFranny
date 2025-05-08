@@ -5,7 +5,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import { SketchPicker } from "react-color";
 import DropdownMenu from "@/app/uploadNote/_components/DropDownMenu"; // adjust if needed
 
-export default function DeckCard({ deck }) {
+export default function DeckCard({ deck, onDelete }) {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
@@ -18,8 +18,11 @@ export default function DeckCard({ deck }) {
     setIsRenaming(false);
   };
 
-  const handleDelete = () => {
-    console.log("Deleting:", deck.id);
+  const handleDelete = async () => {
+    if (onDelete) {
+      console.log("Deleting:", deck.id);
+      await onDelete();
+    }
   };
 
   const handleColorChange = (color) => {
@@ -53,7 +56,7 @@ export default function DeckCard({ deck }) {
         <DropdownMenu
           actions={[
             {
-              label: "Rename",
+              label: "Edit",
               onClick: (e) => {
                 e.stopPropagation();
                 setIsRenaming(true);

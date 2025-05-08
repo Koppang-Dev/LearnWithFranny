@@ -6,8 +6,8 @@ import java.util.List;
 public class CreateDeckDTO {
 
     private Long userId;
-    private String name;
-    private String description;
+    private String deckName;
+    private String deckDescription;
     private List<CardDTO> cards;  // Add a list of CardDTO objects
 
     // Getters and Setters
@@ -20,19 +20,19 @@ public class CreateDeckDTO {
     }
 
     public String getName() {
-        return name;
+        return deckName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.deckName = name;
     }
 
     public String getDescription() {
-        return description;
+        return deckDescription;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.deckDescription = description;
     }
 
     public List<CardDTO> getCards() {
