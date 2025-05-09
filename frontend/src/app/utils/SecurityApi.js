@@ -1,9 +1,8 @@
-import { cookies } from "next/headers";
+import { getCookies } from "./headerUtil";
 
 // Information for the security page
 export const getSecurityInformation = async () => {
-  const token = cookies().get("token")?.value;
-
+  const token = await getCookies();
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/security`,

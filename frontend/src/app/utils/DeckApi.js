@@ -38,7 +38,7 @@ export const getDeckCards = async (deckId) => {
 
     const data = await response.json();
     console.log("API Response", data);
-    return await response.json();
+    return data;
   } catch (error) {
     console.error("Error get deck", error);
   }
@@ -86,8 +86,6 @@ export const getDeckById = async (deckId) => {
 
 // Updating a deck
 export const updateDeck = async (deckId, payload) => {
-  console.log("Deck Id", deckId);
-  console.log("Payload", payload);
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/deck/${deckId}`,

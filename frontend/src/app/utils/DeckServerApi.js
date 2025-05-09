@@ -1,8 +1,9 @@
+"use server";
 import { getCookies } from "./headerUtil";
 
 // Retrieving all the decks from a user
 export const getUserDecks = async () => {
-  const token = getCookies();
+  const token = await getCookies();
 
   try {
     const response = await fetch(

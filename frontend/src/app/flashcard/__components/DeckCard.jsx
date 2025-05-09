@@ -29,15 +29,11 @@ export default function DeckCard({ deck, onDelete }) {
     }
   };
 
-  const handleColorChange = (color) => {
-    setColor(color.hex);
-  };
-
   return (
     <div
       className="relative border p-6 rounded-lg shadow-md flex flex-col justify-between bg-white hover:shadow-lg transition"
       style={{ backgroundColor: color }}
-      onClick={() => router.push(`/flashcard-study/${deck.id}`)}
+      onClick={() => router.push(`/flashcard/study/${deck.id}`)}
     >
       <h3 className="text-lg font-bold mb-2">{deck.name}</h3>
       <p className="text-sm text-gray-600">{deck.description}</p>
@@ -72,14 +68,6 @@ export default function DeckCard({ deck, onDelete }) {
               onClick: (e) => {
                 e.stopPropagation();
                 handleDelete();
-                setShowDropdown(false);
-              },
-            },
-            {
-              label: "Change Colour",
-              onClick: (e) => {
-                e.stopPropagation();
-                setShowColorPicker((prev) => !prev);
                 setShowDropdown(false);
               },
             },

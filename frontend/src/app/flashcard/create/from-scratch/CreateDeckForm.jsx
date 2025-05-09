@@ -96,7 +96,6 @@ export default function CreateDeckFromScratch({ deckToEdit = null }) {
     try {
       // Editing a prexisting deck
       if (deckToEdit) {
-        console.log(deckToEdit);
         await updateDeck(deckToEdit?.id, deck);
         toast.success("Deck Updated");
         // Creating a new deck

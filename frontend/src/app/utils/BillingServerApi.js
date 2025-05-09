@@ -3,7 +3,7 @@ import { getCookies } from "./headerUtil";
 
 // Fetching all payment methods
 export const fetchPaymentMethods = async () => {
-  const token = getCookies();
+  const token = await getCookies();
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/billing/payment-methods`,
@@ -34,7 +34,7 @@ export const fetchPaymentMethods = async () => {
 
 // Fetching Billing history
 export const fetchBillingHistory = async () => {
-  const token = getCookies();
+  const token = await getCookies();
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/billing/billing-history`,
@@ -65,7 +65,7 @@ export const fetchBillingHistory = async () => {
 
 // Fetching current subscription plan
 export const fetchSubscriptionPlan = async () => {
-  const token = getCookies();
+  const token = await getCookies();
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/billing/subscription-plan`,
