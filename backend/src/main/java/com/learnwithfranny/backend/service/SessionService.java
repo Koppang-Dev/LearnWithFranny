@@ -63,7 +63,6 @@ public class SessionService {
 
     // Revoke all sessions for a user
     public void revokeAllSessions() {
-
         User user = userService.getCurrentUser();
 
         List<Session> sessions = sessionRepository.findByUser(user);

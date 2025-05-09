@@ -4,7 +4,7 @@ import BottomSection from "./__components/bottomSection";
 import Header from "./__components/header";
 import { useReducer } from "react";
 import { useState } from "react";
-import { createUserDeck } from "@/app/utils/DeckApi";
+import { createUserDeck, updateDeck } from "@/app/utils/DeckApi";
 import { useRouter } from "next/navigation";
 import toast, { Toast } from "react-hot-toast";
 
@@ -46,6 +46,7 @@ function cardReducer(state, action) {
 }
 
 export default function CreateDeckFromScratch({ deckToEdit = null }) {
+  console.log("Deck again", deckToEdit);
   const router = useRouter();
   const [cards, dispatch] = useReducer(
     cardReducer,
@@ -58,7 +59,7 @@ export default function CreateDeckFromScratch({ deckToEdit = null }) {
 
   const [deckTitle, setDeckTitle] = useState(deckToEdit?.name || "");
   const [deckDescription, setDeckDescription] = useState(
-    deckToEdit.description || ""
+    deckToEdit?.description || ""
   );
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -95,7 +96,8 @@ export default function CreateDeckFromScratch({ deckToEdit = null }) {
     try {
       // Editing a prexisting deck
       if (deckToEdit) {
-        await updateDeck(deckToEdit.id, deck);
+        console.log(deckToEdit);
+        await updateDeck(deckToEdit?.id, deck);
         toast.success("Deck Updated");
         // Creating a new deck
       } else {
@@ -107,7 +109,7 @@ export default function CreateDeckFromScratch({ deckToEdit = null }) {
       router.push("/flashcard");
     } catch (err) {
       toast.error("Error creating deck");
-      console.error("Faile creating deck:", err);
+      console.error("Failed creating deck:", err);
       setErrorMessage("Failed to create deck. Please Try Again");
     }
   };

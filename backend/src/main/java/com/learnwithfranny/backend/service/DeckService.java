@@ -91,35 +91,29 @@ public class DeckService {
     @Transactional
     public Deck updateDeck(Long deckId, CreateDeckDTO dto) {
         User user = userService.getCurrentUser();
+        Deck deck = deckRepository.findById(deckId)
+            .orElseThrow(() -> new RuntimeException("Deck not found with id: " + deckId));
 
-        // Retrieve the deck 
-        Deck deck = deckRepository.findById(deckId).orElseThrow(() -> new RuntimeException(("Deck not found with the id: " + deckId)));
-
-        // Ensure authorization
         if (!deck.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not authorized to update this deck.");
+            throw new RuntimeException("Unauthorized");
         }
 
-        // Update title and description
         deck.setName(dto.getName());
         deck.setDescription(dto.getDescription());
 
-        // Deleting previous cards
+        // Modifying cards in place
         deck.getCards().clear();
+        deck.getCards().addAll(
+            dto.getCards().stream()
+                .map(cardDTO -> new Card(
+                    cardDTO.getCardNumber(),
+                    cardDTO.getFrontText(),
+                    cardDTO.getBackText(),
+                    deck
+                ))
+                .collect(Collectors.toList())
+        );
 
-        // Creating new cards
-        List<Card> newCards = dto.getCards().stream()
-        .map(cardDTO -> new Card(
-            cardDTO.getCardNumber(),
-            cardDTO.getFrontText(),
-            cardDTO.getBackText(),
-            deck 
-        ))
-        .collect(Collectors.toList());
-
-        deck.setCards(newCards);
-
-        // Save and return updated deck
         return deckRepository.save(deck);
     }
 }

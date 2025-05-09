@@ -104,10 +104,8 @@ public class DeckController {
 
     // Updating a deck
     @PutMapping("/{deckId}")
-public ResponseEntity<DeckResponseDTO> updateDeck(
-    @PathVariable Long deckId,
-    @RequestBody CreateDeckDTO deckData
-) {
+    public ResponseEntity<?> updateDeck(@PathVariable("deckId") Long deckId,
+                                                      @RequestBody CreateDeckDTO deckData) {
     try {
         Deck updatedDeck = deckService.updateDeck(deckId, deckData);
         DeckResponseDTO response = new DeckResponseDTO(
@@ -119,7 +117,7 @@ public ResponseEntity<DeckResponseDTO> updateDeck(
         return ResponseEntity.ok(response);
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
+                .body(e.getMessage());
     }
 }   
 }

@@ -76,6 +76,7 @@ export const getDeckById = async (deckId) => {
     if (!response.ok) throw new Error("Failed to get deck");
 
     const data = await response.json();
+    console.log("Deck by id", data);
     return data;
   } catch (error) {
     console.error("Failed to get deck", error);
@@ -84,7 +85,9 @@ export const getDeckById = async (deckId) => {
 };
 
 // Updating a deck
-export const updateDeck = async ({ deckId, payload }) => {
+export const updateDeck = async (deckId, payload) => {
+  console.log("Deck Id", deckId);
+  console.log("Payload", payload);
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/deck/${deckId}`,
@@ -98,13 +101,14 @@ export const updateDeck = async ({ deckId, payload }) => {
       }
     );
     if (!response.ok) {
-      console.error("Failed to update deck");
+      const error = await response.text();
+      console.error("Failed to update deck", error);
       throw new Error("Failed to update deck");
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Failed to delete deck", error);
+    console.error("Failedddd to delete deck", error);
   }
 };

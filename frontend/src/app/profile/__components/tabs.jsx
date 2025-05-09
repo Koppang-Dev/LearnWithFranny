@@ -1,5 +1,5 @@
 "use client";
-import Router, { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 // This component will render the selected tab for the user
 const Tabs = ({ activeTab }) => {

@@ -26,6 +26,6 @@ export const getUserDecks = async () => {
     return data;
   } catch (err) {
     console.log("Error fetching decks", err);
-    throw new Error(err);
+    throw new Error("Failed getting decks");
   }
 };

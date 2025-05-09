@@ -30,7 +30,9 @@ public class PaymentMethod {
 
 
     // Constructor
-    public PaymentMethod() {}
+    public PaymentMethod() {
+    }
+    
     public PaymentMethod(String cardType, String last4, String expiryDate, User user) {
         this.cardType = cardType;
         this.last4 = last4;
