@@ -19,6 +19,9 @@ public class NotificationService {
     private UserRepository userRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private NotificationPreferencesRepository notificationPreferencesRepository;
 
      // Constants for preference keys
@@ -32,18 +35,13 @@ public class NotificationService {
 
     // Getting the current users Notification preferecnes
     private NotificationPreferences getCurrentUsNotificationPreferences() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found with that username"));
-        
-        // Returning the notification preferences
+        User user = userService.getCurrentUser();
         return notificationPreferencesRepository.findByUser(user)
                 .orElseGet(() -> {
                     NotificationPreferences defaults = new NotificationPreferences();
                     defaults.setUser(user);
                     return notificationPreferencesRepository.save(defaults);
-                });
-        
+                });   
     }
 
     // Getting Notification preferences
@@ -63,7 +61,6 @@ public class NotificationService {
                 NOTIFICATION_FREQUENCY, notificationPreferences.getNotificationFrequency());
     }
     
-
     // Updating Notification Preferences
     public void updateAllNotificationPreferences(Map<String, Object> preferences) {
         Assert.notNull(preferences, "Preferences map cannot be null");
@@ -83,6 +80,4 @@ public class NotificationService {
         notificationPreferences.setPushReminders((Boolean) preferences.getOrDefault(PUSH_REMINDERS, false));
         notificationPreferences.setNotificationFrequency((String) preferences.getOrDefault(NOTIFICATION_FREQUENCY, "daily"));
     }
-
-    
 }

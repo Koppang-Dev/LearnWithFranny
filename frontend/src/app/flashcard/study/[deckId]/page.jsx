@@ -5,23 +5,21 @@ import { handleFlashcardDifficulty } from "@/app/utils/ReviewApi";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Flashcard from "../__components/Flashcard";
+import { useDeckProgress } from "@/app/hooks/useDeckProgress";
+import ProgressBar from "../__components/ProgressBar";
+
 const FlashCardStudy = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [difficultyResults, setDifficultyResults] = useState([]);
-  const [isClient, setIsClient] = useState(false);
   const { deckId } = useParams();
   const [flashcards, setFlashcards] = useState([]);
   const [error, setError] = useState(null);
-
-  // Ensure this only runs on the client side
-  useEffect(() => {
-    setIsClient(true); // Set to true once the component is mounted on the client
-  }, []);
+  const { progress, fetchProgress } = useDeckProgress(deckId);
 
   // User determines difficulty for flashcard
-  const handleDifficultyChange = (difficulty, cardId) => {
+  const handleDifficultyChange = async (difficulty, cardId) => {
     // Notify backend about the difficulty
-    handleFlashcardDifficulty(difficulty, cardId);
+    await handleFlashcardDifficulty(difficulty, cardId);
+    await fetchProgress();
 
     if (currentIndex < flashcards.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -60,6 +58,11 @@ const FlashCardStudy = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Flashcards for Deck {deckId}</h1>
+
+      {/* Progress bar */}
+      <ProgressBar mastered={progress.mastered} total={progress.total} />
+
+      {/* Card Information */}
       {currentCard && (
         <Flashcard
           cardId={currentCard.id}

@@ -2,6 +2,7 @@ package com.learnwithfranny.backend.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,5 +65,15 @@ public class CardReviewService {
 
         review.setReviewedAt(LocalDateTime.now());
         cardReviewRepository.save(review);
+    }
+
+    // Counting total of mastered cards
+    public long countMasteredCards(Long deckId) {
+        User user = userService.getCurrentUser();
+        List<Card> deckCards = cardRepository.findByDeckId(deckId);
+
+        // Returning the mastered count
+        return deckCards.stream().map(card -> cardReviewRepository.findByUserAndCard(user, card).orElse(null))
+                .filter(r -> r != null && r.getBucket() == 4).count();
     }
 }

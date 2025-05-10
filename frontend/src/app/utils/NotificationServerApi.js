@@ -1,6 +1,6 @@
 import { getCookies } from "./headerUtil";
 export const fetchNotificationPreferences = async () => {
-  const token = getCookies();
+  const token = await getCookies();
 
   try {
     const response = await fetch(

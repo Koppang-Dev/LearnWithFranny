@@ -43,6 +43,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 /**
  * Authentication Controller for handling user authentication and registration requests.
@@ -77,7 +80,8 @@ public class AuthController {
             PasswordEncoder passwordEncoder,
             RoleRepository roleRepository,
             AuthenticationManager authenticationManager,
-            JwtUtil jwtUtil, PasswordResetService passwordResetService, EmailService emailService, SessionService sessionService) {
+            JwtUtil jwtUtil, PasswordResetService passwordResetService, EmailService emailService,
+            SessionService sessionService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -87,6 +91,15 @@ public class AuthController {
         this.emailService = emailService;
         this.sessionService = sessionService;
     }
+    
+
+
+    // Checking if a user is authenticated
+    @GetMapping("/check")
+    public ResponseEntity<?> checkSecurity() {
+        return ResponseEntity.ok("User logged in");
+    }
+   
 
     /**
      * Handles sign-in (login) requests. Authenticates the user and returns a JWT token.

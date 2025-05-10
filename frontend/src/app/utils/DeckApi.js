@@ -110,3 +110,25 @@ export const updateDeck = async (deckId, payload) => {
     console.error("Failedddd to delete deck", error);
   }
 };
+
+// Completed progress
+// Returns number of cards mastered and number of total cards
+export const getDeckProgress = async (deckId) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/deck/progress/${deckId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (!response.ok) throw new Error("Failed to get deck progress");
+
+    const data = await response.json();
+    console.log("Mastered total", data);
+    return data;
+  } catch (error) {
+    console.error("Failed to get deck progress", error);
+    throw error;
+  }
+};

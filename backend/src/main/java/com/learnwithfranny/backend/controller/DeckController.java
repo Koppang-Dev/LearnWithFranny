@@ -3,9 +3,13 @@ import com.learnwithfranny.backend.dto.CreateDeckDTO;
 import com.learnwithfranny.backend.dto.DeckRequestDTO;
 import com.learnwithfranny.backend.dto.DeckResponseDTO;
 import com.learnwithfranny.backend.model.Card;
+import com.learnwithfranny.backend.model.CardReview;
 import com.learnwithfranny.backend.model.Deck;
 import com.learnwithfranny.backend.model.User;
+import com.learnwithfranny.backend.repository.CardRepository;
+import com.learnwithfranny.backend.repository.CardReviewRepository;
 import com.learnwithfranny.backend.repository.UserRepository;
+import com.learnwithfranny.backend.service.CardReviewService;
 import com.learnwithfranny.backend.service.CardService;
 import com.learnwithfranny.backend.service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,15 @@ public class DeckController {
     private UserRepository userRepository;
     @Autowired
     private CardService cardService;
+
+    @Autowired
+    private CardReviewRepository cardReviewRepository;
+
+    @Autowired
+    private CardReviewService cardReviewService;
+
+    @Autowired
+    private CardRepository cardRepository;
 
 
     // Create new Deck for a user
@@ -105,19 +118,32 @@ public class DeckController {
     // Updating a deck
     @PutMapping("/{deckId}")
     public ResponseEntity<?> updateDeck(@PathVariable("deckId") Long deckId,
-                                                      @RequestBody CreateDeckDTO deckData) {
-    try {
-        Deck updatedDeck = deckService.updateDeck(deckId, deckData);
-        DeckResponseDTO response = new DeckResponseDTO(
-            updatedDeck.getId(),
-            updatedDeck.getName(),
-            updatedDeck.getDescription(),
-            updatedDeck.getCards().size()
-        );
-        return ResponseEntity.ok(response);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(e.getMessage());
+            @RequestBody CreateDeckDTO deckData) {
+        try {
+            Deck updatedDeck = deckService.updateDeck(deckId, deckData);
+            DeckResponseDTO response = new DeckResponseDTO(
+                    updatedDeck.getId(),
+                    updatedDeck.getName(),
+                    updatedDeck.getDescription(),
+                    updatedDeck.getCards().size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
     }
-}   
+
+    // Getting Deck Progression
+    @GetMapping("/progress/{deckId}")
+    public ResponseEntity<?> getDeckProgress(@PathVariable("deckId") Long deckId) {
+        try {
+            long mastered = cardReviewService.countMasteredCards(deckId);
+            long total = cardRepository.countByDeckId(deckId);
+            return ResponseEntity.ok(Map.of("mastered", mastered, "total", total));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error loading progress");
+        }
+        
+    }
+    
 }
