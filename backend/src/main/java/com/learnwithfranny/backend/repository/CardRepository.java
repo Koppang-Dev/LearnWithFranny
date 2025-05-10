@@ -10,5 +10,5 @@ import com.learnwithfranny.backend.model.User;
 public interface CardRepository extends JpaRepository<Card, Long> {
 
     // Finding by card id and user
-    Optional<Card> findByIdAndUser(Long id, User user);
+    Optional<Card> findById(Long id);
 }

@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 
 // Flashcard component
-const Flashcard = ({ frontText, backText, onDifficultyChange }) => {
+const Flashcard = ({ cardId, frontText, backText, onDifficultyChange }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleDifficultyChange = (difficulty) => {
     // Send the difficulty choice to the parent to move to the next card
-    onDifficultyChange(difficulty);
+    onDifficultyChange(difficulty, cardId);
   };
 
   // Flipping the card

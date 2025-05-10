@@ -2,14 +2,22 @@ package com.learnwithfranny.backend.dto;
 
 public class ReviewDTO {
     private Long cardId;
-    private int difficulty;
+    private String difficulty;
 
     // Setters and Getters
     public Long getCardId() {
         return cardId;
     }
 
-    public int getDifficulty() {
+    public String getDifficulty() {
         return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public void setCardId(Long cardId) {
+        this.cardId = cardId;
     }
 }

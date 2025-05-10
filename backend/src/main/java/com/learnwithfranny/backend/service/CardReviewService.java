@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.learnwithfranny.backend.dto.ReviewDTO;
 import com.learnwithfranny.backend.model.Card;
@@ -12,6 +13,7 @@ import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.CardReviewRepository;
 
+@Service
 public class CardReviewService {
 
     @Autowired
@@ -29,7 +31,7 @@ public class CardReviewService {
         User user = userService.getCurrentUser();
 
         // Getting card
-        Card card = cardRepository.findByIdAndUser(dto.getCardId(), user)
+        Card card = cardRepository.findById(dto.getCardId())
                 .orElseThrow(() -> new RuntimeException("Card Not Found"));
 
         // Getting the card review (or creating it)
@@ -41,16 +43,16 @@ public class CardReviewService {
         switch (dto.getDifficulty()) {
 
             // Easy
-            case 2:
+            case "easy":
                 review.setBucket(Math.min(currentBucket + 2, 4));
                 review.setWasCorrect(true);
                 break;
             // Medium
-            case 1:
+            case "medium":
                 review.setBucket(Math.min(currentBucket + 1, 4));
                 review.setWasCorrect(true);
                 break;
-            case 0:
+            case "hard":
                 review.setBucket(0);
                 review.setWasCorrect(false);
                 break;

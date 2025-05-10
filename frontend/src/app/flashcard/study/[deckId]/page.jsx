@@ -1,6 +1,7 @@
 "use client";
 
 import { getDeckCards } from "@/app/utils/DeckApi";
+import { handleFlashcardDifficulty } from "@/app/utils/ReviewApi";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Flashcard from "../__components/Flashcard";
@@ -17,10 +18,11 @@ const FlashCardStudy = () => {
     setIsClient(true); // Set to true once the component is mounted on the client
   }, []);
 
-  const handleDifficultyChange = (difficulty) => {
-    // Logic to handle difficulty change, then move to the next card
-    console.log(difficulty);
-    // Move to next card
+  // User determines difficulty for flashcard
+  const handleDifficultyChange = (difficulty, cardId) => {
+    // Notify backend about the difficulty
+    handleFlashcardDifficulty(difficulty, cardId);
+
     if (currentIndex < flashcards.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
@@ -52,7 +54,7 @@ const FlashCardStudy = () => {
   }
 
   if (!flashcards) {
-    return <div>Loading...</div>; // Show loading if deck data isn't available yet
+    return <div>Loading...</div>;
   }
 
   return (
@@ -60,6 +62,7 @@ const FlashCardStudy = () => {
       <h1 className="text-2xl font-bold mb-4">Flashcards for Deck {deckId}</h1>
       {currentCard && (
         <Flashcard
+          cardId={currentCard.id}
           frontText={currentCard.frontText}
           backText={currentCard.backText}
           onDifficultyChange={handleDifficultyChange}
