@@ -29,7 +29,7 @@ const Tabs = ({ activeTab }) => {
   ];
 
   const handleTabClick = (tabId) => {
-    router.push(`?tab=${tabId}`, { scroll: true });
+    router.push(`/profile/${tabId}`);
   };
 
   return (
