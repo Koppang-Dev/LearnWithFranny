@@ -10,7 +10,6 @@ import com.learnwithfranny.backend.model.User;
 
 public interface CardReviewRepository extends JpaRepository<CardReview, Long> {
 
-
     // Fetching by card id and user
     Optional<CardReview> findByUserAndCard(User user, Card card);  
 }
