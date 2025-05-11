@@ -52,28 +52,6 @@ export const resetPassword = async (email) => {
   }
 };
 
-// Grabbing information to set user context (username, email)
-export const getUserContext = async () => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/user/user-context`,
-    {
-      method: "Get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-
-  // Checking response
-  if (!response.ok) {
-    throw new Error("Failed to logout");
-  }
-
-  // Returning user context
-  const data = await response.json();
-  return data;
-};
 
 // Logging user out
 export const logoutUser = async () => {
@@ -97,27 +75,6 @@ export const logoutUser = async () => {
   return true;
 };
 
-// Retrieiving all the general data from user
-export const fetchGeneralData = async () => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/preferences`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to get general data");
-  }
-
-  const data = await response.json();
-  console.log("General Data", data);
-
-  return data;
-};
 
 // Fetching Security data from the user
 export const fetchSecurityData = async () => {

@@ -17,10 +17,13 @@ export default function UploadFlashcardPage() {
     if (!file) return;
 
     setLoading(true);
+
     try {
       await uploadFileForFlashcards(file);
       toast.success("Flashcards generated successfully!");
-      router.push("/flashcard");
+      setTimeout(() => {
+        router.push("/flashcard");
+      }, 1000);
     } catch (err) {
       console.error(err);
       toast.error("Failed to generate flashcards.");

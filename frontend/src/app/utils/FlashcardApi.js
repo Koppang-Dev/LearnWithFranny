@@ -1,20 +1,21 @@
 // Sending files for AI Generation
 export const uploadFileForFlashcards = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/file/download`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/flashcard/upload`,
       {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(file),
+        body: formData,
       }
     );
 
     if (!response.ok) {
       const error = await response.text();
+      console.log("Upload Error");
       console.log(error);
       return error;
     }
