@@ -7,28 +7,30 @@ import {
   updateUserUsername,
   updateUserLanguage,
   updateTimeZone,
-  fetchGeneralData,
-  getUserContext,
 } from "@/app/utils/ProfileApi";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useUser } from "@/app/context/UserContext";
-import EditableField from "./EditableField";
+import { useState } from "react";
+import EditableField from "../EditableField";
 import toast from "react-hot-toast";
 
-const GeneralContent = () => {
-  // User information
-  const { user } = useUser();
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+const GeneralContent = ({ userData, generalData }) => {
+  // Initialize state using props
+  const [name, setName] = useState(userData.name || "");
+  const [username, setUsername] = useState(userData.username || "");
+  const [email, setEmail] = useState(userData.email || "");
+  const [profilePictureUrl, setProfilePictureUrl] = useState(
+    userData.profilePictureUrl || "/images/avatar.png"
+  );
 
-  // All of the general content data
-  const [generalData, setGeneralData] = useState(null);
-  const [isAutomaticTimeZone, setAutomaticTimeZone] = useState(true);
-  const [language, setLanguage] = useState("English (US)");
-  const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
-  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+  const [isAutomaticTimeZone, setAutomaticTimeZone] = useState(
+    generalData.isAutomaticTimeZone ?? true
+  );
+  const [language, setLanguage] = useState(
+    generalData.language || "English (US)"
+  );
+  const [dateFormat, setDateFormat] = useState(
+    generalData.dateFormat || "DD/MM/YYYY"
+  );
 
   // Conditionals
   const [error, settError] = useState(null);
@@ -86,37 +88,6 @@ const GeneralContent = () => {
   const handleDateFormatChange = (event) => {
     setDateFormat(event.target.value);
   };
-
-  // Fetching the General Content from backend
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetching user information and their general data
-        const userData = await getUserContext();
-        const data = await fetchGeneralData();
-
-        console.log("User Data:", userData);
-
-        setGeneralData(data);
-        setName(userData.name || "");
-        setUsername(userData.username || "");
-        setEmail(userData.email || "");
-        setProfilePictureUrl(
-          userData.profilePictureUrl || "/images/avatar.png"
-        );
-
-        // Setting Preferences
-        setAutomaticTimeZone(data.isAutomaticTimeZone || true);
-        setLanguage(data.language || "English (US)");
-        setDateFormat(data.dateFormat || DD / MM / YYYY);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
 
   // Handling loading
   if (loading) {
