@@ -1,10 +1,9 @@
-import { getUserDecks } from "../utils/DeckServerApi";
-import DeckList from "./__components/DeckList";
 import Link from "next/link";
-export default async function FlashCardPage() {
-  // User decks
-  const decks = await getUserDecks();
+import Loading from "@/components/loading";
+import { Suspense } from "react";
+import DecKlistWrapper from "./__components/DeckListWrapper";
 
+export default async function FlashCardPage() {
   return (
     <div className="flex flex-col gap-10 m-10 pt-10">
       <div className="flex items-center row gap-10">
@@ -19,7 +18,9 @@ export default async function FlashCardPage() {
           +
         </Link>
       </div>
-      <DeckList decks={decks} />
+      <Suspense fallback={<Loading />}>
+        <DecKlistWrapper />
+      </Suspense>
     </div>
   );
 }
