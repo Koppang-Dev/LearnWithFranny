@@ -1,10 +1,6 @@
-// Contains:
-// Create new Deck title
-// Button to create the flashcards
-// Deck Name
-// Deck description
-
+"use client";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const Header = ({
   deckTitle,
@@ -13,6 +9,8 @@ const Header = ({
   setDeckTitle,
   setDeckDescription,
 }) => {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col gap-10">
       {/* Title and button */}
@@ -22,7 +20,9 @@ const Header = ({
           <Button onClick={createDeck} className="bg-purple-500">
             Create Deck
           </Button>
-          <Button className="bg-red-500">Cancel</Button>
+          <Button className="bg-red-500" onClick={() => router.back()}>
+            Cancel
+          </Button>
         </div>
       </div>
       {/* Deck Title Name */}
