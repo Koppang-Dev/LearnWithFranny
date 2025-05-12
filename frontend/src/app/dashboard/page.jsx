@@ -4,7 +4,7 @@ import AdminPage from "@/components/AdminPage";
 import Navbar from "@/components/Navbar";
 import { useUser } from "../context/UserContext";
 import { useRouter } from "next/navigation";
-import { getUserContext } from "../utils/ProfileApi";
+import { getUserContext } from "../utils/generalServerApi";
 import { useEffect } from "react";
 const DashboardPage = () => {
   const { user, setUser } = useUser();
