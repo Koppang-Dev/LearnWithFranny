@@ -26,6 +26,9 @@ public class CardReviewService {
     @Autowired
     CardRepository cardRepository;
 
+    @Autowired
+    ActivityService activityService;
+
     public void recordReview(ReviewDTO dto) {
 
         // Fetch current user
@@ -75,5 +78,11 @@ public class CardReviewService {
         // Returning the mastered count
         return deckCards.stream().map(card -> cardReviewRepository.findByUserAndCard(user, card).orElse(null))
                 .filter(r -> r != null && r.getBucket() == 4).count();
+    }
+
+
+    // Determining user streak
+    public int calculateStreak(User user) {
+        List<LocalDate?> reviewedDates = cardReviewRepository.find
     }
 }

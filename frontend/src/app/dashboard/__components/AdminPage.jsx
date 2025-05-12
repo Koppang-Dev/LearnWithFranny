@@ -1,10 +1,17 @@
 // Page displaying the Analystics and the calender
-import ActivityChart from "./ActivityChart";
-import Announcements from "./Announcements";
-import CountChart from "./CountChart";
-import EventCalendar from "./EventCalendar";
-import NotesChart from "./NotesChart";
+import ActivityChart from "@/components/ActivityChart";
+import Announcements from "@/components/Announcements";
+import CountChart from "@/components/CountChart";
+import EventCalendar from "@/components/EventCalendar";
+import NotesChart from "@/components/NotesChart";
 import UserCard from "./UserCard";
+// User card metrics
+const metrics = [
+  "Flashcards Created",
+  "Flashcards Reviewed",
+  "Study Streak (Days)",
+  "Flashcards Mastered",
+];
 
 const AdminPage = () => {
   return (
@@ -13,19 +20,18 @@ const AdminPage = () => {
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
         {/* USER CARDS */}
         <div className="flex gap-4 justify-between flex-wrap">
-          <UserCard type="Flashcards Made" />
-          <UserCard type="Flashcards Studied" />
-          <UserCard type="Tests Completed" />
-          <UserCard type="Hours Spent Studying" />
+          {metrics.map((metricsText, index) => (
+            <UserCard key={index} type={metricsText} />
+          ))}
         </div>
         {/* MIDDLE CHARTS */}
         <div className="flex gap-4 flex-col lg:flex-row">
           {/* COUNT CHART */}
-          <div className="w-full lg-w-1/3 h-[450px]">
+          <div className="w-full lg:w-1/3 h-[450px]">
             <CountChart />
           </div>
           {/* ACTIVITY CHART */}
-          <div className="w-full lg-w-2/3 h-[450px]">
+          <div className="w-full lg:w-2/3 h-[450px]">
             <ActivityChart />
           </div>
         </div>

@@ -3,45 +3,45 @@
 import React, { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 
-// Flashcard component
 const Flashcard = ({ cardId, frontText, backText, onDifficultyChange }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleDifficultyChange = (difficulty) => {
-    // Send the difficulty choice to the parent to move to the next card
     onDifficultyChange(difficulty, cardId);
   };
 
-  // Flipping the card
-  function flipCard() {
+  const flipCard = () => {
     setIsFlipped(!isFlipped);
-  }
+  };
 
-  // Ensuring the front of the card shows first
   useEffect(() => {
     setIsFlipped(false);
   }, [frontText, backText]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      {/* Adding the Front + Back of card */}
-
       <ReactCardFlip flipDirection="horizontal" isFlipped={isFlipped}>
-        {/* Front of card */}
+        {/* Front */}
         <div
           onClick={flipCard}
-          className="flex items-center bg-gray-100 w-[700px] h-[500px] justify-center"
+          className="bg-gray-100 w-[700px] h-[500px] flex items-center justify-center p-4"
         >
-          <h1 className="text-2xl font-semibold">{frontText}</h1>
+          <div className="text-center text-2xl font-semibold max-h-full overflow-auto">
+            {frontText}
+          </div>
         </div>
-        {/* Back of card  */}
+
+        {/* Back */}
         <div
           onClick={flipCard}
-          className="flex items-center bg-gray-100 w-[700px] h-[500px] justify-center"
+          className="bg-gray-100 w-[700px] h-[500px] flex items-center justify-center p-4"
         >
-          <h1 className="text-2xl">{backText}</h1>
+          <div className="text-center text-2xl max-h-full overflow-auto">
+            {backText}
+          </div>
         </div>
       </ReactCardFlip>
+
       {/* Difficulty Buttons */}
       <div className="flex gap-6 mt-8">
         <button

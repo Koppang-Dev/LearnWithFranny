@@ -1,6 +1,11 @@
 package com.learnwithfranny.backend.service;
+import com.learnwithfranny.backend.dto.StatisticsResponseDTO;
 import com.learnwithfranny.backend.dto.UserContextDto;
+import com.learnwithfranny.backend.model.CardReview;
 import com.learnwithfranny.backend.model.User;
+import com.learnwithfranny.backend.repository.CardRepository;
+import com.learnwithfranny.backend.repository.CardReviewRepository;
+import com.learnwithfranny.backend.repository.DeckRepository;
 import com.learnwithfranny.backend.repository.UserRepository;
 
 import io.jsonwebtoken.io.IOException;
@@ -23,6 +28,21 @@ public class UserService {
 
     @Autowired
     private StorageService storageService;
+
+    @Autowired
+    private DeckRepository deckRepository;
+
+    @Autowired
+    private CardRepository cardRepository;
+
+    @Autowired
+    private CardReview cardReview;
+
+    @Autowired
+    private ActivityService activityService;
+
+    @Autowired
+    private CardReviewRepository cardReviewRepository;
 
     // Updating the users profile picture
     public String updateProfilePicture(MultipartFile image) throws IOException {
@@ -117,6 +137,27 @@ public class UserService {
         String username = authentication.getName();
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // Fetching user statics
+    public StatisticsResponseDTO getUserStatistics() {
+        User user = getCurrentUser();
+        int MASTERED_BUCKET = 4;
+        long flashcardsCreated = cardRepository.countByUser(user);
+        long flashcardsReviewed = cardReviewRepository.countByUser(user);
+        int studyStreak = activityService.calculateStreak(user);
+        long mastered = cardReviewRepository.countByUserAndBucket(user, MASTERED_BUCKET);
+
+        return new StatisticsResponseDTO(
+        flashcardsCreated,
+        flashcardsReviewed,
+        studyStreak,
+        mastered
+        );
+
+
+
+
     }
 }
 

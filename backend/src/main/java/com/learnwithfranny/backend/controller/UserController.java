@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.learnwithfranny.backend.dto.StatisticsResponseDTO;
 import com.learnwithfranny.backend.dto.UserContextDto;
+import com.learnwithfranny.backend.service.ActivityService;
 import com.learnwithfranny.backend.service.UserService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
 
 
     // Retrieves the users username and password
@@ -91,10 +94,9 @@ public class UserController {
     @PostMapping("/update-email")
     public ResponseEntity<String> updateEmail(@RequestBody Map<String, String> request) {
 
-
-         // Setting new username
-         try {
-            String email = request.get("email"); 
+        // Setting new username
+        try {
+            String email = request.get("email");
             if (email == null || email.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("Email can not be empty");
             }
@@ -103,6 +105,19 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Failed to update email");
         }
+    }
+    
 
-    } 
+    // Retrieving user statistcis
+    @GetMapping("/stats")
+    public ResponseEntity<?> fetchUserStats() {
+        try {
+            StatisticsResponseDTO response = userService.getUserStatistics();
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Failed to fetch user statistics");
+        }
+    }
+    
 }
