@@ -1,3 +1,4 @@
+"use server";
 import { getCookies } from "./headerUtil";
 
 export const fetchUserStats = async () => {

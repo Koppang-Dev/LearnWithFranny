@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.learnwithfranny.backend.dto.ReviewDTO;
+import com.learnwithfranny.backend.model.ActivityLog;
 import com.learnwithfranny.backend.model.Card;
 import com.learnwithfranny.backend.model.CardReview;
 import com.learnwithfranny.backend.model.User;
+import com.learnwithfranny.backend.repository.ActivityLogRepository;
 import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.CardReviewRepository;
 
@@ -28,6 +30,9 @@ public class CardReviewService {
 
     @Autowired
     ActivityService activityService;
+
+    @Autowired
+    ActivityLogRepository activityLogRepository;
 
     public void recordReview(ReviewDTO dto) {
 
@@ -65,7 +70,7 @@ public class CardReviewService {
                 review.setWasCorrect(false);
                 break;
         }
-
+        activityLogRepository.save(new ActivityLog(user, "REVIEW", card.getId()));
         review.setReviewedAt(LocalDateTime.now());
         cardReviewRepository.save(review);
     }
@@ -78,11 +83,5 @@ public class CardReviewService {
         // Returning the mastered count
         return deckCards.stream().map(card -> cardReviewRepository.findByUserAndCard(user, card).orElse(null))
                 .filter(r -> r != null && r.getBucket() == 4).count();
-    }
-
-
-    // Determining user streak
-    public int calculateStreak(User user) {
-        List<LocalDate?> reviewedDates = cardReviewRepository.find
     }
 }

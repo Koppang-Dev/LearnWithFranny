@@ -1,8 +1,11 @@
 package com.learnwithfranny.backend.service;
+import com.learnwithfranny.backend.dto.MasteryBreakdownDTO;
 import com.learnwithfranny.backend.dto.StatisticsResponseDTO;
 import com.learnwithfranny.backend.dto.UserContextDto;
+import com.learnwithfranny.backend.dto.DailyReviewDTO;
 import com.learnwithfranny.backend.model.CardReview;
 import com.learnwithfranny.backend.model.User;
+
 import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.CardReviewRepository;
 import com.learnwithfranny.backend.repository.DeckRepository;
@@ -17,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,9 +39,6 @@ public class UserService {
 
     @Autowired
     private CardRepository cardRepository;
-
-    @Autowired
-    private CardReview cardReview;
 
     @Autowired
     private ActivityService activityService;
@@ -139,25 +141,49 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    // Fetching user statics
+    // Fetching user statistics
     public StatisticsResponseDTO getUserStatistics() {
         User user = getCurrentUser();
+
+        // Basic Metrics
         int MASTERED_BUCKET = 4;
         long flashcardsCreated = cardRepository.countByUser(user);
         long flashcardsReviewed = cardReviewRepository.countByUser(user);
         int studyStreak = activityService.calculateStreak(user);
-        long mastered = cardReviewRepository.countByUserAndBucket(user, MASTERED_BUCKET);
+
+        // Difficulty Breakdown
+        long newCards = cardReviewRepository.countByUserAndBucket(user, 0);
+        long learning = cardReviewRepository.countByUserAndBucket(user, 1);
+        long reviewing = cardReviewRepository.countByUserAndBucket(user, 2)
+                        + cardReviewRepository.countByUserAndBucket(user, 3);
+        long mastered = cardReviewRepository.countByUserAndBucket(user, 4);
+        MasteryBreakdownDTO masteryBreakdown = new MasteryBreakdownDTO(newCards, learning, reviewing, mastered);
+
+        // Date Ranges
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfYear = LocalDate.of(today.getYear(), 1, 1).atStartOfDay();
+        LocalDateTime endOfToday = today.atTime(23, 59, 59);
+        LocalDateTime sevenDaysAgo = today.minusDays(6).atStartOfDay();
+        LocalDateTime endOfYear = LocalDate.of(today.getYear(), 12, 31).atTime(23, 59, 59);
+
+        // Fetch raw activity counts
+        List<DailyReviewDTO> rawYearActivity = cardReviewRepository.getDailyReviewCounts(user.getId(), startOfYear, endOfToday);
+        List<DailyReviewDTO> rawRecentWeek = cardReviewRepository.getDailyReviewCounts(user.getId(), sevenDaysAgo, endOfToday);
+
+        // Fill in missing dates
+        List<DailyReviewDTO> fullYearActivity = ActivityService.fillMissingDates(rawYearActivity, startOfYear.toLocalDate(), endOfYear.toLocalDate());
+        List<DailyReviewDTO> recentWeekActivity = ActivityService.fillMissingDates(rawRecentWeek, sevenDaysAgo.toLocalDate(), endOfToday.toLocalDate());
 
         return new StatisticsResponseDTO(
-        flashcardsCreated,
-        flashcardsReviewed,
-        studyStreak,
-        mastered
+            flashcardsCreated,
+            flashcardsReviewed,
+            studyStreak,
+            mastered,
+            masteryBreakdown,
+            fullYearActivity,
+            recentWeekActivity
         );
-
-
-
-
-    }
+}
+    
 }
 

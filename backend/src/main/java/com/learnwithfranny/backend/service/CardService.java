@@ -2,8 +2,11 @@ package com.learnwithfranny.backend.service;
 
 import org.springframework.stereotype.Service;
 import com.learnwithfranny.backend.exceptions.DeckNotFoundException;
+import com.learnwithfranny.backend.model.ActivityLog;
 import com.learnwithfranny.backend.model.Card;
 import com.learnwithfranny.backend.model.Deck;
+import com.learnwithfranny.backend.model.User;
+import com.learnwithfranny.backend.repository.ActivityLogRepository;
 import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +23,24 @@ public class CardService {
     @Autowired
     private DeckRepository deckRepository;
 
+    @Autowired
+    private ActivityLogRepository activityLogRepository;
+
+    @Autowired
+    private UserService userService;
+
     // Creating a new card in a given deck
     public Card createCard(Long deckId, Card card) {
+        User user = userService.getCurrentUser();
 
         // Find the deck by its ID
         Optional<Deck> deck = deckRepository.findById(deckId);
 
         if (deck.isPresent()) {
             card.setDeck(deck.get());
-            return cardRepository.save(card);
-
+            Card newCard = cardRepository.save(card);
+            activityLogRepository.save(new ActivityLog(user, "CREATE_CARD", newCard.getId()));
+            return newCard;
         } else {
             throw new DeckNotFoundException(deckId);
         }

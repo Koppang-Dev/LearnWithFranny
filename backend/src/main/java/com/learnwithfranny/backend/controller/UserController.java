@@ -116,6 +116,7 @@ public class UserController {
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Failed to fetch user statistics");
         }
     }

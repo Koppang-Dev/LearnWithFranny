@@ -1,20 +1,36 @@
 package com.learnwithfranny.backend.dto;
 
+import java.util.List;
+
 public class StatisticsResponseDTO {
+
     private long flashcardsCreated;
     private long flashcardsReviewed;
     private int studyStreak;
     private long flashcardsMastered;
 
-    // Constructor
-    public StatisticsResponseDTO(long flashcardsCreated, long flashcardsReviewed, int studyStreak, long flashcardsMastered) {
+    private MasteryBreakdownDTO masteryBreakdown;
+    private List<DailyReviewDTO> yearActivity;
+    private List<DailyReviewDTO> recentWeekActivity;
+
+    public StatisticsResponseDTO(
+        long flashcardsCreated,
+        long flashcardsReviewed,
+        int studyStreak,
+        long flashcardsMastered,
+        MasteryBreakdownDTO masteryBreakdown,
+        List<DailyReviewDTO> yearActivity,
+        List<DailyReviewDTO> recentWeekActivity
+    ) {
         this.flashcardsCreated = flashcardsCreated;
         this.flashcardsReviewed = flashcardsReviewed;
         this.studyStreak = studyStreak;
         this.flashcardsMastered = flashcardsMastered;
+        this.masteryBreakdown = masteryBreakdown;
+        this.yearActivity = yearActivity;
+        this.recentWeekActivity = recentWeekActivity;
     }
 
-    // Getters
     public long getFlashcardsCreated() {
         return flashcardsCreated;
     }
@@ -31,20 +47,15 @@ public class StatisticsResponseDTO {
         return flashcardsMastered;
     }
 
-    // Setters
-    public void setFlashcardsCreated(long flashcardsCreated) {
-        this.flashcardsCreated = flashcardsCreated;
+    public MasteryBreakdownDTO getMasteryBreakdown() {
+        return masteryBreakdown;
     }
 
-    public void setFlashcardsReviewed(long flashcardsReviewed) {
-        this.flashcardsReviewed = flashcardsReviewed;
+    public List<DailyReviewDTO> getYearActivity() {
+        return yearActivity;
     }
 
-    public void setStudyStreak(int studyStreak) {
-        this.studyStreak = studyStreak;
-    }
-
-    public void setFlashcardsMastered(long flashcardsMastered) {
-        this.flashcardsMastered = flashcardsMastered;
+    public List<DailyReviewDTO> getRecentWeekActivity() {
+        return recentWeekActivity;
     }
 }
