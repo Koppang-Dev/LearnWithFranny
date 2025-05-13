@@ -3,7 +3,7 @@ import Loading from "@/components/loading";
 import { Suspense } from "react";
 import DecKlistWrapper from "./__components/DeckListWrapper";
 
-export default async function FlashCardPage() {
+export default function FlashCardPage() {
   return (
     <div className="flex flex-col gap-10 m-10 pt-10">
       <div className="flex items-center row gap-10">

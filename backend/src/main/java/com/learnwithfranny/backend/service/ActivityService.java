@@ -22,7 +22,12 @@ public class ActivityService {
 
     // Calculating user streak
     public int calculateStreak(User user) {
-        List<LocalDate> dates = activityLogRepository.findDistinctReviewDates(user);
+        List<LocalDate> dates = activityLogRepository
+        .findDistinctReviewDates(user)
+        .stream()
+        .map(java.sql.Date::toLocalDate)  
+                .collect(Collectors.toList());
+        
         if (dates.isEmpty()) {
             return 0;
         }

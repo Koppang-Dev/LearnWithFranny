@@ -8,8 +8,10 @@ import com.learnwithfranny.backend.model.Deck;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.ActivityLogRepository;
 import com.learnwithfranny.backend.repository.CardRepository;
+import com.learnwithfranny.backend.repository.CardReviewRepository;
 import com.learnwithfranny.backend.repository.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.learnwithfranny.backend.model.CardReview;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +31,9 @@ public class CardService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CardReviewRepository cardReviewRepository;
+
     // Creating a new card in a given deck
     public Card createCard(Long deckId, Card card) {
         User user = userService.getCurrentUser();
@@ -39,6 +44,9 @@ public class CardService {
         if (deck.isPresent()) {
             card.setDeck(deck.get());
             Card newCard = cardRepository.save(card);
+            
+            // Creating dependencies
+            cardReviewRepository.save(new CardReview(user, newCard));
             activityLogRepository.save(new ActivityLog(user, "CREATE_CARD", newCard.getId()));
             return newCard;
         } else {

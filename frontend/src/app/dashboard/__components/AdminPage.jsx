@@ -6,7 +6,8 @@ import EventCalendar from "@/components/EventCalendar";
 import UserCard from "./UserCard";
 import DailyActivityChart from "./DailyActivityChart";
 import DifficultyChart from "./DifficultyChart";
-
+import Loading from "@/components/loading";
+import { Suspense } from "react";
 // User card metrics
 const metrics = [
   "Flashcards Created",
@@ -29,33 +30,41 @@ const AdminPage = async () => {
       {/* LEFT COLUMN */}
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
         {/* USER CARDS */}
-        <div className="flex gap-4 justify-between flex-wrap">
-          {metrics.map((metricsText, index) => (
-            <UserCard
-              key={index}
-              type={metricsText}
-              value={metricValues[index]}
-            />
-          ))}
-        </div>
+        <Suspense fallback={<Loading />}>
+          <div className="flex gap-4 justify-between flex-wrap">
+            {metrics.map((metricsText, index) => (
+              <UserCard
+                key={index}
+                type={metricsText}
+                value={metricValues[index]}
+              />
+            ))}
+          </div>
+        </Suspense>
 
         {/* MIDDLE CHARTS */}
         <div className="flex gap-4 flex-col lg:flex-row">
           {/* DIFFICULTY CHART */}
-          <div className="w-full lg:w-1/3 h-[450px]">
-            <DifficultyChart data={userStats.masteryBreakdown} />
-          </div>
+          <Suspense fallback={<Loading />}>
+            <div className="w-full lg:w-1/3 h-[450px]">
+              <DifficultyChart data={userStats.masteryBreakdown} />
+            </div>
+          </Suspense>
 
           {/* WEEKLY ACTIVITY */}
-          <div className="w-full h-[450px]">
-            <WeeklyActivityChart data={userStats.recentWeekActivity} />
-          </div>
+          <Suspense fallback={<Loading />}>
+            <div className="w-full h-[450px]">
+              <WeeklyActivityChart data={userStats.recentWeekActivity} />
+            </div>
+          </Suspense>
         </div>
 
         {/* DAILY ACTIVITY - Fixed Height Wrapper */}
-        <div className="w-full h-[200px]">
-          <DailyActivityChart data={userStats.yearActivity} />
-        </div>
+        <Suspense fallback={<Loading />}>
+          <div className="h-[200px]">
+            <DailyActivityChart data={userStats.yearActivity} />
+          </div>
+        </Suspense>
       </div>
 
       {/* RIGHT SIDEBAR */}
