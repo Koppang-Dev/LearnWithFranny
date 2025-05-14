@@ -31,11 +31,6 @@ const NoteDashboard = () => {
 
   // Handle drag-and-drop functionality
   const handleDrop = async (item, targetFolderId) => {
-    console.log("Dropped File ID:", item.id);
-    console.log("Dropped file:", item.fileName);
-    console.log("Original folder:", item.folderId);
-    console.log("Target folder:", targetFolderId);
-
     try {
       await moveFileToFolder(userId, item.id, item.folderId, targetFolderId);
       window.location.reload(); // Force refresh the screen
@@ -47,7 +42,7 @@ const NoteDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchDocuments(userId);
+        const data = await fetchDocuments();
         console.log("Fetched Data:", data);
         const defaultFolder = data.find(
           (folder) => folder.folderName === "Default Folder"

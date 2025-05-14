@@ -1,4 +1,5 @@
 package com.learnwithfranny.backend.repository;
+import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.model.UserFileMetaData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -25,6 +26,9 @@ public interface UserFileRepository extends JpaRepository<UserFileMetaData, Long
 
     // Find specific file by user id and file id
     Optional<UserFileMetaData> findByUser_IdAndFileId(Long userId, Long fileId);
+
+    // Finding by user and file id
+    Optional<UserFileMetaData> findByUserAndFileId(User user, Long fileId);
 
 
 }

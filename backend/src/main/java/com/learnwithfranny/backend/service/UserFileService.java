@@ -31,12 +31,14 @@ public class UserFileService {
     private final UserRepository userRepository;
     private final StorageService storageService;
     private final FolderRepository folderRepository;
+    private final UserService userService;
 
-    public UserFileService(UserFileRepository userFileRepository, StorageService storageService, UserRepository userRepository, FolderRepository folderRepository) {
+    public UserFileService(UserFileRepository userFileRepository, StorageService storageService, UserRepository userRepository, FolderRepository folderRepository, UserService userService) {
         this.userFileRepository = userFileRepository;
         this.storageService = storageService;
         this.userRepository = userRepository;
         this.folderRepository = folderRepository;
+        this.userService = userService;
     }
 
 
@@ -50,22 +52,22 @@ public class UserFileService {
      * @param folderId  The ID of the folder where the file should be stored. If null, a default folder will be created.
      * @return          A success message with the file URL if the upload is successful.
      */
-     public String saveFile(MultipartFile file, String fileName, Long userId, Long folderId) {
-
-        // Find the user based on the unique ID
-        User user = userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+     public String saveFile(MultipartFile file, String fileName, Long folderId) {
+    
+        // User information
+        User user = userService.getCurrentUser();
+        Long userId = user.getId();
 
          // Generating a unique file name for every users'
         String timestamp = String.valueOf(System.currentTimeMillis());
         String uniqueFileName = userId + "_" + timestamp + "_" + fileName;
 
          // Saving the file information in s3 storage
-         String fileUrl = storageService.uploadFile(file, uniqueFileName);
+        String fileUrl = storageService.uploadFile(file, uniqueFileName);
 
 
-         // If no folderID was given then save it to the default folder
-         Folder folder;
+        // If no folderID was given then save it to the default folder
+        Folder folder;
 
          if (folderId == null) {
              // Save the file in the given folder
@@ -179,9 +181,12 @@ public class UserFileService {
 
 
     // Retrieves all of the clients folders
-    public List<FolderWithFilesResponse> getAllFoldersByUserId(Long userId) {
+    public List<FolderWithFilesResponse> getAllFoldersByUserId() {
+        User user = userService.getCurrentUser();
+        Long userId = user.getId();
 
         List<Folder> userFolders = folderRepository.findByUser_Id(userId);
+
 
         // Iterate through each folder and get the files associated with it
         List<FolderWithFilesResponse> folderWithFilesResponses = userFolders.stream()
@@ -206,21 +211,13 @@ public class UserFileService {
 
 
     // Deletes specific file for user
-    public ResponseEntity<String> deleteFile(Long userId, String fileName, Long folderId) {
+    public ResponseEntity<String> deleteFile(Long fileId) {
+        // User information
+        User user = userService.getCurrentUser();
+        Long userId = user.getId();
 
         try {
-
-            Optional<UserFileMetaData> file;
-
-            if (folderId == null) {
-                file = userFileRepository.findByUser_IdAndFileNameAndFolderName(userId, fileName,
-                        "Default Folder");
-
-            } else {
-                // See if the file exists
-                file = userFileRepository.findByUser_IdAndFileNameAndFolder_Id(userId, fileName,
-                        folderId);
-            }
+            Optional<UserFileMetaData> file = userFileRepository.findByUserAndFile_Id(user, fileId);
 
             if (file.isPresent()) {
 
@@ -250,7 +247,10 @@ public class UserFileService {
     
 
     // Deletes a specified folder for a user
-    public ResponseEntity<String> deleteFolder(Long userId, Long folderId) {
+    public ResponseEntity<String> deleteFolder(Long folderId) {
+
+        User user = userService.getCurrentUser();
+        Long userId = user.getId();
 
         try {
             // See if the folder exists

@@ -14,6 +14,8 @@ import { useState, useRef } from "react";
 import uuid4 from "uuid4";
 import { useUser } from "@/app/context/UserContext";
 import { useFolder } from "@/app/context/FolderProvider";
+import { saveFile } from "@/app/utils/FileApi";
+import toast from "react-hot-toast";
 
 const UploadScreen = ({ dialogOpen, setDialogOpen }) => {
   const { currentFolder } = useFolder();
@@ -46,22 +48,12 @@ const UploadScreen = ({ dialogOpen, setDialogOpen }) => {
     formData.append("folderId", currentFolder.folderId);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/file/${userId}/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (response.ok) {
-        setDialogOpen(false); // Close the dialog when upload is successful
-        window.location.reload();
-      } else {
-        console.error("File upload failed", await response.text());
-      }
+      saveFile(formData);
+      setDialogOpen(false);
+      toast.success("File uploaded!");
     } catch (error) {
       console.error("Error uploading file", error);
+      toast.error("Error uploading file");
     } finally {
       setLoading(false);
     }

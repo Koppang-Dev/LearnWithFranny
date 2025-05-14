@@ -6,18 +6,11 @@ import org.springframework.stereotype.Component;
 import com.learnwithfranny.backend.repository.UserRepository;
 import com.learnwithfranny.backend.service.SessionService;
 import com.learnwithfranny.backend.util.JwtUtil;
-import com.learnwithfranny.backend.repository.RoleRepository;
 import com.learnwithfranny.backend.model.User;
-import com.learnwithfranny.backend.model.Role;
-import com.learnwithfranny.backend.model.Session;
-import com.learnwithfranny.backend.model.ERole;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import jakarta.servlet.ServletException;
@@ -29,15 +22,13 @@ import jakarta.servlet.http.Cookie;
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final SessionService sessionService;
 
     @Lazy
-    public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SessionService sessionService) {
+    public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SessionService sessionService) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.sessionService = sessionService;

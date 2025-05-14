@@ -6,7 +6,6 @@ import com.learnwithfranny.backend.repository.SessionRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.aspectj.apache.bcel.classfile.Module.Uses;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

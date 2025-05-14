@@ -5,17 +5,29 @@
  * @returns {Promise<Object[]>} - A promise that resolves to the list of documents in JSON format.
  * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
  */
-export const fetchDocuments = async (userId) => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/file/${userId}/files`,
-    {
-      method: "GET",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
+export const fetchDocuments = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/file/files`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    // Validation
+    if (!response.ok) {
+      const error = await response.text();
+      console.log(error);
+      throw new Error("Failed to fetch documents");
     }
-  );
-  if (!response.ok) throw new Error("Failed to fetch documents");
-  return response.json();
+
+    return response.json();
+  } catch (err) {
+    console.log(err);
+    throw new Error(err);
+  }
 };
 
 /**
@@ -53,20 +65,14 @@ export const deleteFile = async (userId, fileName, folderId) => {
  * @returns {Promise<Object>} - A promise that resolves to the server's response in JSON format.
  * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
  */
-export const deleteFolder = async (userId, folderId) => {
-  const requestData = {
-    userId,
-    folderId,
-  };
-
+export const deleteFolder = async (folderId) => {
   // Make an HTTP DELETE request to delete the specified folder for the user
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/file/folder/delete`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/file/folder/delete/${folderId}`,
     {
       method: "DELETE",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestData),
     }
   );
 
@@ -286,6 +292,30 @@ export const createFolder = async (folderName, userId, parentFolderId) => {
     return await response.text(); // Use `await response.json();` if the backend returns JSON
   } catch (error) {
     console.error("Error creating folder:", error);
+    return `Error: ${error.message}`;
+  }
+};
+
+// Saving the file
+export const saveFile = async (formBody) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/file/upload`,
+      {
+        method: "POST",
+        credentials: "include",
+        body: formBody,
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Failed to upload file", error);
+      throw new Error(error);
+    }
+    return await response.text();
+  } catch (error) {
+    console.error("Error uploading file");
     return `Error: ${error.message}`;
   }
 };
