@@ -1,16 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import {
-  format,
-  eachDayOfInterval,
-  startOfYear,
-  endOfYear,
-  getMonth,
-  getYear,
-  startOfMonth,
-  endOfMonth,
-} from "date-fns";
+import { format, eachDayOfInterval, startOfMonth, endOfMonth } from "date-fns";
 
 const getColor = (count) => {
   if (count === 0) return "bg-gray-100";
@@ -32,7 +23,6 @@ const DailyActivityChart = ({ data }) => {
     return map;
   }, [data]);
 
-  // Group days by month
   const months = useMemo(() => {
     const year = new Date().getFullYear();
     const monthly = [];
@@ -46,17 +36,9 @@ const DailyActivityChart = ({ data }) => {
         count: dataMap.get(format(date, "yyyy-MM-dd")) || 0,
       }));
 
-      // Pad start of first week
-      while (days[0] && days[0].date.getDay() !== 0) {
-        days.unshift(null);
-      }
+      while (days[0] && days[0].date.getDay() !== 0) days.unshift(null);
+      while (days.length % 7 !== 0) days.push(null);
 
-      // Pad end of last week
-      while (days.length % 7 !== 0) {
-        days.push(null);
-      }
-
-      // Chunk into weeks
       const weeks = [];
       for (let i = 0; i < days.length; i += 7) {
         weeks.push(days.slice(i, i + 7));
@@ -72,42 +54,44 @@ const DailyActivityChart = ({ data }) => {
   }, [dataMap]);
 
   return (
-    <div className="bg-white p-4 rounded-xl w-full overflow-x-auto">
+    <div className="bg-white p-4 rounded-xl w-full h-full flex flex-col overflow-hidden mb-10">
       <h2 className="text-lg font-semibold mb-4">Review Activity</h2>
 
-      <div className="flex gap-1 justify-center ">
-        {/* Each month block */}
-        {months.map((month, i) => (
-          <div key={i} className="flex flex-col items-center">
-            <p className="text-xs font-semibold mb-1">{month.label}</p>
-            <div className="flex">
-              {month.weeks.map((week, j) => (
-                <div key={j} className="flex flex-col gap-[2px]">
-                  {week.map((day, k) => (
-                    <div
-                      key={k}
-                      className={`w-4 h-4 rounded-sm ${
-                        day ? getColor(day.count) : "bg-transparent"
-                      }`}
-                      onMouseEnter={(e) =>
-                        day &&
-                        setHovered({
-                          ...day,
-                          x: e.clientX,
-                          y: e.clientY,
-                        })
-                      }
-                      onMouseLeave={() => setHovered(null)}
-                    />
-                  ))}
-                </div>
-              ))}
+      <div className="flex-grow overflow-auto">
+        <div className="flex flex-wrap gap-6 justify-center min-h-full">
+          {months.map((month, i) => (
+            <div key={i} className="flex flex-col items-center w-[160px]">
+              <p className="text-sm font-bold mb-3 text-gray-700">
+                {month.label}
+              </p>
+              <div className="flex">
+                {month.weeks.map((week, j) => (
+                  <div key={j} className="flex flex-col gap-[5px]">
+                    {week.map((day, k) => (
+                      <div
+                        key={k}
+                        className={`w-[18px] h-[18px] rounded-sm ${
+                          day ? getColor(day.count) : "bg-transparent"
+                        }`}
+                        onMouseEnter={(e) =>
+                          day &&
+                          setHovered({
+                            ...day,
+                            x: e.clientX,
+                            y: e.clientY,
+                          })
+                        }
+                        onMouseLeave={() => setHovered(null)}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Tooltip */}
       {hovered && (
         <div
           className="fixed z-50 pointer-events-none"
@@ -116,7 +100,6 @@ const DailyActivityChart = ({ data }) => {
             left: hovered.x + 12,
           }}
         >
-          {" "}
           <div className="bg-white border border-gray-300 shadow-md px-3 py-2 rounded text-xs text-gray-800">
             <p className="font-semibold">
               {format(hovered.date, "MMM d, yyyy")}

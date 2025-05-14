@@ -1,13 +1,15 @@
 // Page displaying the Analytics and the calendar
 import { fetchUserStats } from "@/app/utils/UserStatsServerApi";
 import WeeklyActivityChart from "./WeeklyActivityChart";
-import Announcements from "@/components/Announcements";
-import EventCalendar from "@/components/EventCalendar";
+import Announcements from "./Announcements";
+import EventCalendar from "./EventCalendar";
 import UserCard from "./UserCard";
 import DailyActivityChart from "./DailyActivityChart";
 import DifficultyChart from "./DifficultyChart";
 import Loading from "@/components/loading";
 import { Suspense } from "react";
+import { getUpcomingTasks } from "@/app/utils/TaskServerApi";
+
 // User card metrics
 const metrics = [
   "Flashcards Created",
@@ -25,10 +27,13 @@ const AdminPage = async () => {
     userStats.flashcardsMastered,
   ];
 
+  const upcomingTasks = (await getUpcomingTasks()).sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
   return (
-    <div className="p-4 flex gap-4 flex-col md:flex-row">
+    <div className="p-4 flex flex-col lg:flex-row gap-4 min-h-screen">
       {/* LEFT COLUMN */}
-      <div className="w-full lg:w-2/3 flex flex-col gap-8">
+      <div className="w-full lg:w-2/3 flex flex-col gap-8 flex-grow">
         {/* USER CARDS */}
         <Suspense fallback={<Loading />}>
           <div className="flex gap-4 justify-between flex-wrap">
@@ -59,18 +64,18 @@ const AdminPage = async () => {
           </Suspense>
         </div>
 
-        {/* DAILY ACTIVITY - Fixed Height Wrapper */}
+        {/* DAILY ACTIVITY */}
         <Suspense fallback={<Loading />}>
-          <div className="h-[200px]">
+          <div className="flex-1">
             <DailyActivityChart data={userStats.yearActivity} />
           </div>
         </Suspense>
       </div>
 
       {/* RIGHT SIDEBAR */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-8">
-        <EventCalendar />
-        <Announcements />
+      <div className="w-full lg:w-1/3 flex flex-col gap-8 overflow-y-auto max-h-[calc(100vh-2rem)] pr-2">
+        <EventCalendar tasks={upcomingTasks} />
+        <Announcements tasks={upcomingTasks} />
       </div>
     </div>
   );
