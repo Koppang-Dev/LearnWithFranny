@@ -47,4 +47,14 @@ public class TaskService {
     public List<Task> getAllTasks() {
         return taskRepository.findAllByUser(userService.getCurrentUser());
     }
+
+    // Retrieving tasks within a range
+    public List<Task> getTasksInRange(LocalDate start, LocalDate end) {
+        return taskRepository.findByUserAndDateBetween(
+            userService.getCurrentUser(),
+            start,
+            end
+        );
+    }
+
 }

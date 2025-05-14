@@ -19,8 +19,6 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // === Constructors ===
-
     public Task() {
     }
 
@@ -29,8 +27,6 @@ public class Task {
         this.date = date;
         this.user = user;
     }
-
-    // === Getters and Setters ===
 
     public Long getId() {
         return id;

@@ -2,7 +2,7 @@ package com.learnwithfranny.backend.dto;
 
 import java.time.LocalDate;
 
-public class TaskRequest {
+public class TaskRequestDTO {
     private String title;
     private LocalDate date;
 

@@ -19,7 +19,7 @@ public class CardReview {
     @ManyToOne
     private Card card;
 
-    private int bucket = 0; // 0 = New, 1 = Learning, 2 = Known
+    private int bucket = 0; // 0 = New, 1-3 = Learning, 4 = mastered
     private boolean wasCorrect;
     private LocalDateTime reviewedAt;
 

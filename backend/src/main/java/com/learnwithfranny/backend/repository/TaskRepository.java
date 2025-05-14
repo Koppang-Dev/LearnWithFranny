@@ -13,5 +13,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByUserAndDate(User user, LocalDate date);
 
     // Retrieving all taks
-    List<Task> findByUser(User user);
+    List<Task> findAllByUser(User user);
+
+    // Tasks within a range
+    List<Task> findByUserAndDateBetween(User user, LocalDate start, LocalDate end);
+
 }
