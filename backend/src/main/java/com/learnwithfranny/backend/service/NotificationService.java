@@ -3,10 +3,8 @@ package com.learnwithfranny.backend.service;
 import com.learnwithfranny.backend.model.NotificationPreferences;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.NotificationPreferencesRepository;
-import com.learnwithfranny.backend.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -14,9 +12,6 @@ import java.util.Map;
 
 @Service
 public class NotificationService {
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;

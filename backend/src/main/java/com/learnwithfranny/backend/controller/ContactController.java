@@ -1,6 +1,5 @@
 
 package com.learnwithfranny.backend.controller;
-import java.util.Map;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

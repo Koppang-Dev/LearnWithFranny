@@ -54,7 +54,7 @@ const DailyActivityChart = ({ data }) => {
   }, [dataMap]);
 
   return (
-    <div className="bg-white p-4 rounded-xl w-full h-full flex flex-col overflow-hidden mb-10">
+    <div className="bg-white p-4 rounded-xl w-full h-full flex flex-col overflow-hidden mb-20">
       <h2 className="text-lg font-semibold mb-4">Review Activity</h2>
 
       <div className="flex-grow overflow-auto">

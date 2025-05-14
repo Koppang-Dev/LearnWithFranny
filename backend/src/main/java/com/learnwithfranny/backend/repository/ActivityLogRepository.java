@@ -2,7 +2,6 @@ package com.learnwithfranny.backend.repository;
 
 import com.learnwithfranny.backend.model.ActivityLog;
 import com.learnwithfranny.backend.model.User;
-import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

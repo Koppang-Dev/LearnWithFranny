@@ -3,20 +3,16 @@ package com.learnwithfranny.backend.service;
 import com.learnwithfranny.backend.dto.CreateDeckDTO;
 import com.learnwithfranny.backend.dto.DeckResponseDTO;
 import com.learnwithfranny.backend.dto.FlashcardDTO;
-import com.learnwithfranny.backend.exceptions.UserNotFoundException;
 import com.learnwithfranny.backend.model.Card;
 import com.learnwithfranny.backend.model.Deck;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.DeckRepository;
-import com.learnwithfranny.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.learnwithfranny.backend.service.UserService;
 
 import jakarta.transaction.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,9 +23,6 @@ public class DeckService {
 
     @Autowired
     private DeckRepository deckRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;

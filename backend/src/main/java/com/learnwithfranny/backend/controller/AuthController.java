@@ -1,16 +1,12 @@
 package com.learnwithfranny.backend.controller;
 
 import com.learnwithfranny.backend.repository.UserRepository;
-import com.learnwithfranny.backend.repository.RoleRepository;
 import com.learnwithfranny.backend.model.User;
-import com.learnwithfranny.backend.model.ERole;
 import com.learnwithfranny.backend.model.PasswordResetToken;
-import com.learnwithfranny.backend.model.Role;
 
 import com.learnwithfranny.backend.exceptions.ErrorResponse;
 import com.learnwithfranny.backend.util.JwtUtil;
 import com.learnwithfranny.backend.dto.SignInRequest;
-import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.JwtResponse;
 
 import com.learnwithfranny.backend.dto.SignUpRequest;
@@ -35,16 +31,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
@@ -59,7 +50,6 @@ public class AuthController {
     private String frontendBaseUrl;
     
     private UserRepository userRepository;
-    private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
     private JwtUtil jwtUtil;
@@ -78,12 +68,10 @@ public class AuthController {
      */
     public AuthController(UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            RoleRepository roleRepository,
             AuthenticationManager authenticationManager,
             JwtUtil jwtUtil, PasswordResetService passwordResetService, EmailService emailService,
             SessionService sessionService) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;

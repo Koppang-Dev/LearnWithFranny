@@ -3,11 +3,9 @@ package com.learnwithfranny.backend.service;
 import com.learnwithfranny.backend.model.PasswordResetToken;
 import com.learnwithfranny.backend.model.User;
 import com.learnwithfranny.backend.repository.PasswordResetTokenRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

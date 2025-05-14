@@ -9,6 +9,7 @@ import DifficultyChart from "./DifficultyChart";
 import Loading from "@/components/loading";
 import { Suspense } from "react";
 import { getUpcomingTasks } from "@/app/utils/TaskServerApi";
+import { addDays } from "date-fns";
 
 // User card metrics
 const metrics = [
@@ -27,9 +28,14 @@ const AdminPage = async () => {
     userStats.flashcardsMastered,
   ];
 
-  const upcomingTasks = (await getUpcomingTasks()).sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
-  );
+  const rawTasks = await getUpcomingTasks();
+  const upcomingTasks = rawTasks
+    .map((task) => ({
+      ...task,
+      date: addDays(new Date(task.date), 1).toISOString().split("T")[0],
+    }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
   return (
     <div className="p-4 flex flex-col lg:flex-row gap-4 min-h-screen">
       {/* LEFT COLUMN */}

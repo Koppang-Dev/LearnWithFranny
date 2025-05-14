@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amazonaws.Response;
 import com.learnwithfranny.backend.dto.BillingInfo;
 import com.learnwithfranny.backend.model.PaymentMethod;
 import com.learnwithfranny.backend.service.BillingService;

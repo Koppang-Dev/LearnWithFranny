@@ -3,12 +3,10 @@ import com.learnwithfranny.backend.dto.MasteryBreakdownDTO;
 import com.learnwithfranny.backend.dto.StatisticsResponseDTO;
 import com.learnwithfranny.backend.dto.UserContextDto;
 import com.learnwithfranny.backend.dto.DailyReviewDTO;
-import com.learnwithfranny.backend.model.CardReview;
 import com.learnwithfranny.backend.model.User;
 
 import com.learnwithfranny.backend.repository.CardRepository;
 import com.learnwithfranny.backend.repository.CardReviewRepository;
-import com.learnwithfranny.backend.repository.DeckRepository;
 import com.learnwithfranny.backend.repository.UserRepository;
 
 import io.jsonwebtoken.io.IOException;
@@ -33,9 +31,6 @@ public class UserService {
 
     @Autowired
     private StorageService storageService;
-
-    @Autowired
-    private DeckRepository deckRepository;
 
     @Autowired
     private CardRepository cardRepository;
@@ -146,7 +141,6 @@ public class UserService {
         User user = getCurrentUser();
 
         // Basic Metrics
-        int MASTERED_BUCKET = 4;
         long flashcardsCreated = cardRepository.countByUser(user);
         long flashcardsReviewed = cardReviewRepository.countByUser(user);
         int studyStreak = activityService.calculateStreak(user);

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.learnwithfranny.backend.dto.StatisticsResponseDTO;
 import com.learnwithfranny.backend.dto.UserContextDto;
-import com.learnwithfranny.backend.service.ActivityService;
 import com.learnwithfranny.backend.service.UserService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
