@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -59,12 +63,24 @@ public class TaskController {
     }
     // Deleting specific task
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> deleteTask(@PathVariable(name = "id") Long id) {
         try {
-
+            taskService.deleteTask(id);
+            return ResponseEntity.ok("Sucessfully deleted taks");
         } catch (Exception e) {
-            
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        taskService.deleteTask(id);
+    }
+
+
+    // Updating a task
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateTask(@PathVariable(name = "id") Long id, @RequestBody TaskRequestDTO request) {
+        try {
+            taskService.updateTask(id, request);
+            return ResponseEntity.ok("Sucessfully updated taks");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

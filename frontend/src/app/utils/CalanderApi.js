@@ -78,3 +78,31 @@ export const deleteTask = async (taskId) => {
     throw new Error(err);
   }
 };
+
+// Editing a task
+export const editTask = async (taskId, newTask) => {
+  console.log("New task", newTask);
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${taskId}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newTask),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error);
+    }
+
+    const message = await response.text();
+    return message;
+  } catch (err) {
+    throw new Error(err);
+  }
+};

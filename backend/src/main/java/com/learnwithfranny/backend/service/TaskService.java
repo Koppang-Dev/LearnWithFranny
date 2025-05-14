@@ -51,10 +51,18 @@ public class TaskService {
     // Retrieving tasks within a range
     public List<Task> getTasksInRange(LocalDate start, LocalDate end) {
         return taskRepository.findByUserAndDateBetween(
-            userService.getCurrentUser(),
-            start,
-            end
-        );
+                userService.getCurrentUser(),
+                start,
+                end);
+    }
+    
+    // Updating a task
+    public void updateTask(Long taskId, TaskRequestDTO newTask) {
+        // Update with the new information
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
+        task.setTitle(newTask.getTitle());
+        task.setDate(newTask.getDate());
+        taskRepository.save(task);
     }
 
 }

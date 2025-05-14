@@ -20,6 +20,7 @@ import {
   getTasksInRange,
   createTask,
   deleteTask,
+  editTask,
 } from "@/app/utils/CalanderApi";
 import toast from "react-hot-toast";
 export default function CalendarView() {
@@ -44,7 +45,8 @@ export default function CalendarView() {
         start = format(startOfWeek(currentDate), "yyyy-MM-dd");
         end = format(endOfWeek(currentDate), "yyyy-MM-dd");
       } else {
-        start = end = format(currentDate, "yyyy-MM-dd");
+        const adjustedDate = addDays(currentDate, 1);
+        start = end = format(adjustedDate, "yyyy-MM-dd");
       }
 
       // Fetch the tasks for this date
@@ -79,15 +81,16 @@ export default function CalendarView() {
     );
   };
 
-  const openModal = (taskOrDate) => {
-    if (taskOrDate.date) {
-      setSelectedTask({
-        title: "",
-        date: format(taskOrDate.date, "yyyy-MM-dd"),
-      });
-    } else {
-      setSelectedTask(taskOrDate);
-    }
+  const openAddModal = (date) => {
+    setSelectedTask({
+      title: "",
+      date: format(date, "yyyy-MM-dd"),
+    });
+    setModalOpen(true);
+  };
+
+  const openEditModal = (task) => {
+    setSelectedTask(task);
     setModalOpen(true);
   };
 
@@ -112,12 +115,29 @@ export default function CalendarView() {
     }
   };
 
-  const handleDelete = async (task) => {
+  const handleDelete = async (taskId) => {
     try {
-      await deleteTask(task);
-      toast.success("Deleted Taks");
+      await deleteTask(taskId);
+
+      // Remove task from list
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
     } catch (err) {
       toast.error("Error deleting task");
+    }
+  };
+
+  const handleEdit = async (taskId, payload) => {
+    try {
+      await editTask(taskId, payload);
+      const refreshed = await getTasksInRange(
+        format(startOfMonth(currentDate), "yyyy-MM-dd"),
+        format(endOfMonth(currentDate), "yyyy-MM-dd")
+      );
+      setTasks(refreshed);
+      toast.success("Edited Task");
+      setModalOpen(false);
+    } catch (err) {
+      toast.error("Error editing task");
     }
   };
 
@@ -152,21 +172,24 @@ export default function CalendarView() {
         <MonthView
           currentDate={currentDate}
           tasks={tasks}
-          openModal={openModal}
+          openAddModal={openAddModal}
+          openEditModal={openEditModal}
           handleDelete={handleDelete}
         />
       ) : view === "week" ? (
         <WeekView
           currentDate={currentDate}
           tasks={tasks}
-          openModal={openModal}
+          openAddModal={openAddModal}
+          openEditModal={openEditModal}
           handleDelete={handleDelete}
         />
       ) : (
         <DayView
           currentDate={currentDate}
           tasks={tasks}
-          openModal={openModal}
+          openAddModal={openAddModal}
+          openEditModal={openEditModal}
           handleDelete={handleDelete}
         />
       )}
@@ -176,6 +199,7 @@ export default function CalendarView() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
+        onEdit={handleEdit}
         task={selectedTask}
       />
     </div>

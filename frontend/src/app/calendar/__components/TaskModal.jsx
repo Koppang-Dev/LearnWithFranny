@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 
-export default function TaskModal({ isOpen, onClose, onSave, task }) {
+export default function TaskModal({ isOpen, onClose, onSave, onEdit, task }) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
 
@@ -20,7 +20,13 @@ export default function TaskModal({ isOpen, onClose, onSave, task }) {
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
-    await onSave({ title, date, id: task?.id });
+    const payload = { title, date };
+    console.log("Task Payload", task);
+    if (task?.id) {
+      await onEdit(task.id, payload);
+    } else {
+      await onSave({ title, date, id: task?.id });
+    }
     onClose();
   };
 
@@ -51,7 +57,7 @@ export default function TaskModal({ isOpen, onClose, onSave, task }) {
             onClick={handleSubmit}
             className="px-4 py-2 bg-blue-600 text-white rounded"
           >
-            Save
+            {task ? "Update" : "Save"}
           </button>
         </div>
       </div>
