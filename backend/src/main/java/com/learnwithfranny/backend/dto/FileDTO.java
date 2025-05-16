@@ -3,8 +3,8 @@ package com.learnwithfranny.backend.dto;
 public class FileDTO {
     private Long id;
     private String name;
-    private String fileType; // Type of the file (e.g., document, image, etc.)
-    private String fileUrl; // URL or path to the file
+    private String fileType; 
+    private String fileUrl; 
 
     // Getters and Setters
     public Long getId() {

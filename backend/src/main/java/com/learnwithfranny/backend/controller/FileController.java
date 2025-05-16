@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/api/files")
 public class FileController {
 
     @Autowired
@@ -68,7 +68,7 @@ public class FileController {
         try {
 
             // Call the service method to create a new folder
-            String result = userFileService.createFolder(folderRequest.getFolderName(), folderRequest.getUserId(),
+            String result = userFileService.createFolder(folderRequest.getFolderName(),
                     folderRequest.getParentFolderId());
             
             
@@ -79,7 +79,7 @@ public class FileController {
     }
 
     // Retrieves all of the files from a users account
-    @GetMapping("/files")
+    @GetMapping()
     public List<FolderWithFilesResponse> getUserFiles() {
         return userFileService.getAllFoldersByUserId();
     }

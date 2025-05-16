@@ -2,7 +2,7 @@ import Sidebar from "../dashboard/__components/Sidebar";
 import { Toaster } from "react-hot-toast";
 export default function Layout({ children }) {
   return (
-    <div className="flex h-screen">
+    <div className="flex">
       {/* Sidebar */}
       <div className="bg-gray-800 text-white">
         <Sidebar />

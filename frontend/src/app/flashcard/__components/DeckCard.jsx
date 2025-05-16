@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaEllipsisV } from "react-icons/fa";
 import { SketchPicker } from "react-color";
-import DropdownMenu from "@/app/uploadNote/_components/DropDownMenu"; // adjust if needed
+import DropdownMenu from "@/app/documents/_components/DropDownMenu"; // adjust if needed
 
 export default function DeckCard({ deck, onDelete }) {
   const router = useRouter();

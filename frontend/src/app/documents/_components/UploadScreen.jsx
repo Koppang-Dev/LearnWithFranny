@@ -10,9 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Loader2Icon } from "lucide-react";
-import { useState, useRef } from "react";
-import uuid4 from "uuid4";
-import { useUser } from "@/app/context/UserContext";
+import { useState } from "react";
 import { useFolder } from "@/app/context/FolderProvider";
 import { saveFile } from "@/app/utils/FileApi";
 import toast from "react-hot-toast";
@@ -22,9 +20,6 @@ const UploadScreen = ({ dialogOpen, setDialogOpen }) => {
   const [file, setFile] = useState();
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState("");
-  const { user } = useUser();
-  const userId = user?.id ?? 10;
-  const dialogCloseRef = useRef(null);
 
   const OnFileSelect = (event) => {
     const selectedFile = event.target.files[0];

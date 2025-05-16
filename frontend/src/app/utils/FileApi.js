@@ -1,36 +1,4 @@
 /**
- * Fetches a list of documents for the specified user.
- *
- * @param {string} userId - The unique identifier of the user whose documents need to be fetched.
- * @returns {Promise<Object[]>} - A promise that resolves to the list of documents in JSON format.
- * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
- */
-export const fetchDocuments = async () => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/file/files`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-
-    // Validation
-    if (!response.ok) {
-      const error = await response.text();
-      console.log(error);
-      throw new Error("Failed to fetch documents");
-    }
-
-    return response.json();
-  } catch (err) {
-    console.log(err);
-    throw new Error(err);
-  }
-};
-
-/**
  * Deletes a specified file for the given user.
  *
  * @param {string} userId - The unique identifier of the user who owns the file.
@@ -38,9 +6,8 @@ export const fetchDocuments = async () => {
  * @returns {Promise<Object>} - A promise that resolves to the server's response in JSON format.
  * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
  */
-export const deleteFile = async (userId, fileName, folderId) => {
+export const deleteFile = async (fileName, folderId) => {
   const requestData = {
-    userId,
     fileName,
     folderId,
   };
@@ -68,7 +35,7 @@ export const deleteFile = async (userId, fileName, folderId) => {
 export const deleteFolder = async (folderId) => {
   // Make an HTTP DELETE request to delete the specified folder for the user
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/file/folder/delete/${folderId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/files/folder/delete/${folderId}`,
     {
       method: "DELETE",
       credentials: "include",
@@ -101,7 +68,7 @@ export const renameFolder = async (userId, folderId, newFolderName) => {
 
   // Make an HTTP PUT request to rename the specified folder
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/file/folder/rename`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/files/folder/rename`,
     {
       method: "PUT",
       credentials: "include",
@@ -134,7 +101,7 @@ export const renameFile = async (userId, fileId, newFileName) => {
 
   // Make an HTTP PUT request to rename the specified file
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/file/rename`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/files/rename`,
     {
       method: "PUT",
       credentials: "include",
@@ -173,7 +140,7 @@ export const moveFileToFolder = async (
 
   // Make an HTTP PUT request to move the file
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/file/move`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/files/move`,
     {
       method: "PUT",
       credentials: "include",
@@ -198,7 +165,7 @@ export const moveFileToFolder = async (
 export const downloadFile = async (fileId) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/file/download`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/files/download`,
       {
         method: "POST",
         credentials: "include",
@@ -231,7 +198,7 @@ export const fetchPresignedUrl = async (fileId) => {
   const requestData = { fileId };
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/file/get-presigned-url`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/files/get-presigned-url`,
     {
       method: "POST",
       credentials: "include",
@@ -258,38 +225,32 @@ export const fetchPresignedUrl = async (fileId) => {
  * @param {number|null} parentFolderId - (Optional) The ID of the parent folder, if applicable.
  * @returns {Promise<string>} A success message or an error message.
  */
-export const createFolder = async (folderName, userId, parentFolderId) => {
+export const createFolder = async (folderName, parentFolderId) => {
   // Prepare the payload to send in the request body
   const payload = {
     folderName,
-    userId,
     parentFolderId,
   };
 
   try {
-    console.log("Creating Folders", payload);
-    // Send a POST request to the backend to create a new folder
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/file/create-folder`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/files/create-folder`,
       {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          // Authorization header can be added if authentication is required
-          // "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(payload), // Convert payload to JSON string
+        body: JSON.stringify(payload),
       }
     );
 
-    // Check if the response is successful (status code 2xx)
+    // Validation
     if (!response.ok) {
       throw new Error(`Failed to create folder: ${response.statusText}`);
     }
 
-    // Return the response body as a text or JSON message
-    return await response.text(); // Use `await response.json();` if the backend returns JSON
+    return await response.text();
   } catch (error) {
     console.error("Error creating folder:", error);
     return `Error: ${error.message}`;
@@ -300,7 +261,7 @@ export const createFolder = async (folderName, userId, parentFolderId) => {
 export const saveFile = async (formBody) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/file/upload`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/files/upload`,
       {
         method: "POST",
         credentials: "include",
@@ -315,7 +276,7 @@ export const saveFile = async (formBody) => {
     }
     return await response.text();
   } catch (error) {
-    console.error("Error uploading file");
-    return `Error: ${error.message}`;
+    console.error("Error uploading file", error.message);
+    throw new Error(error);
   }
 };

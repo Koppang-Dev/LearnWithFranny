@@ -12,33 +12,31 @@ import { Input } from "@/components/ui/input";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Loader2Icon } from "lucide-react";
 import { useState, useRef } from "react";
-import { useUser } from "@/app/context/UserContext";
 import { useFolder } from "@/app/context/FolderProvider";
 import { createFolder } from "@/app/utils/FileApi";
+import { toast } from "react-hot-toast";
 
 const CreateFolderScreen = ({ dialogOpen, setCreateFolderDialogOpen }) => {
   const { currentFolder } = useFolder();
   const [loading, setLoading] = useState(false);
   const [folderName, setFolderName] = useState("");
-  const { user } = useUser();
-  const userId = user?.id ?? 10;
   const dialogCloseRef = useRef(null);
 
-  // Upload the PDF to convex
   const OnCreate = async () => {
-    // Ensure the folderName is not blank or empty
+    // Validation
     if (!folderName || folderName.trim() === "") {
       alert("Folder name cannot be empty or blank");
       return;
     }
 
     setLoading(true);
-    console.log("currentFolder", currentFolder);
-    createFolder(folderName, userId, currentFolder.folderId);
+    await createFolder(folderName, currentFolder.folderId);
+    toast.success("Created Folder!");
 
     if (dialogCloseRef.current) {
-      dialogCloseRef.current.click(); // Close dialog after creation
+      dialogCloseRef.current.click();
     } else {
+      toast.error("Failed creating folder");
       console.error("Folder creation failed");
     }
     setLoading(false);

@@ -28,15 +28,13 @@ import java.util.Date;
 @Service
 public class UserFileService {
     private final UserFileRepository userFileRepository;
-    private final UserRepository userRepository;
     private final StorageService storageService;
     private final FolderRepository folderRepository;
     private final UserService userService;
 
-    public UserFileService(UserFileRepository userFileRepository, StorageService storageService, UserRepository userRepository, FolderRepository folderRepository, UserService userService) {
+    public UserFileService(UserFileRepository userFileRepository, StorageService storageService, FolderRepository folderRepository, UserService userService) {
         this.userFileRepository = userFileRepository;
         this.storageService = storageService;
-        this.userRepository = userRepository;
         this.folderRepository = folderRepository;
         this.userService = userService;
     }
@@ -118,10 +116,10 @@ public class UserFileService {
      * @param parentFolderId The ID of the parent folder, or null if the folder is a root-level folder.
      * @return              A success message indicating the folder has been created.
      */
-    public String createFolder(String folderName, Long userId, Long parentFolderId) {
+    public String createFolder(String folderName, Long parentFolderId) {
         // Find the user based on the unique ID
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.getCurrentUser();
+        Long userId = user.getId();
 
         
         // If the folder already exists
@@ -217,7 +215,7 @@ public class UserFileService {
         Long userId = user.getId();
 
         try {
-            Optional<UserFileMetaData> file = userFileRepository.findByUserAndFile_Id(user, fileId);
+            Optional<UserFileMetaData> file = userFileRepository.findByUserAndFileId(user, fileId);
 
             if (file.isPresent()) {
 

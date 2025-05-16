@@ -30,18 +30,9 @@ const items = [
   },
   {
     name: "Documents",
-    path: "/uploadNote",
+    path: "/documents",
     icon: FileIcon,
     items: [
-      {
-        name: "Upload Document",
-        icon: FileIcon,
-        action: "upload",
-      },
-      {
-        name: "Create Folder",
-        icon: FileIcon,
-      },
       {
         name: "Favourites",
         icon: FileIcon,
