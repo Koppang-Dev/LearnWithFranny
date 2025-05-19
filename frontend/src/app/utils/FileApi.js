@@ -6,19 +6,16 @@
  * @returns {Promise<Object>} - A promise that resolves to the server's response in JSON format.
  * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
  */
-export const deleteFile = async (fileName, folderId) => {
-  const requestData = {
-    fileName,
-    folderId,
-  };
-
+export const deleteFile = async (fileId) => {
   // Make an HTTP DELETE request to delete the specified file for the user
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/file`, {
-    method: "DELETE",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(requestData),
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/files/${fileId}`,
+    {
+      method: "DELETE",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    }
+  );
   if (!response.ok) throw new Error("Failed to delete file");
 
   return await response.text();
@@ -82,24 +79,13 @@ export const renameFolder = async (userId, folderId, newFolderName) => {
   return await response.text();
 };
 
-/**
- * Renames a specified file for the given user.
- *
- * @param {string} userId - The unique identifier of the user who owns the file.
- * @param {string} oldFileName - The current name of the file to be renamed.
- * @param {string} newFileName - The new name for the file.
- * @param {string} folderId - The unique identifier of the folder where the file is located.
- * @returns {Promise<Object>} - A promise that resolves to the server's response in JSON format.
- * @throws {Error} - Throws an error if the fetch operation fails or the response is not successful.
- */
-export const renameFile = async (userId, fileId, newFileName) => {
+// Renaming a file
+export const renameFile = async (fileId, newFileName) => {
   const requestData = {
-    userId,
     fileId,
     newFileName,
   };
 
-  // Make an HTTP PUT request to rename the specified file
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/files/rename`,
     {

@@ -272,10 +272,14 @@ public class UserFileService {
     }
     
 
-    public ResponseEntity<String> renameFolder(Long userId, Long folderId, String newName) {
+    public ResponseEntity<String> renameFolder(Long folderId, String newName) {
+
+        // Current user
+        User user = userService.getCurrentUser();
+        Long userId = user.getId();
 
         try {
-            // See if the folder exists
+            // Make sure the folder belongs to the user
             Optional<Folder> folder = folderRepository.findByUser_IdAndId(userId, folderId);
 
             if (folder.isPresent()) {
@@ -292,8 +296,11 @@ public class UserFileService {
         }
     }
 
-    public ResponseEntity<String> renameFile(Long userId, Long fileId, String newName) {
+    public ResponseEntity<String> renameFile(Long fileId, String newName) {
 
+        User user = userService.getCurrentUser();
+        Long userId = user.getId();
+        
         try {
             // See if the file exists
             Optional<UserFileMetaData> file = userFileRepository.findByUser_IdAndFileId(userId, fileId);

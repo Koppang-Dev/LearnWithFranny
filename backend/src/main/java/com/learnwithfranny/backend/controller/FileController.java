@@ -71,7 +71,7 @@ public class FileController {
             String result = userFileService.createFolder(folderRequest.getFolderName(),
                     folderRequest.getParentFolderId());
             
-            
+        
             return new ResponseEntity<>(result, HttpStatus.CREATED); // Return success message with status 201
         } catch (Exception e) {
             return new ResponseEntity<>("Folder creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -116,7 +116,7 @@ public class FileController {
                // Handle any unexpected errors
                return ResponseEntity.status(500).body("An unexpected error occurred deleting file: " + e.getMessage());
            }
-           }
+        }
     
         // Deleting a folder
     @DeleteMapping("/folder/delete/{folderId}")
@@ -135,7 +135,7 @@ public class FileController {
     public ResponseEntity<String> renameFolder(@RequestBody RenameFolderRequest request) {
 
         try {
-            userFileService.renameFolder(request.getUserId(), request.getFolderId(), request.getNewFolderName());
+            userFileService.renameFolder(request.getFolderId(), request.getNewFolderName());
             return new ResponseEntity<>(HttpStatus.CREATED); // Return success message with status 201
 
         } catch (Exception e) {
@@ -148,7 +148,7 @@ public class FileController {
     public ResponseEntity<String> renameFile(@RequestBody RenameFileRequest request) {
 
         try {
-            userFileService.renameFile(request.getUserId(), request.getFileId(), request.getNewFileName());
+            userFileService.renameFile(request.getFileId(), request.getNewFileName());
             return new ResponseEntity<>(HttpStatus.CREATED); // Return success message with status 201
 
         } catch (Exception e) {

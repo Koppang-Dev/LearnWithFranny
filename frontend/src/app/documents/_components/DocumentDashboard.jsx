@@ -1,9 +1,12 @@
 "use client";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import SearchBar from "@/components/custom/SearchBar";
-import FileList from "./FileList";
-import FolderList from "./FolderList";
-import { moveFileToFolder } from "@/app/utils/FileApi";
+import {
+  deleteFile,
+  downloadFile,
+  moveFileToFolder,
+  renameFile,
+} from "@/app/utils/FileApi";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useFolder } from "@/app/context/FolderProvider";
@@ -12,29 +15,20 @@ import { DataTable } from "./DataTable/DataTable";
 import { fileColumns } from "./DataTable/Columns";
 import { Table, LayoutGrid } from "lucide-react";
 import RecentFileCard from "./RecentFileCard";
+import toast from "react-hot-toast";
 
-const DocumentDashboard = ({ initialDocuments }) => {
+const DocumentDashboard = ({ documents, setDocuments }) => {
   const { setCurrentFolder } = useFolder();
   const { allFiles } = useContext(DocumentsContext);
   const [folderStack, setFolderStack] = useState([]);
-
-  const [documents, setDocuments] = useState([]);
-  const [defaultFolderFiles, setDefaultFolderFiles] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isTableView, setIsTableView] = useState(false);
 
-  useEffect(() => {
-    const defaultFolder = initialDocuments.find(
-      (folder) => folder.folderName === "Default Folder"
-    );
-    setDefaultFolderFiles(defaultFolder?.files || []);
-    setDocuments(
-      initialDocuments.filter(
-        (folder) => folder.folderName !== "Default Folder"
-      )
-    );
-  }, [initialDocuments]);
+  const defaultFolder = documents.find(
+    (folder) => folder.folderName === "Default Folder"
+  );
+  const defaultFolderFiles = defaultFolder?.files || [];
 
   const filteredDefaultFiles = defaultFolderFiles.filter((file) =>
     file.fileName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -80,10 +74,99 @@ const DocumentDashboard = ({ initialDocuments }) => {
     });
   };
 
+  // Renaming File
+  const handleFileRename = async (file, newFileName) => {
+    const fileId = file.fileId;
+    const folderId = file.folderId;
+
+    try {
+      await renameFile(fileId, newFileName);
+
+      const updatedDocs = documents.map((folder) =>
+        folder.folderId === folderId
+          ? {
+              ...folder,
+              files: folder.files.map((f) =>
+                f.fileId === fileId ? { ...f, fileName: newFileName } : f
+              ),
+            }
+          : folder
+      );
+
+      setDocuments(updatedDocs);
+
+      if (selectedFolder?.folderId === folderId) {
+        const updatedFolder = {
+          ...selectedFolder,
+          files: selectedFolder.files.map((f) =>
+            f.fileId === fileId ? { ...f, fileName: newFileName } : f
+          ),
+        };
+        setSelectedFolder(updatedFolder);
+        setCurrentFolder(updatedFolder);
+      }
+
+      toast.success("Successfully changed file name");
+    } catch (err) {
+      console.error("Error renaming file", err);
+      toast.error("Issue renaming file");
+    }
+  };
+
+  // Deleting File
+  const handleFileDelete = async (file) => {
+    const fileId = file.fileId;
+    const folderId = file.folderId;
+
+    try {
+      await deleteFile(fileId);
+
+      const updatedDocs = documents.map((folder) =>
+        folder.folderId === folderId
+          ? {
+              ...folder,
+              files: folder.files.filter((file) => file.fileId !== fileId),
+            }
+          : folder
+      );
+
+      setDocuments(updatedDocs);
+
+      if (selectedFolder?.folderId === folderId) {
+        const updatedFolder = {
+          ...selectedFolder,
+          files: selectedFolder.files.filter((f) => f.fileId !== fileId),
+        };
+        setSelectedFolder(updatedFolder);
+        setCurrentFolder(updatedFolder);
+      }
+
+      toast.success("Deleted file");
+    } catch (err) {
+      toast.error("Issue deleting file");
+      console.error("Failed to delete file", err);
+    }
+  };
+
+  // Downloading file
+  const handleDownload = async (fileId) => {
+    try {
+      const response = await downloadFile(fileId);
+      const blob = new Blob([response], { type: "application/octet-stream" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "downloaded-file";
+      link.click();
+      toast.success("Downloaded File");
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      toast.error("Error downloading file");
+    }
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <section className="mt-10 pr-20">
-        {/* Header + Toggle */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
           <h2 className="text-2xl font-semibold text-gray-800">
             All Documents
@@ -114,12 +197,10 @@ const DocumentDashboard = ({ initialDocuments }) => {
           </div>
         </div>
 
-        {/* Search */}
         <div className="mb-6">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </div>
 
-        {/* Table View */}
         {isTableView ? (
           <div className="w-full bg-white border rounded-lg p-4 shadow-sm">
             <DataTable columns={fileColumns} data={allFiles} />
@@ -138,7 +219,6 @@ const DocumentDashboard = ({ initialDocuments }) => {
             </h3>
 
             <div className="space-y-10">
-              {/* Subfolders inside selected folder */}
               {findSubfolders(selectedFolder.folderId).length > 0 && (
                 <div>
                   <h4 className="text-lg font-semibold text-gray-700 mb-3">
@@ -164,7 +244,6 @@ const DocumentDashboard = ({ initialDocuments }) => {
                 </div>
               )}
 
-              {/* Files inside selected folder */}
               {selectedFolder.files?.length > 0 && (
                 <div>
                   <h4 className="text-lg font-semibold text-gray-700 mb-3">
@@ -179,7 +258,12 @@ const DocumentDashboard = ({ initialDocuments }) => {
                       )
                       .map((file) => (
                         <div key={file.fileId}>
-                          <RecentFileCard file={file} />
+                          <RecentFileCard
+                            file={file}
+                            onDelete={handleFileDelete}
+                            onRename={handleFileRename}
+                            onDownload={handleDownload}
+                          />
                         </div>
                       ))}
                   </div>
@@ -189,7 +273,6 @@ const DocumentDashboard = ({ initialDocuments }) => {
           </div>
         ) : (
           <div className="space-y-10">
-            {/* Folders */}
             {rootFolders.length > 0 && (
               <div>
                 <h4 className="text-lg font-semibold text-gray-700 mb-3">
@@ -215,19 +298,20 @@ const DocumentDashboard = ({ initialDocuments }) => {
               </div>
             )}
 
-            {/* Files */}
             {filteredDefaultFiles.length > 0 && (
               <div>
                 <h4 className="text-lg font-semibold text-gray-700 mb-3">
                   Files
                 </h4>
-                <div className="relative z-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 overflow-visible">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {filteredDefaultFiles.map((file) => (
-                    <div
-                      key={file.fileId}
-                      className="relative overflow-visible"
-                    >
-                      <RecentFileCard file={file} />
+                    <div key={file.fileId} className="">
+                      <RecentFileCard
+                        file={file}
+                        onDelete={handleFileDelete}
+                        onRename={handleFileRename}
+                        onDownload={handleDownload}
+                      />
                     </div>
                   ))}
                 </div>

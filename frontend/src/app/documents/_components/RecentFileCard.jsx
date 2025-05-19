@@ -4,13 +4,36 @@ import { FileIcon } from "lucide-react";
 import DropDownMenu from "./DropDownMenu";
 import { formatDistanceToNow } from "date-fns";
 
-const RecentFileCard = ({ file }) => {
+const RecentFileCard = ({ file, onDelete, onRename, onDownload }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newFileName, setNewFileName] = useState(file.fileName);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleFileClick = () => {
-    window.open(file.fileUrl, "_blank");
+    if (!isRenaming && !showDropdown) {
+      window.open(file.fileUrl, "_blank");
+    }
+  };
+
+  // Deletig a fule
+  const handleDelete = async () => {
+    await onDelete(file);
+    setIsDeleting(false);
+    setShowDropdown(false);
+  };
+
+  // Renaming file
+  const handleRename = async () => {
+    await onRename(file, newFileName);
+    setIsRenaming(false);
+    setShowDropdown(false);
+  };
+
+  // Handling Download
+  const handleDownload = async () => {
+    await onDownload(file.fileId);
+    setShowDropdown(false);
   };
 
   const toggleDropdown = (e) => {
@@ -25,17 +48,53 @@ const RecentFileCard = ({ file }) => {
   return (
     <div
       onClick={handleFileClick}
-      className="relative z-10 flex flex-col gap-2 items-start p-4 w-full h-full bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition hover:scale-[1.01] cursor-pointer"
+      className="relative z-2000 flex flex-col gap-2 items-start p-4 w-full h-full bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition  cursor-pointer"
     >
       {/* Dropdown icon */}
       <div
-        className="absolute top-2 right-2 text-gray-400 hover:text-black"
+        className="absolute top-2 right-2 text-gray-400 hover:text-black z-20"
         onClick={toggleDropdown}
       >
         <FaEllipsisV className="cursor-pointer" />
       </div>
 
-      {/* File icon + type */}
+      {/* Dropdown menu (absolutely positioned and layered) */}
+      {showDropdown && (
+        <div className="absolute top-10 right-2 z-50">
+          <DropDownMenu
+            actions={[
+              {
+                label: "Rename",
+                onClick: async (e) => {
+                  e.stopPropagation();
+                  setIsRenaming(true);
+                  setShowDropdown(false);
+                },
+              },
+              {
+                label: "Download",
+                onClick: async (e) => {
+                  e.stopPropagation();
+                  setShowDropdown(false);
+                  await handleDownload();
+                },
+              },
+              {
+                label: "Delete",
+                onClick: async (e) => {
+                  e.stopPropagation();
+                  setIsDeleting(true);
+                  setShowDropdown(false);
+
+                  await handleDelete();
+                },
+              },
+            ]}
+          />
+        </div>
+      )}
+
+      {/* File icon and name */}
       <div className="flex items-center gap-3">
         <FileIcon size={32} className="text-purple-500" />
         <div className="flex flex-col">
@@ -46,12 +105,9 @@ const RecentFileCard = ({ file }) => {
         </div>
       </div>
 
-      {/* Metadata */}
-      <p className="text-xs text-gray-400">Uploaded {formattedTime}</p>
-
       {/* Rename input */}
       {isRenaming && (
-        <div className="mt-2 flex flex-col gap-2 w-full">
+        <div className="mt-2 flex flex-col gap-2 w-full z-30">
           <input
             type="text"
             className="w-full border rounded-md p-2 text-sm"
@@ -64,8 +120,7 @@ const RecentFileCard = ({ file }) => {
               className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log(`Renamed to: ${newFileName}`);
-                setIsRenaming(false);
+                handleRename();
               }}
             >
               Save
@@ -83,30 +138,7 @@ const RecentFileCard = ({ file }) => {
         </div>
       )}
 
-      {/* Dropdown menu */}
-      {showDropdown && (
-        <div className="absolute top-8 right-2 z-50">
-          <DropDownMenu
-            actions={[
-              {
-                label: "Rename",
-                onClick: (e) => {
-                  e.stopPropagation();
-                  setIsRenaming(true);
-                  setShowDropdown(false);
-                },
-              },
-              {
-                label: "Download",
-                onClick: (e) => {
-                  e.stopPropagation();
-                  window.open(file.fileUrl, "_blank");
-                },
-              },
-            ]}
-          />
-        </div>
-      )}
+      <p className="text-xs text-gray-400 mt-auto">Uploaded {formattedTime}</p>
     </div>
   );
 };

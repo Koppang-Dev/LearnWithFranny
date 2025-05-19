@@ -21,81 +21,56 @@ const FileCard = ({ file, folderId }) => {
 
   const router = useRouter();
 
-  console.log(folderId);
   const handleDelete = async () => {
-    console.log(`Deleting file: ${file.fileName}`);
     const folderId = folderId ? folderId : null;
     deleteFile(10, file.fileName, folderId);
     window.location.reload();
-
-    setShowConfirmDialog(false); // Close the dialog after confirming
+    setShowConfirmDialog(false);
   };
 
-  // Dragging logic
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: "FILE", // Type of draggable item
+    type: "FILE",
     item: {
       id: file.fileId,
       fileName: file.fileName,
       folderId: folderId,
-    }, // Data passed with the drag
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   }));
 
-  // Handling the renaming of the folder
   const handleRename = async () => {
-    console.log(`Renaming folder to: ${newFileName}`);
     setShowDropdown(false);
     await renameFile(10, file.fileId, newFileName);
     setIsRenaming(false);
     window.location.reload();
   };
 
-  // Showing the dropdown
   const toggleDropdown = (event) => {
     event.stopPropagation();
     setShowDropdown((prev) => !prev);
   };
 
-  // Handle file click to open PDF viewer
   const handleFileClick = async () => {
-    // Do not activate when in the drop down
-    if (isRenaming || isSharing || isDeleting) {
-      return;
-    }
+    if (isRenaming || isSharing || isDeleting) return;
     try {
       const preSignedUrl = await fetchPresignedUrl(file.fileId);
-      console.log("Pre-signed URL:", preSignedUrl);
-      // You can now use this URL to allow the user to download the file
       window.open(preSignedUrl, "_blank");
     } catch (error) {
       console.error("Error fetching pre-signed URL:", error);
     }
   };
 
-  // Handling the file download
   const handleDownload = async () => {
     try {
-      console.log("Downloading file...");
       setShowDropdown(false);
-
-      // Assuming `userId` and `fileId` are available in the component
-      const response = await downloadFile(file.fileId); // Use your `downloadFile` function here
-
-      // Create a Blob from the binary data
-      const blob = new Blob([response], {
-        type: "application/octet-stream",
-      });
+      const response = await downloadFile(file.fileId);
+      const blob = new Blob([response], { type: "application/octet-stream" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-
-      // Use the filename from the response header or a default one
-      const filename = "downloaded-file"; // If the filename isn't returned by the response, you can specify a default one
-
-      link.download = filename; // Set the filename for download
-      link.click(); // Trigger download
+      link.download = "downloaded-file";
+      link.click();
     } catch (error) {
       console.error("Error downloading file:", error);
     }
@@ -106,65 +81,68 @@ const FileCard = ({ file, folderId }) => {
       ref={drag}
       onClick={handleFileClick}
       onMouseLeave={() => setShowDropdown(false)}
-      className={`relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all
-      ${isDragging ? "opacity-50" : ""}`}
+      className={`relative flex flex-col p-5 shadow-md rounded-md border bg-white transition-all ${
+        isDragging ? "opacity-50" : ""
+      }`}
     >
-      <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
-      {/* More button - Triggers dropdown */}
-      <div
-        className="absolute top-2 right-2"
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleDropdown(e);
-        }}
-      >
-        <FaEllipsisV className="cursor-pointer" />
+      {/* Header with icon and menu */}
+      <div className="w-full flex justify-between items-start">
+        <Image src="/images/pdf-file.png" alt="" width={50} height={50} />
+
+        <div className="flex flex-col items-end">
+          <div onClick={toggleDropdown} className="cursor-pointer">
+            <FaEllipsisV />
+          </div>
+
+          {showDropdown && (
+            <div className="mt-2">
+              <DropDownMenu
+                actions={[
+                  {
+                    label: "Rename",
+                    onClick: (e) => {
+                      e.stopPropagation();
+                      setShowDropdown(false);
+                      setIsRenaming(true);
+                    },
+                  },
+                  {
+                    label: "Delete",
+                    onClick: (e) => {
+                      e.stopPropagation();
+                      setShowConfirmDialog(true);
+                      setIsDeleting(true);
+                    },
+                  },
+                  {
+                    label: "Share",
+                    onClick: (e) => {
+                      e.stopPropagation();
+                      console.log("Share clicked");
+                    },
+                  },
+                  { label: "Download", onClick: handleDownload },
+                ]}
+              />
+            </div>
+          )}
+        </div>
       </div>
-      {/* Drop down menu */}
-      {showDropdown && (
-        <DropDownMenu
-          actions={[
-            {
-              label: "Rename",
-              onClick: (e) => {
-                e.stopPropagation();
-                setShowDropdown(false);
-                setIsRenaming(true);
-              },
-            },
-            {
-              label: "Delete",
-              onClick: (e) => {
-                e.stopPropagation();
-                setShowConfirmDialog(true);
-                setIsDeleting(true);
-              },
-            },
-            {
-              label: "Share",
-              onClick: (e) => {
-                e.stopPropagation();
-                console.log("Share clicked");
-              },
-            },
-            { label: "Download", onClick: () => handleDownload() },
-          ]}
-        />
-      )}
 
-      {/* Rename File */}
-
+      {/* File name */}
       <h2
-        className="mt-3 font-medium text-xl"
-        onClick={(e) => e.stopPropagation()} // Prevents file click event when clicking on the title
+        className="mt-4 font-medium text-xl text-center break-words"
+        onClick={(e) => e.stopPropagation()}
       >
         {file.fileName}
       </h2>
+
+      {/* Rename input */}
       {isRenaming && (
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex gap-2 w-full">
           <input
             type="text"
-            className="border rounded-md p-2"
+            className="border rounded-md p-2 flex-1"
             value={newFileName}
             onChange={(e) => setNewFileName(e.target.value)}
           />
@@ -182,13 +160,14 @@ const FileCard = ({ file, folderId }) => {
           </button>
         </div>
       )}
-      {/* Confirmation Dialog */}
+
+      {/* Confirmation dialog */}
       {showConfirmDialog && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
           <div className="bg-white p-6 rounded-md shadow-lg">
             <h3 className="text-lg font-bold">Confirm Delete</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to delete the file <b>{file.fileName}</b>?
+              Are you sure you want to delete <b>{file.fileName}</b>?
             </p>
             <div className="mt-4 flex justify-end gap-3">
               <button

@@ -12,121 +12,119 @@ const FolderCard = ({ folder, onFileDrop, onClick }) => {
   const [isSharing, setIsSharing] = useState(false);
   const [newFolderName, setNewFolderName] = useState(folder.folderName);
 
-  // Handling the deletion of the document
   const handleDelete = async () => {
-    // Add delete folder logic here
-    console.log(`Deleting folder: ${folder.folderName}`);
     deleteFolder(10, folder.folderId);
     window.location.reload();
   };
 
-  // Handling the renaming of the folder
   const handleRename = async () => {
-    console.log(`Renaming folder to: ${newFolderName}`);
-    setShowDropdown(false);
     await renameFolder(10, folder.folderId, newFolderName);
     window.location.reload();
     setIsRenaming(false);
+    setShowDropdown(false);
   };
 
-  // Showing the dropdown
-  const toggleDropdown = (event) => {
-    event.stopPropagation();
+  const toggleDropdown = (e) => {
+    e.stopPropagation();
     setShowDropdown((prev) => !prev);
   };
 
-  // Handle file click to open PDF viewer
-  const handleFolderClick = async (e) => {
-    // Do not activate when in the drop down
-    if (isRenaming || isSharing || isDeleting) {
-      return;
-    }
+  const handleFolderClick = (e) => {
+    if (isRenaming || isSharing || isDeleting) return;
     onClick(e);
   };
 
-  // Drag and drop logic for the folder
   const [{ isOver }, drop] = useDrop(() => ({
-    accept: "FILE", // The folder accepts files as the drop target
+    accept: "FILE",
     drop: (item) => {
-      console.log(
-        `Dropped file: ${item.fileName} (original folder ID: ${item.folderId}) into folder: ${item.folderName}`
-      );
-      // Call the onFileDrop callback when a file is dropped into the folder
       onFileDrop(item, folder.folderId);
     },
     collect: (monitor) => ({
-      isOver: monitor.isOver(), // Is the folder currently being hovered over by a draggable item?
+      isOver: monitor.isOver(),
     }),
   }));
 
   return (
-    <div
-      ref={drop}
-      className={`relative flex p-5 shadow-md rounded-md flex-col items-center justify-center border cursor-pointer hover:scale-105 transition-all
-      ${isOver ? "bg-green-100 border-green-500" : "bg-white"}`}
-      onMouseLeave={() => setShowDropdown(false)}
-      onClick={handleFolderClick}
-    >
-      {/* More button - Triggers dropdown */}
+    <div ref={drop}>
       <div
-        className="absolute top-2 right-2"
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleDropdown(e);
-        }}
+        onClick={handleFolderClick}
+        className={`relative bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer ${
+          isOver ? "bg-green-100 border-green-500" : ""
+        }`}
+        onMouseLeave={() => setShowDropdown(false)}
       >
-        <FaEllipsisV className="cursor-pointer" />
-      </div>
-      {showDropdown && (
-        <DropDownMenu
-          actions={[
-            {
-              label: "Rename",
-              onClick: (e) => {
-                e.stopPropagation();
-                setIsRenaming(true);
-                setShowDropdown(false);
-              },
-            },
-            {
-              label: "Delete",
-              onClick: (e) => {
-                e.stopPropagation();
-                setIsDeleting(true);
-                setShowConfirmDialog(true);
-              },
-            },
-            { label: "Share", onClick: () => console.log("Share clicked") },
-          ]}
-        />
-      )}
-      <h2 className="mt-3 font-medium text-xl">{folder.folderName}</h2>
-      {/* Rename Folder */}
-      {isRenaming && (
-        <div className="mt-4 flex gap-2">
-          <input
-            type="text"
-            className="border rounded-md p-2"
-            value={newFolderName}
-            onChange={(e) => setNewFolderName(e.target.value)}
-          />
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-md"
-            onClick={handleRename}
-          >
-            Save
-          </button>
-          <button
-            className="px-4 py-2 bg-gray-200 rounded-md"
-            onClick={() => setIsRenaming(false)}
-          >
-            Cancel
-          </button>
+        {/* More Icon */}
+        <div
+          className="absolute top-2 right-2"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleDropdown(e);
+          }}
+        >
+          <FaEllipsisV className="cursor-pointer text-gray-600" />
         </div>
-      )}
-      {/* Confirmation Dialog */}
+
+        {showDropdown && (
+          <DropDownMenu
+            actions={[
+              {
+                label: "Rename",
+                onClick: (e) => {
+                  e.stopPropagation();
+                  setIsRenaming(true);
+                  setShowDropdown(false);
+                },
+              },
+              {
+                label: "Delete",
+                onClick: (e) => {
+                  e.stopPropagation();
+                  setIsDeleting(true);
+                  setShowConfirmDialog(true);
+                },
+              },
+              { label: "Share", onClick: () => console.log("Share clicked") },
+            ]}
+          />
+        )}
+
+        {/* Folder Name or Rename Input */}
+        {isRenaming ? (
+          <div className="mt-2">
+            <input
+              type="text"
+              className="border rounded-md p-2 w-full"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+            />
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                className="px-3 py-1 bg-blue-500 text-white rounded-md text-sm"
+                onClick={handleRename}
+              >
+                Save
+              </button>
+              <button
+                className="px-3 py-1 bg-gray-300 text-sm rounded-md"
+                onClick={() => setIsRenaming(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <p className="font-medium text-gray-800">{folder.folderName}</p>
+            <p className="text-sm text-gray-500">
+              {folder.files?.length || 0} file(s)
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Confirm Delete Dialog */}
       {showConfirmDialog && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-md shadow-lg">
             <h3 className="text-lg font-bold">Confirm Delete</h3>
             <p className="mt-2 text-sm text-gray-600">
